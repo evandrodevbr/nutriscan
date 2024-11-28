@@ -2,11 +2,25 @@
 
 <div align="center">
 
-![Next.js][]![TypeScript][]![Prisma][]![Tailwind CSS][][![Licença][]](./LICENSE)
+[![Next.js][]](https://nextjs.org/)[![TypeScript][]](https://www.typescriptlang.org/)[![Prisma][]](https://www.prisma.io/)[![Tailwind CSS][]](https://tailwindcss.com/)[![MIT License][]](https://opensource.org/licenses/MIT)
 
-Uma aplicação moderna para gerenciamento de listas de compras colaborativas, construída com as mais recentes tecnologias web.[Demonstração ao Vivo](https://resenhaitapoa.com.br) • [Reportar Bug](https://github.com/seu-usuario/resenhaitapoa/issues) • [Solicitar Funcionalidade](https://github.com/seu-usuario/resenhaitapoa/issues)
+Uma aplicação moderna para gerenciamento de listas de compras colaborativas, construída com as mais recentes tecnologias web.[<img src="https://img.shields.io/badge/Demonstração-00B37E?style=for-the-badge&logo=vercel&logoColor=white" />](https://resenhaitapoa.com.br)[<img src="https://img.shields.io/badge/Reportar%20Bug-E62117?style=for-the-badge&logo=github&logoColor=white" />](https://github.com/evandrodevbr/lista-compras/issues)[<img src="https://img.shields.io/badge/Solicitar%20Funcionalidade-2EA043?style=for-the-badge&logo=github&logoColor=white" />](https://github.com/evandrodevbr/lista-compras/issues)
 
 </div>
+
+## 📋 Índice
+
+Para usar este markdown, basta copiar o código acima e colar no seu README.md. Os badges são interativos e direcionam para as respectivas documentações/links. As cores e ícones foram escolhidos para criar uma apresentação visual profissional e moderna.
+
+Principais características:
+- Badges modernos e interativos
+- Links diretos para documentação
+- Cores consistentes com as marcas
+- Layout centralizado e limpo
+- Ícones oficiais das tecnologias
+- Badges de ação com cores distintivas
+
+Quer que eu faça algum ajuste nas cores ou adicione mais badges?
 
 ## 📋 Índice
 
