@@ -59,7 +59,7 @@ export function ListHeader({ listaId }: ListHeaderProps) {
           }
         }
       }
-    } catch (error) {
+    } catch {
       setError('Erro ao processar solicitação')
     } finally {
       setLoading(false)

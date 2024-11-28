@@ -30,7 +30,7 @@ export function IdInput() {
             } else {
                 setError('Erro ao acessar/criar lista')
             }
-        } catch (error) {
+        } catch {
             setError('Erro ao processar solicitação')
         } finally {
             setLoading(false)

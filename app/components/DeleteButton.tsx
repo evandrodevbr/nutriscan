@@ -51,7 +51,7 @@ export function DeleteButton({ produtoId, produtoNome, listaId }: DeleteButtonPr
                 <AlertDialogHeader>
                     <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
                     <AlertDialogDescription>
-                        Tem certeza que deseja excluir o produto "{produtoNome}"?
+                        Tem certeza que deseja excluir o produto &quot;{produtoNome}&quot;?
                         Esta ação não pode ser desfeita.
                     </AlertDialogDescription>
                 </AlertDialogHeader>

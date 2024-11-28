@@ -1,10 +1,8 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useTheme } from 'next-themes'
-
 export function PageTitle() {
-    const { theme } = useTheme()
+
 
     return (
         <motion.div

@@ -9,7 +9,7 @@ export function cn(...inputs: ClassValue[]) {
 const perfCache = new Map<string, number>()
 
 // Debounce utility
-export function debounce<T extends (...args: any[]) => any>(
+export function debounce<T extends (...args: unknown[]) => unknown>(
   func: T,
   wait: number
 ): (...args: Parameters<T>) => void {
@@ -22,21 +22,24 @@ export function debounce<T extends (...args: any[]) => any>(
 }
 
 // Memoização para cálculos pesados
-export function memoize<T extends (...args: any[]) => any>(
-  func: T,
-  resolver?: (...args: Parameters<T>) => string
-): T {
-  const cache = new Map<string, ReturnType<T>>()
+export function memoize<TArgs extends unknown[], TResult>(
+  func: (...args: TArgs) => TResult,
+  resolver?: (...args: TArgs) => string
+): typeof func {
+  const cache = new Map<string, TResult>()
 
-  return ((...args: Parameters<T>) => {
+  return ((...args: TArgs) => {
     const key = resolver ? resolver(...args) : JSON.stringify(args)
-    if (cache.has(key)) {
-      return cache.get(key)
+    const cachedResult = cache.get(key)
+
+    if (cachedResult !== undefined) {
+      return cachedResult
     }
+
     const result = func(...args)
     cache.set(key, result)
     return result
-  }) as T
+  }) as typeof func
 }
 
 // Medição de performance

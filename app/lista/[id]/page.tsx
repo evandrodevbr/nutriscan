@@ -14,7 +14,7 @@ interface ListaPageProps {
 }
 
 export default async function ListaPage({ params }: ListaPageProps) {
-    const { success, exists } = await verificarLista(params.id);
+    const { success } = await verificarLista(params.id);
 
     if (!success) {
         redirect('/');
