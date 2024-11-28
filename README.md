@@ -1,36 +1,175 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Resenha Itapoá - Gerenciador de Listas de Compras
 
-## Getting Started
+<div align="center">
 
-First, run the development server:
+[![Next.js][]](https://nextjs.org/)[![TypeScript][]](https://www.typescriptlang.org/)[![Prisma][]](https://www.prisma.io/)[![Tailwind CSS][]](https://tailwindcss.com/)[![MIT License][]](https://opensource.org/licenses/MIT)
 
+Uma aplicação moderna para gerenciamento de listas de compras colaborativas, construída com as mais recentes tecnologias web.[<img src="https://img.shields.io/badge/Demonstração-00B37E?style=for-the-badge&logo=vercel&logoColor=white" />](https://resenhaitapoa.com.br)[<img src="https://img.shields.io/badge/Reportar%20Bug-E62117?style=for-the-badge&logo=github&logoColor=white" />](https://github.com/evandrodevbr/lista-compras/issues)[<img src="https://img.shields.io/badge/Solicitar%20Funcionalidade-2EA043?style=for-the-badge&logo=github&logoColor=white" />](https://github.com/evandrodevbr/lista-compras/issues)
+
+</div>
+
+## 📋 Índice
+
+Para usar este markdown, basta copiar o código acima e colar no seu README.md. Os badges são interativos e direcionam para as respectivas documentações/links. As cores e ícones foram escolhidos para criar uma apresentação visual profissional e moderna.
+
+Principais características:
+- Badges modernos e interativos
+- Links diretos para documentação
+- Cores consistentes com as marcas
+- Layout centralizado e limpo
+- Ícones oficiais das tecnologias
+- Badges de ação com cores distintivas
+
+Quer que eu faça algum ajuste nas cores ou adicione mais badges?
+
+## 📋 Índice
+
+- [Sobre o Projeto](#-sobre-o-projeto)
+- [Tecnologias](#-tecnologias)
+- [Funcionalidades](#-funcionalidades)
+- [Começando](#-começando)
+- [Estrutura do Projeto](#-estrutura-do-projeto)
+- [Otimizações](#-otimizações)
+- [Contribuindo](#-contribuindo)
+- [Licença](#-licença)
+- [Contato](#-contato)
+
+## 🚀 Sobre o Projeto
+
+Resenha Itapoá é um gerenciador de listas de compras moderno e intuitivo, desenvolvido para facilitar a organização de compras colaborativas. Com foco em performance, acessibilidade e experiência do usuário, a aplicação permite criar e gerenciar listas de compras compartilháveis em tempo real.
+
+### 🎯 Objetivos Principais
+
+- Simplificar a gestão de listas de compras
+- Permitir colaboração em tempo real
+- Oferecer interface intuitiva e responsiva
+- Garantir alta performance e acessibilidade
+
+## 🛠 Tecnologias
+
+O projeto foi desenvolvido com as seguintes tecnologias:
+
+- **Framework**: [Next.js 14](https://nextjs.org/)
+- **Linguagem**: [TypeScript](https://www.typescriptlang.org/)
+- **Banco de Dados**: [Prisma](https://www.prisma.io/)
+- **Estilização**: 
+  - [Tailwind CSS](https://tailwindcss.com/)  - [Shadcn/ui](https://ui.shadcn.com/)
+- **UI/UX**:
+  - [Lucide Icons](https://lucide.dev/)  - [Tailwind Merge](https://github.com/dcastil/tailwind-merge)
+  - [Class Variance Authority](https://cva.style/docs)
+- **Temas**: [next-themes](https://github.com/pacocoursey/next-themes)
+
+## ✨ Funcionalidades
+
+- 📝 Criação e gerenciamento de listas de compras
+- 🔄 Atualização em tempo real
+- 🌓 Tema claro/escuro
+- 📱 Design responsivo
+- ⚡ Performance otimizada
+- ♿ Acessibilidade aprimorada
+- 🔍 SEO otimizado
+
+## 🚦 Começando
+
+### Pré-requisitos
+
+- Node.js (versão 18 ou superior)
+- pnpm (versão 8 ou superior)
+
+### Instalação
+
+1. Clone o repositório:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/seu-usuario/resenhaitapoa.git
+cd resenhaitapoa```
+
+2. Instale as dependências:```bash
+pnpm install```
+
+3. Configure as variáveis de ambiente:```bash
+cp .env.example .env.local```
+
+4. Execute as migrações do banco de dados:```bash
+pnpm prisma migrate dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+5. Inicie o servidor de desenvolvimento:```bash
+pnpm dev
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📁 Estrutura do Projeto```
+resenhaitapoa/
+├── app/
+│   ├── components/        # Componentes React reutilizáveis
+│   ├── actions/          # Server Actions do Next.js
+│   ├── providers/        # Providers da aplicação
+│   └── layout.tsx        # Layout principal
+├── components/
+│   └── ui/              # Componentes UI reutilizáveis
+├── lib/
+│   └── utils.ts         # Utilitários e helpers
+├── prisma/
+│   └── schema.prisma    # Schema do banco de dados
+├── public/              # Arquivos estáticos
+└── styles/             # Estilos globais
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## ⚡ Otimizações
 
-## Learn More
+- **Performance**:
+  - Code splitting com dynamic imports
+  - Componentes memoizados
+  - Lazy loading de componentes não críticos  - Otimização de imagens  
+- **SEO**:
+  - Meta tags otimizadas
+  - Schema.org markup  - Sitemap dinâmico
+  - Progressive Web App ready
 
-To learn more about Next.js, take a look at the following resources:
+- **Core Web Vitals**:  - FCP otimizado  - LCP minimizado
+  - CLS zero
+  - TTI reduzido
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🤝 Contribuindo
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Contribuições são sempre bem-vindas! Para contribuir:
 
-## Deploy on Vercel
+1. Faça um Fork do projeto
+2. Crie uma Branch para sua feature (`git checkout -b feature/AmazingFeature`)
+3. Commit suas mudanças (`git commit -m 'Add: Amazing Feature'`)
+4. Push para a Branch (`git push origin feature/AmazingFeature`)
+5. Abra um Pull Request
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Scripts Úteis
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+# Desenvolvimento
+pnpm dev
+
+# Build de produção
+pnpm build
+
+# Análise de bundle
+pnpm analyze
+
+# Limpar dependências não utilizadas
+pnpm clean:deps
+
+# Lint
+pnpm lint
+```
+
+## 📄 Licença
+
+Distribuído sob a licença MIT. Veja `LICENSE` para mais informações.
+
+## 📫 Contato
+
+Evandro - [evandro.dev.br](https://evandro.dev.br)
+
+Link do Projeto: [https://github.com/seu-usuario/resenhaitapoa](https://github.com/seu-usuario/resenhaitapoa)
+
+---<div align="center">
+  Desenvolvido com ❤️ por <a href="https://evandro.dev.br">evandro.dev.br</a>
+</div>
+
+Quer que eu faça algum ajuste ou adicione mais alguma seção à documentação?
