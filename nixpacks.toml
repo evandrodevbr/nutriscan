@@ -3,8 +3,9 @@ nixPkgs = ['nodejs_18', 'openssl']
 cmds = [
   'npm install -g pnpm@latest',
   'mkdir -p /usr/bin',
-  'which pnpm > /tmp/pnpm_path',
-  'cp $(which pnpm) /usr/bin/pnpm'
+  'npm config get prefix > /tmp/npm_prefix',
+  'cp $(cat /tmp/npm_prefix)/bin/pnpm /usr/bin/pnpm',
+  'chmod +x /usr/bin/pnpm'
 ]
 
 [phases.install]
