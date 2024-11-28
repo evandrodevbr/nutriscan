@@ -1,11 +1,14 @@
 [phases.setup]
-nixPkgs = ['nodejs_18', 'openssl', 'pnpm']
+nixPkgs = ['nodejs_18', 'openssl']
 
 [phases.install]
 cmds = ['pnpm install']
 
 [phases.build]
-cmds = ['prisma generate', 'pnpm run build']
+cmds = [
+  'pnpx prisma generate',
+  'pnpm run build'
+]
 
 [start]
 cmd = 'pnpm start'

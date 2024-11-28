@@ -1,0 +1,13 @@
+build:
+  steps:
+    - name: Install dependencies
+      run: pnpm install
+    
+    - name: Generate Prisma Client
+      run: pnpx prisma generate
+    
+    - name: Build application
+      run: pnpm build
+
+start:
+  cmd: pnpm start
