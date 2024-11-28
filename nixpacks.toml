@@ -7,15 +7,19 @@ cmds = [
 
 [phases.install]
 cmds = [
-  'npx pnpm install --no-frozen-lockfile'
+  'npx pnpm install --no-frozen-lockfile',
+  'mkdir -p prisma',
+  'touch prisma/dev.db',
+  'chmod -R 777 prisma'
 ]
 
 [phases.build]
 cmds = [
   'mkdir -p node_modules/.prisma',
   'mkdir -p .next',
-  'chmod -R 777 node_modules/.prisma node_modules/.bin .next',
+  'chmod -R 777 node_modules/.prisma node_modules/.bin .next prisma',
   'npx prisma generate',
+  'npx prisma db push --accept-data-loss',
   'npx pnpm run build'
 ]
 
@@ -26,3 +30,4 @@ cmd = 'npx pnpm start'
 NODE_ENV = "production"
 PRISMA_SKIP_POSTINSTALL_GENERATE = "true"
 PRISMA_GENERATE_SKIP_DUPLICATE = "true"
+DATABASE_URL = "file:./prisma/db/database.sqlite"
