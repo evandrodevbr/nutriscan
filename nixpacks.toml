@@ -2,22 +2,25 @@
 nixPkgs = ['nodejs_18', 'openssl']
 cmds = [
   'npm install -g pnpm@latest',
-  'npm config set prefix "/usr/local"'
+  'find / -name pnpm 2>/dev/null > /tmp/pnpm_path',
+  'chmod +x $(cat /tmp/pnpm_path)',
+  'ln -s $(cat /tmp/pnpm_path) /usr/bin/pnpm'
 ]
 
 [phases.install]
 cmds = [
-  '/usr/local/bin/pnpm install --no-frozen-lockfile'
+  'pnpm install --no-frozen-lockfile'
 ]
 
 [phases.build]
 cmds = [
-  '/usr/local/bin/pnpm exec prisma generate',
-  '/usr/local/bin/pnpm run build'
+  'pnpm exec prisma generate',
+  'pnpm run build'
 ]
 
 [start]
-cmd = '/usr/local/bin/pnpm start'
+cmd = 'pnpm start'
 
 [phases.setup.env]
-PATH = "/usr/local/bin:${PATH}"
+NPM_CONFIG_PREFIX = "/usr/local"
+PATH = "/usr/local/bin:/usr/bin:${PATH}"
