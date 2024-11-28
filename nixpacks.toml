@@ -2,17 +2,19 @@
 nixPkgs = ['nodejs_18', 'openssl']
 cmds = [
   'npm install -g pnpm@latest',
-  'npm install -g @antfu/ni'
+  'npm install -g prisma'
 ]
 
 [phases.install]
 cmds = [
-  'npx pnpm install --no-frozen-lockfile'
+  'npx pnpm install --no-frozen-lockfile',
+  'chmod -R 777 node_modules/.bin'
 ]
 
 [phases.build]
 cmds = [
-  'npx pnpm exec prisma generate',
+  'chmod -R 777 node_modules/.prisma',
+  'npx prisma generate',
   'npx pnpm run build'
 ]
 
@@ -21,4 +23,6 @@ cmd = 'npx pnpm start'
 
 [phases.setup.env]
 NODE_ENV = "production"
-NPM_CONFIG_PREFIX = "/usr/local"
+PRISMA_SCHEMA_ENGINE_BINARY = "/app/node_modules/.prisma/client/schema-engine"
+PRISMA_QUERY_ENGINE_BINARY = "/app/node_modules/.prisma/client/query-engine"
+PRISMA_CLI_QUERY_ENGINE_TYPE = "binary"
