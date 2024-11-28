@@ -1,0 +1,27 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Lista {
+  id        String     @id
+  produtos  Produtos[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @default(now()) @updatedAt
+}
+
+model Produtos {
+  id        Int      @id @default(autoincrement())
+  nome      String
+  qtd       Float
+  tipoUN    String
+  comprado  Boolean  @default(false)
+  listaId   String   @default("default") // Valor padrão temporário
+  lista     Lista    @relation(fields: [listaId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
