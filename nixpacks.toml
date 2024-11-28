@@ -2,9 +2,9 @@
 nixPkgs = ['nodejs_18', 'openssl']
 cmds = [
   'npm install -g pnpm@latest',
-  'find / -name pnpm 2>/dev/null > /tmp/pnpm_path',
-  'chmod +x $(cat /tmp/pnpm_path)',
-  'ln -s $(cat /tmp/pnpm_path) /usr/bin/pnpm'
+  'mkdir -p /usr/bin',
+  'which pnpm > /tmp/pnpm_path',
+  'cp $(which pnpm) /usr/bin/pnpm'
 ]
 
 [phases.install]
@@ -22,5 +22,4 @@ cmds = [
 cmd = 'pnpm start'
 
 [phases.setup.env]
-NPM_CONFIG_PREFIX = "/usr/local"
-PATH = "/usr/local/bin:/usr/bin:${PATH}"
+PATH = "/usr/bin:/usr/local/bin:${PATH}"
