@@ -1,8 +1,13 @@
 [phases.setup]
 nixPkgs = ['nodejs_18', 'openssl']
+cmds = [
+  'npm install -g pnpm@latest'
+]
 
 [phases.install]
-cmds = ['pnpm install']
+cmds = [
+  'pnpm install --no-frozen-lockfile'
+]
 
 [phases.build]
 cmds = [
