@@ -7,13 +7,14 @@ cmds = [
 
 [phases.install]
 cmds = [
-  'npx pnpm install --no-frozen-lockfile',
-  'chmod -R 777 node_modules/.bin'
+  'npx pnpm install --no-frozen-lockfile'
 ]
 
 [phases.build]
 cmds = [
-  'chmod -R 777 node_modules/.prisma',
+  'mkdir -p node_modules/.prisma',
+  'mkdir -p .next',
+  'chmod -R 777 node_modules/.prisma node_modules/.bin .next',
   'npx prisma generate',
   'npx pnpm run build'
 ]
@@ -23,6 +24,5 @@ cmd = 'npx pnpm start'
 
 [phases.setup.env]
 NODE_ENV = "production"
-PRISMA_SCHEMA_ENGINE_BINARY = "/app/node_modules/.prisma/client/schema-engine"
-PRISMA_QUERY_ENGINE_BINARY = "/app/node_modules/.prisma/client/query-engine"
-PRISMA_CLI_QUERY_ENGINE_TYPE = "binary"
+PRISMA_SKIP_POSTINSTALL_GENERATE = "true"
+PRISMA_GENERATE_SKIP_DUPLICATE = "true"
