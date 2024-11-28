@@ -171,5 +171,3 @@ Link do Projeto: [https://github.com/seu-usuario/resenhaitapoa](https://github.c
 ---<div align="center">
   Desenvolvido com ❤️ por <a href="https://evandro.dev.br">evandro.dev.br</a>
 </div>
-
-Quer que eu faça algum ajuste ou adicione mais alguma seção à documentação?
