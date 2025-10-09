@@ -1,10 +1,10 @@
 import {
-  ScanLine,
   ExternalLink,
   Github,
   Heart,
   Globe,
   Shield,
+  ScanLine,
 } from "lucide-react";
 
 export function Footer() {
@@ -15,9 +15,11 @@ export function Footer() {
           {/* Brand */}
           <div className="md:col-span-1">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-green-600 rounded-xl flex items-center justify-center">
-                <ScanLine className="w-6 h-6 text-white" />
-              </div>
+              <img
+                src="/apple-touch-icon.png"
+                alt="NutriScan Logo"
+                className="w-10 h-10 rounded-xl"
+              />
               <div>
                 <h3 className="text-xl font-bold">NutriScan</h3>
                 <p className="text-sm text-gray-400">
