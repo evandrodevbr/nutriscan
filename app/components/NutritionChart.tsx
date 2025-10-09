@@ -95,7 +95,7 @@ export function NutritionChart({ data, className = "" }: NutritionChartProps) {
     <Card className={className}>
       <CardHeader>
         <CardTitle className="text-lg font-semibold">
-          Informação Nutricional (por 100g)
+          Informação Nutricional
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">

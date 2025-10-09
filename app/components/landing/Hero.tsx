@@ -113,17 +113,50 @@ export function Hero() {
 
         {/* Main Heading */}
         <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6 leading-tight">
-          Descubra tudo sobre seus{" "}
+          Descubra o que a comunidade alimentar sabe sobre{" "}
           <span className="bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
-            alimentos
+            seus alimentos
           </span>
         </h1>
 
         {/* Subtitle */}
-        <p className="text-lg sm:text-xl lg:text-2xl text-gray-600 dark:text-gray-300 mb-8 sm:mb-12 max-w-3xl mx-auto leading-relaxed">
-          Consulte informações nutricionais completas, ingredientes e
-          classificações de qualidade de milhares de produtos alimentícios.
+        <p className="text-lg sm:text-xl lg:text-2xl text-gray-600 dark:text-gray-300 mb-4 max-w-3xl mx-auto leading-relaxed">
+          Transparência total, zero custo, milhões de dados colaborativos ao seu
+          alcance.
         </p>
+
+        <p className="text-base sm:text-lg text-gray-500 dark:text-gray-400 mb-8 sm:mb-12 max-w-4xl mx-auto leading-relaxed">
+          Consulte informações nutricionais completas, ingredientes e
+          classificações de qualidade — tudo baseado no{" "}
+          <span className="font-semibold text-blue-600">Open Food Facts</span>,
+          a maior base de dados colaborativa do mundo.
+        </p>
+
+        {/* Estatísticas Visuais */}
+        <div className="flex justify-center gap-6 sm:gap-8 mb-8 sm:mb-12 text-center">
+          <div className="animate-fadeIn">
+            <div className="text-2xl sm:text-3xl font-bold text-blue-600">
+              2M+
+            </div>
+            <div className="text-xs sm:text-sm text-gray-500">
+              produtos no banco
+            </div>
+          </div>
+          <div className="animate-fadeIn" style={{ animationDelay: "0.2s" }}>
+            <div className="text-2xl sm:text-3xl font-bold text-green-600">
+              100+
+            </div>
+            <div className="text-xs sm:text-sm text-gray-500">
+              países cobertos
+            </div>
+          </div>
+          <div className="animate-fadeIn" style={{ animationDelay: "0.4s" }}>
+            <div className="text-2xl sm:text-3xl font-bold text-purple-600">
+              24/7
+            </div>
+            <div className="text-xs sm:text-sm text-gray-500">disponível</div>
+          </div>
+        </div>
 
         {/* Search Form */}
         <form
@@ -196,33 +229,10 @@ export function Hero() {
           )}
         </form>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 max-w-4xl mx-auto">
-          <div className="text-center">
-            <div className="text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">
-              2M+
-            </div>
-            <div className="text-gray-600 dark:text-gray-400">
-              Produtos no banco
-            </div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl sm:text-3xl font-bold text-green-600 dark:text-green-400 mb-2">
-              100+
-            </div>
-            <div className="text-gray-600 dark:text-gray-400">
-              Países cobertos
-            </div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl sm:text-3xl font-bold text-purple-600 dark:text-purple-400 mb-2">
-              24/7
-            </div>
-            <div className="text-gray-600 dark:text-gray-400">
-              Disponível sempre
-            </div>
-          </div>
-        </div>
+        {/* Dica sobre código de barras */}
+        <p className="text-center text-sm text-gray-500 dark:text-gray-400 mb-8">
+          💡 Dica: O código de barras está na parte de trás da embalagem
+        </p>
       </div>
 
       {/* Scroll Indicator */}

@@ -44,29 +44,31 @@ export function Pagination({
   const startIndex = (currentPage - 1) * itemsPerPage + 1;
   const endIndex = Math.min(currentPage * itemsPerPage, totalItems);
 
-  // Gerar array de páginas visíveis
+  // Gerar array de páginas visíveis com responsividade
   const visiblePages = useMemo(() => {
     const pages: (number | string)[] = [];
-    const { maxVisiblePages } = finalConfig;
+    // Reduzir maxVisiblePages em mobile (assumindo que usaremos classes Tailwind)
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
+    const maxVisible = isMobile ? 3 : finalConfig.maxVisiblePages;
 
-    if (totalPages <= maxVisiblePages) {
+    if (totalPages <= maxVisible) {
       // Se total de páginas é menor que o máximo, mostrar todas
       for (let i = 1; i <= totalPages; i++) {
         pages.push(i);
       }
     } else {
       // Lógica para mostrar páginas com ellipsis
-      const halfVisible = Math.floor(maxVisiblePages / 2);
+      const halfVisible = Math.floor(maxVisible / 2);
       let startPage = Math.max(1, currentPage - halfVisible);
-      const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+      const endPage = Math.min(totalPages, startPage + maxVisible - 1);
 
       // Ajustar se estivermos no final
-      if (endPage - startPage + 1 < maxVisiblePages) {
-        startPage = Math.max(1, endPage - maxVisiblePages + 1);
+      if (endPage - startPage + 1 < maxVisible) {
+        startPage = Math.max(1, endPage - maxVisible + 1);
       }
 
-      // Primeira página
-      if (startPage > 1) {
+      // Primeira página (ocultar em mobile)
+      if (startPage > 1 && !isMobile) {
         pages.push(1);
         if (startPage > 2) {
           pages.push("...");
@@ -78,8 +80,8 @@ export function Pagination({
         pages.push(i);
       }
 
-      // Última página
-      if (endPage < totalPages) {
+      // Última página (ocultar em mobile)
+      if (endPage < totalPages && !isMobile) {
         if (endPage < totalPages - 1) {
           pages.push("...");
         }
@@ -106,111 +108,191 @@ export function Pagination({
   }
 
   return (
-    <div
-      className={`flex flex-col sm:flex-row items-center justify-between gap-4 ${className}`}
-    >
-      {/* Informações dos itens */}
-      <div className="text-sm text-gray-600 dark:text-gray-400">
-        Mostrando {startIndex} a {endIndex} de {totalItems} resultado
-        {totalItems !== 1 ? "s" : ""}
-      </div>
+    <div className={`w-full ${className}`}>
+      {/* Layout Mobile: Múltiplas linhas */}
+      <div className="flex flex-col gap-3 sm:hidden">
+        {/* Linha 1: Informação de resultados */}
+        <div className="text-center text-sm text-gray-600 dark:text-gray-400">
+          {startIndex}-{endIndex} de {totalItems} resultado
+          {totalItems !== 1 ? "s" : ""}
+        </div>
 
-      {/* Controles de paginação */}
-      <div className="flex items-center gap-2">
-        {/* Seletor de itens por página */}
-        {onItemsPerPageChange && (
-          <div className="flex items-center gap-2 mr-4">
-            <span className="text-sm text-gray-600 dark:text-gray-400">
-              Por página:
-            </span>
-            <Select
-              value={localItemsPerPage.toString()}
-              onValueChange={handleItemsPerPageChange}
-            >
-              <SelectTrigger className="w-20 h-8">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="10">10</SelectItem>
-                <SelectItem value="20">20</SelectItem>
-                <SelectItem value="50">50</SelectItem>
-                <SelectItem value="100">100</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        )}
-
-        {/* Botões de navegação */}
-        <div className="flex items-center gap-1">
-          {/* Primeira página */}
-          {finalConfig.showFirstLast && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onPageChange(1)}
-              disabled={!canGoPrevious}
-              className="h-8 w-8 p-0"
-            >
-              <ChevronsLeft className="h-4 w-4" />
-            </Button>
-          )}
-
-          {/* Página anterior */}
-          {finalConfig.showPrevNext && (
+        {/* Linha 2: Controles de navegação */}
+        <div className="flex justify-center">
+          <div className="flex items-center gap-1 overflow-x-auto px-2 scrollbar-hide">
+            {/* Página anterior */}
             <Button
               variant="outline"
               size="sm"
               onClick={() => onPageChange(currentPage - 1)}
               disabled={!canGoPrevious}
-              className="h-8 w-8 p-0"
+              className="h-9 w-9 p-0 flex-shrink-0"
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
-          )}
 
-          {/* Números das páginas */}
-          {visiblePages.map((page, index) => (
-            <div key={index}>
-              {page === "..." ? (
-                <span className="px-3 py-1 text-sm text-gray-500">...</span>
-              ) : (
-                <Button
-                  variant={currentPage === page ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => onPageChange(page as number)}
-                  className="h-8 w-8 p-0"
-                >
-                  {page}
-                </Button>
-              )}
-            </div>
-          ))}
+            {/* Números das páginas */}
+            {visiblePages.map((page, index) => (
+              <div key={index} className="flex-shrink-0">
+                {page === "..." ? (
+                  <span className="px-2 py-1 text-sm text-gray-500">...</span>
+                ) : (
+                  <Button
+                    variant={currentPage === page ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => onPageChange(page as number)}
+                    className="h-9 w-9 p-0"
+                  >
+                    {page}
+                  </Button>
+                )}
+              </div>
+            ))}
 
-          {/* Próxima página */}
-          {finalConfig.showPrevNext && (
+            {/* Próxima página */}
             <Button
               variant="outline"
               size="sm"
               onClick={() => onPageChange(currentPage + 1)}
               disabled={!canGoNext}
-              className="h-8 w-8 p-0"
+              className="h-9 w-9 p-0 flex-shrink-0"
             >
               <ChevronRight className="h-4 w-4" />
             </Button>
+          </div>
+        </div>
+
+        {/* Linha 3: Seletor de itens por página (opcional) */}
+        {onItemsPerPageChange && (
+          <div className="flex justify-center">
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-gray-600 dark:text-gray-400">
+                Por página:
+              </span>
+              <Select
+                value={localItemsPerPage.toString()}
+                onValueChange={handleItemsPerPageChange}
+              >
+                <SelectTrigger className="w-16 h-8 text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="10">10</SelectItem>
+                  <SelectItem value="20">20</SelectItem>
+                  <SelectItem value="50">50</SelectItem>
+                  <SelectItem value="100">100</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Layout Desktop: Linha única */}
+      <div className="hidden sm:flex flex-row items-center justify-between gap-4">
+        {/* Informações dos itens */}
+        <div className="text-sm text-gray-600 dark:text-gray-400">
+          Mostrando {startIndex} a {endIndex} de {totalItems} resultado
+          {totalItems !== 1 ? "s" : ""}
+        </div>
+
+        {/* Controles de paginação */}
+        <div className="flex items-center gap-2">
+          {/* Seletor de itens por página */}
+          {onItemsPerPageChange && (
+            <div className="flex items-center gap-2 mr-4">
+              <span className="text-sm text-gray-600 dark:text-gray-400">
+                Por página:
+              </span>
+              <Select
+                value={localItemsPerPage.toString()}
+                onValueChange={handleItemsPerPageChange}
+              >
+                <SelectTrigger className="w-20 h-8">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="10">10</SelectItem>
+                  <SelectItem value="20">20</SelectItem>
+                  <SelectItem value="50">50</SelectItem>
+                  <SelectItem value="100">100</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           )}
 
-          {/* Última página */}
-          {finalConfig.showFirstLast && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onPageChange(totalPages)}
-              disabled={!canGoNext}
-              className="h-8 w-8 p-0"
-            >
-              <ChevronsRight className="h-4 w-4" />
-            </Button>
-          )}
+          {/* Botões de navegação */}
+          <div className="flex items-center gap-1">
+            {/* Primeira página */}
+            {finalConfig.showFirstLast && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onPageChange(1)}
+                disabled={!canGoPrevious}
+                className="h-8 w-8 p-0"
+              >
+                <ChevronsLeft className="h-4 w-4" />
+              </Button>
+            )}
+
+            {/* Página anterior */}
+            {finalConfig.showPrevNext && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onPageChange(currentPage - 1)}
+                disabled={!canGoPrevious}
+                className="h-8 w-8 p-0"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+            )}
+
+            {/* Números das páginas */}
+            {visiblePages.map((page, index) => (
+              <div key={index}>
+                {page === "..." ? (
+                  <span className="px-3 py-1 text-sm text-gray-500">...</span>
+                ) : (
+                  <Button
+                    variant={currentPage === page ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => onPageChange(page as number)}
+                    className="h-8 w-8 p-0"
+                  >
+                    {page}
+                  </Button>
+                )}
+              </div>
+            ))}
+
+            {/* Próxima página */}
+            {finalConfig.showPrevNext && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onPageChange(currentPage + 1)}
+                disabled={!canGoNext}
+                className="h-8 w-8 p-0"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            )}
+
+            {/* Última página */}
+            {finalConfig.showFirstLast && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onPageChange(totalPages)}
+                disabled={!canGoNext}
+                className="h-8 w-8 p-0"
+              >
+                <ChevronsRight className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
         </div>
       </div>
     </div>

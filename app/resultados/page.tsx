@@ -7,11 +7,20 @@ import {
   Loader2,
   SlidersHorizontal,
   Database,
+  ArrowUpDown,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Badge } from "@/components/ui/badge";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { ProductCard } from "@/app/components/ProductCard";
 import { ProductCardSkeleton } from "@/app/components/ProductCardSkeleton";
+import { DonateCard } from "@/app/components/DonateCard";
 import { FilterSidebar } from "@/app/components/FilterSidebar";
 import { SearchBar } from "@/app/components/SearchBar";
 import { Pagination } from "@/app/components/Pagination";
@@ -56,6 +65,11 @@ function ResultadosContent() {
   // Estados de paginação
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(20);
+
+  // Estados para modais mobile
+  const [showFilters, setShowFilters] = useState(false);
+  const [showSort, setShowSort] = useState(false);
+  const [showCacheInfo, setShowCacheInfo] = useState(false);
 
   // Hook de cache
   const {
@@ -133,7 +147,7 @@ function ResultadosContent() {
           q: query,
           country: countryToUse,
           page: "1",
-          page_size: "50", // Buscar até 50 produtos por página
+          page_size: "1000", // Buscar até 1000 produtos por página
         });
 
         if (cacheOnly) {
@@ -297,105 +311,147 @@ function ResultadosContent() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Header */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-800 sticky top-0 z-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center gap-4">
-            <Link href="/">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="flex items-center gap-2"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                Voltar
-              </Button>
-            </Link>
+      {/* Header Mobile Otimizado */}
+      <div className="lg:hidden sticky top-0 z-40 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-3 py-2">
+        <div className="flex items-center gap-2 mb-2">
+          <Link
+            href="/"
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </Link>
 
-            <div className="flex-1">
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                Resultados para &quot;{query}&quot;
-              </h1>
-              {!loading && totalItems > 0 && (
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                  {totalItems} produto{totalItems !== 1 ? "s" : ""} encontrado
-                  {totalItems !== 1 ? "s" : ""}
-                  {detectedCountry && ` em ${detectedCountry}`}
-                  {cacheState.isCached && (
-                    <span className="ml-2 inline-flex items-center gap-1 text-blue-600 dark:text-blue-400">
-                      <Database className="w-3 h-3" />
-                      Cache Local
-                    </span>
+          <div className="flex-1">
+            <SearchBar compact />
+          </div>
+        </div>
+
+        {/* Botões de ação - apenas filtros e ordenar */}
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowFilters(true)}
+            className="flex-1 text-xs h-8"
+          >
+            <SlidersHorizontal className="w-4 h-4 mr-1" />
+            Filtros
+            {hasActiveFilters && (
+              <Badge variant="destructive" className="ml-1 px-1 text-[10px]">
+                {Object.keys(filters).length}
+              </Badge>
+            )}
+          </Button>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowSort(true)}
+            className="flex-1 text-xs h-8"
+          >
+            <ArrowUpDown className="w-4 h-4 mr-1" />
+            Ordenar
+          </Button>
+        </div>
+      </div>
+
+      {/* Header Desktop (mantido) */}
+      <div className="hidden sm:block max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div className="flex items-center gap-4">
+          <Link href="/">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Voltar
+            </Button>
+          </Link>
+
+          <div className="flex-1">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              Resultados para &quot;{query}&quot;
+            </h1>
+            {!loading && totalItems > 0 && (
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                {totalItems} produto{totalItems !== 1 ? "s" : ""} encontrado
+                {totalItems !== 1 ? "s" : ""}
+                {detectedCountry && ` em ${detectedCountry}`}
+                {cacheState.isCached && (
+                  <span className="ml-2 inline-flex items-center gap-1 text-blue-600 dark:text-blue-400">
+                    <Database className="w-3 h-3" />
+                    Cache Local
+                  </span>
+                )}
+                {storageStats && (
+                  <span className="ml-2 text-xs text-gray-400">
+                    • Storage: {storageStats?.storageSizeMB || 0} MB (
+                    {storageStats?.totalProducts || 0} produtos)
+                  </span>
+                )}
+              </p>
+            )}
+          </div>
+
+          {/* Switch Cache-Only em produção */}
+          <CacheOnlySwitch />
+
+          {/* Barra de Pesquisa - Desktop */}
+          <div className="hidden lg:flex items-center">
+            <SearchBar
+              initialQuery={query}
+              className="w-full max-w-md"
+              placeholder="Buscar outros produtos..."
+            />
+          </div>
+
+          {/* Mobile Controls */}
+          <div className="lg:hidden flex items-center gap-2">
+            <SearchBar
+              initialQuery={query}
+              className="flex-1"
+              placeholder="Buscar..."
+            />
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <SlidersHorizontal className="w-4 h-4 mr-2" />
+                  Filtros
+                  {hasActiveFilters && (
+                    <div className="w-2 h-2 bg-primary rounded-full ml-2" />
                   )}
-                  {storageStats && (
-                    <span className="ml-2 text-xs text-gray-400">
-                      • Storage: {storageStats.storageSizeMB} MB (
-                      {storageStats.totalProducts} produtos)
-                    </span>
-                  )}
-                </p>
-              )}
-            </div>
-
-            {/* Switch Cache-Only em produção */}
-            <CacheOnlySwitch />
-
-            {/* Barra de Pesquisa - Desktop */}
-            <div className="hidden lg:flex items-center">
-              <SearchBar
-                initialQuery={query}
-                className="w-full max-w-md"
-                placeholder="Buscar outros produtos..."
-              />
-            </div>
-
-            {/* Mobile Controls */}
-            <div className="lg:hidden flex items-center gap-2">
-              <SearchBar
-                initialQuery={query}
-                className="flex-1"
-                placeholder="Buscar..."
-              />
-              <Sheet>
-                <SheetTrigger asChild>
-                  <Button variant="outline" size="sm">
-                    <SlidersHorizontal className="w-4 h-4 mr-2" />
-                    Filtros
-                    {hasActiveFilters && (
-                      <div className="w-2 h-2 bg-primary rounded-full ml-2" />
-                    )}
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="left" className="w-80">
-                  <FilterSidebar
-                    filters={filters}
-                    onFiltersChange={updateFilters}
-                    onClearFilters={clearFilters}
-                    isLoading={loading}
-                    totalResults={totalItems}
-                    sortBy={filters.sortBy || "relevance"}
-                    onSortChange={handleSortChange}
-                    viewMode={viewMode}
-                    onViewModeChange={setViewMode}
-                    onRefresh={handleRefresh}
-                    onClearCache={handleClearCache}
-                    isCached={cacheState.isCached}
-                    onRemoveFilter={(key, value) => {
-                      if (value) {
-                        const currentArray =
-                          (filters[key as keyof typeof filters] as string[]) ||
-                          [];
-                        updateFilters({
-                          [key]: currentArray.filter((item) => item !== value),
-                        });
-                      } else {
-                        updateFilters({ [key]: undefined });
-                      }
-                    }}
-                  />
-                </SheetContent>
-              </Sheet>
-            </div>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-80">
+                <FilterSidebar
+                  filters={filters}
+                  onFiltersChange={updateFilters}
+                  onClearFilters={clearFilters}
+                  isLoading={loading}
+                  totalResults={totalItems}
+                  sortBy={filters.sortBy || "relevance"}
+                  onSortChange={handleSortChange}
+                  viewMode={viewMode}
+                  onViewModeChange={setViewMode}
+                  onRefresh={handleRefresh}
+                  onClearCache={handleClearCache}
+                  isCached={cacheState.isCached}
+                  onRemoveFilter={(key, value) => {
+                    if (value) {
+                      const currentArray =
+                        (filters[key as keyof typeof filters] as string[]) ||
+                        [];
+                      updateFilters({
+                        [key]: currentArray.filter((item) => item !== value),
+                      });
+                    } else {
+                      updateFilters({ [key]: undefined });
+                    }
+                  }}
+                />
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
       </div>
@@ -449,9 +505,9 @@ function ResultadosContent() {
                           Carregando todos os resultados...
                         </p>
                         <p className="text-xs text-blue-700 dark:text-blue-300">
-                          Página {cacheState.progress.currentPage} de{" "}
-                          {cacheState.progress.totalPages} •
-                          {cacheState.progress.loadedProducts} produtos
+                          Página {cacheState.progress?.currentPage || 0} de{" "}
+                          {cacheState.progress?.totalPages || 0} •
+                          {cacheState.progress?.loadedProducts || 0} produtos
                           carregados
                         </p>
                         <div className="w-full bg-blue-200 dark:bg-blue-800 rounded-full h-2 mt-2">
@@ -459,8 +515,8 @@ function ResultadosContent() {
                             className="bg-blue-600 h-2 rounded-full transition-all duration-300"
                             style={{
                               width: `${
-                                (cacheState.progress.currentPage /
-                                  cacheState.progress.totalPages) *
+                                ((cacheState.progress?.currentPage || 0) /
+                                  (cacheState.progress?.totalPages || 1)) *
                                 100
                               }%`,
                             }}
@@ -526,12 +582,24 @@ function ResultadosContent() {
             {!loading && totalItems > 0 && (
               <>
                 <div
-                  className={`product-grid grid gap-6 mb-8 ${
+                  className={`product-grid grid gap-3 sm:gap-4 md:gap-6 mb-8 px-3 sm:px-0 ${
                     viewMode === "grid"
                       ? "grid-cols-1 sm:grid-cols-2 xl:grid-cols-3"
                       : "grid-cols-1"
                   }`}
                 >
+                  {/* Card de Doação - sempre primeiro */}
+                  <div
+                    className="animate-in fade-in-0 slide-in-from-bottom-4"
+                    style={{
+                      animationDelay: "0ms",
+                      animationFillMode: "both",
+                    }}
+                  >
+                    <DonateCard variant="mobile" className="sm:hidden" />
+                    <DonateCard variant="default" className="hidden sm:block" />
+                  </div>
+
                   {currentPageProducts.map((product, index) => (
                     <div
                       key={product.code}
@@ -541,7 +609,20 @@ function ResultadosContent() {
                         animationFillMode: "both",
                       }}
                     >
-                      <ProductCard product={product} />
+                      <ProductCard
+                        product={product}
+                        priority={index}
+                        currentPage={currentPage}
+                        variant="mobile"
+                        className="sm:hidden"
+                      />
+                      <ProductCard
+                        product={product}
+                        priority={index}
+                        currentPage={currentPage}
+                        variant="default"
+                        className="hidden sm:block"
+                      />
                     </div>
                   ))}
                 </div>
@@ -597,7 +678,7 @@ function ResultadosContent() {
                           onClick={handleRefreshStorageStats}
                           className="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 underline"
                         >
-                          Storage: {storageStats.storageSizeMB} MB
+                          Storage: {storageStats?.storageSizeMB || 0} MB
                         </button>
                       </>
                     )}
@@ -608,6 +689,120 @@ function ResultadosContent() {
           </div>
         </div>
       </div>
+
+      {/* Modais Mobile */}
+      {/* Modal de Filtros */}
+      <Sheet open={showFilters} onOpenChange={setShowFilters}>
+        <SheetContent side="bottom" className="h-[80vh]">
+          <div className="space-y-4">
+            <h2 className="text-lg font-semibold">Filtros</h2>
+            <FilterSidebar
+              filters={filters}
+              onFiltersChange={updateFilters}
+              onClearFilters={clearFilters}
+              totalResults={totalItems}
+              isLoading={loading}
+            />
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      {/* Modal de Ordenação */}
+      <Sheet open={showSort} onOpenChange={setShowSort}>
+        <SheetContent side="bottom" className="h-[60vh]">
+          <div className="space-y-4">
+            <h2 className="text-lg font-semibold">Ordenar por</h2>
+            <div className="space-y-2">
+              {[
+                { value: "relevance", label: "Relevância" },
+                {
+                  value: "nutrition_grade",
+                  label: "Classificação Nutricional",
+                },
+                { value: "name", label: "Nome" },
+                { value: "energy", label: "Energia" },
+                { value: "with_images", label: "Com Imagens" },
+              ].map((option) => (
+                <Button
+                  key={option.value}
+                  variant={
+                    filters.sortBy === option.value ? "default" : "ghost"
+                  }
+                  className="w-full justify-start"
+                  onClick={() => {
+                    handleSortChange(option.value);
+                    setShowSort(false);
+                  }}
+                >
+                  {option.label}
+                </Button>
+              ))}
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      {/* Modal de Informações de Cache */}
+      <Sheet open={showCacheInfo} onOpenChange={setShowCacheInfo}>
+        <SheetContent
+          side="bottom"
+          className="h-[70vh] max-h-[500px] p-4 sm:p-6 overflow-y-auto"
+        >
+          <SheetHeader className="pb-4">
+            <SheetTitle className="text-lg sm:text-xl">
+              Informações do Cache
+            </SheetTitle>
+          </SheetHeader>
+
+          <div className="space-y-4 px-1">
+            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                Produtos em cache:
+              </p>
+              <p className="text-xl font-bold text-gray-900 dark:text-white">
+                {storageStats?.totalProducts ?? 0}
+              </p>
+            </div>
+
+            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                Tamanho do storage:
+              </p>
+              <p className="text-xl font-bold text-gray-900 dark:text-white">
+                {storageStats?.storageSizeMB
+                  ? `${storageStats?.storageSizeMB} MB`
+                  : "0 KB"}
+              </p>
+            </div>
+
+            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                Última atualização:
+              </p>
+              <p className="text-lg font-semibold text-gray-900 dark:text-white break-words">
+                {storageStats?.lastUpdated
+                  ? new Date(storageStats?.lastUpdated).toLocaleDateString(
+                      "pt-BR"
+                    )
+                  : "Nunca"}
+              </p>
+            </div>
+
+            {/* Botão de limpar cache */}
+            <Button
+              onClick={async () => {
+                await clearCache();
+                await refreshStorageStats();
+                setShowCacheInfo(false);
+              }}
+              variant="destructive"
+              className="w-full mt-6 h-12 text-base font-medium"
+            >
+              Limpar Cache
+            </Button>
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }

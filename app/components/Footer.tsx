@@ -80,7 +80,7 @@ export function Footer() {
             <ul className="space-y-3">
               <li className="flex items-center gap-2 text-gray-400">
                 <Shield className="w-4 h-4" />
-                <span>Dados verificados</span>
+                <span>Dados colaborativos</span>
               </li>
               <li className="flex items-center gap-2 text-gray-400">
                 <Globe className="w-4 h-4" />
@@ -125,11 +125,34 @@ export function Footer() {
           </div>
         </div>
 
+        {/* Disclaimer */}
+        <div className="bg-gray-800 rounded-lg p-6 my-12">
+          <p className="text-xs text-gray-400 text-center leading-relaxed">
+            <strong>Disclaimer:</strong> Os dados apresentados são fornecidos
+            pelo Open Food Facts, uma base de dados colaborativa. Não garantimos
+            a precisão, completude ou atualidade das informações. Sempre
+            verifique as informações na embalagem do produto.
+          </p>
+        </div>
+
         {/* Bottom */}
         <div className="border-t border-gray-800 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="text-sm text-gray-400">
               © 2024 NutriScan. Todos os direitos reservados.
+              <br />
+              <span className="text-xs">
+                Desenvolvido por{" "}
+                <a
+                  href="https://evandro.dev.br"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-400 hover:text-blue-300 transition-colors"
+                >
+                  evandro.dev.br
+                </a>{" "}
+                e mantido por NutriScan
+              </span>
             </div>
             <div className="flex items-center gap-6 text-sm text-gray-400">
               <a href="#" className="hover:text-white transition-colors">

@@ -1,12 +1,14 @@
+"use client";
+
 import { ScanLine, Search, BarChart3, CheckCircle } from "lucide-react";
 
 const steps = [
   {
     number: "01",
     icon: ScanLine,
-    title: "Digite o código de barras",
+    title: "Digitalize sem complicação",
     description:
-      "Encontre o código de barras na embalagem do produto e digite-o na nossa busca.",
+      "Encontre o código de barras na embalagem e escaneie instantaneamente. Nossa tecnologia reconhece produtos de mais de 100 países em segundos.",
     color: "text-blue-600 dark:text-blue-400",
     bgColor: "bg-blue-50 dark:bg-blue-900/20",
     iconBg: "bg-blue-100 dark:bg-blue-900/40",
@@ -14,9 +16,9 @@ const steps = [
   {
     number: "02",
     icon: Search,
-    title: "Buscamos no banco de dados",
+    title: "Acesso a milhões de dados colaborativos",
     description:
-      "Nossa ferramenta consulta milhões de produtos do Open Food Facts em segundos.",
+      "Conectamos você diretamente ao Open Food Facts, a Wikipedia dos alimentos — onde a comunidade global contribui com informações sobre produtos.",
     color: "text-green-600 dark:text-green-400",
     bgColor: "bg-green-50 dark:bg-green-900/20",
     iconBg: "bg-green-100 dark:bg-green-900/40",
@@ -24,9 +26,9 @@ const steps = [
   {
     number: "03",
     icon: BarChart3,
-    title: "Veja informações detalhadas",
+    title: "Informações que fazem diferença",
     description:
-      "Receba dados nutricionais completos, ingredientes e classificações de qualidade.",
+      "Receba dados nutricionais detalhados, alertas de alérgenos e classificações Nutri-Score. Informações fornecidas pela base de dados Open Food Facts.",
     color: "text-purple-600 dark:text-purple-400",
     bgColor: "bg-purple-50 dark:bg-purple-900/20",
     iconBg: "bg-purple-100 dark:bg-purple-900/40",
@@ -34,9 +36,9 @@ const steps = [
   {
     number: "04",
     icon: CheckCircle,
-    title: "Faça escolhas conscientes",
+    title: "Decisões mais inteligentes, saúde melhor",
     description:
-      "Use as informações para tomar decisões mais saudáveis sobre sua alimentação.",
+      "Use informações transparentes para escolher alimentos alinhados aos seus objetivos. Sem interesses comerciais, sem dados manipulados.",
     color: "text-orange-600 dark:text-orange-400",
     bgColor: "bg-orange-50 dark:bg-orange-900/20",
     iconBg: "bg-orange-100 dark:bg-orange-900/40",
@@ -80,11 +82,11 @@ export function HowItWorks() {
         {/* Header */}
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            Como funciona?
+            Alimentação consciente em 4 passos simples
           </h2>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            Em apenas 4 passos simples, você terá acesso a todas as informações
-            nutricionais de qualquer produto alimentício.
+            Descubra como milhares de pessoas já tomam decisões alimentares mais
+            conscientes com informações transparentes e confiáveis.
           </p>
         </div>
 
@@ -178,10 +180,21 @@ export function HowItWorks() {
 
         {/* Bottom CTA */}
         <div className="text-center mt-16">
-          <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-green-600 text-white rounded-full font-semibold hover:shadow-lg transition-all duration-300 hover:scale-105">
+          <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              const input = document.querySelector(
+                'input[placeholder*="código de barras"]'
+              ) as HTMLInputElement;
+              input?.focus();
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-green-600 text-white rounded-full font-semibold hover:shadow-lg transition-all duration-300 hover:scale-105 cursor-pointer"
+          >
             <ScanLine className="w-5 h-5" />
             Começar agora
-          </div>
+          </a>
           <p className="text-gray-500 dark:text-gray-400 text-sm mt-4">
             É rápido, fácil e totalmente gratuito
           </p>

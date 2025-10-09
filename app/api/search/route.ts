@@ -31,16 +31,19 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  if (isNaN(pageSizeNum) || pageSizeNum < 1 || pageSizeNum > 100) {
+  if (isNaN(pageSizeNum) || pageSizeNum < 1) {
     return NextResponse.json(
-      { error: "Invalid page_size parameter (max 100)" },
+      { error: "Invalid page_size parameter" },
       { status: 400 }
     );
   }
 
+  // Usar o máximo permitido pelo Open Food Facts (1000) para consultas na API
+  const apiPageSize = Math.max(pageSizeNum, 1000);
+
   const params = new URLSearchParams({
     search_terms: query,
-    page_size: pageSize,
+    page_size: apiPageSize.toString(),
     page: page,
     json: "true",
     fields: [
@@ -223,36 +226,94 @@ export async function GET(request: NextRequest) {
         `Cache JSON retornou ${localResults.products.length} produtos, buscando na API externa...`
       );
 
-      const response = await fetch(
-        `https://world.openfoodfacts.org/cgi/search.pl?${params.toString()}`,
-        {
-          headers: {
-            "User-Agent": USER_AGENT,
-            Accept: "application/json",
-          },
+      // Implementar busca paginada automática para page_size > 1000
+      const allApiProducts: Product[] = [];
+      const maxPerPage = 1000;
+      let currentApiPage = 1;
+      const totalNeeded = pageSizeNum - localResults.products.length;
+
+      while (allApiProducts.length < totalNeeded) {
+        // Atualizar parâmetros para a página atual
+        const currentParams = new URLSearchParams(params);
+        currentParams.set("page", currentApiPage.toString());
+        currentParams.set("page_size", maxPerPage.toString());
+
+        console.log(
+          `Buscando página ${currentApiPage} da API (${allApiProducts.length}/${totalNeeded} produtos obtidos)...`
+        );
+
+        const response = await fetch(
+          `https://world.openfoodfacts.org/cgi/search.pl?${currentParams.toString()}`,
+          {
+            headers: {
+              "User-Agent": USER_AGENT,
+              Accept: "application/json",
+            },
+          }
+        );
+
+        if (response.ok) {
+          const apiData = await response.json();
+          const pageProducts = apiData.products || [];
+
+          if (pageProducts.length === 0) {
+            console.log("Não há mais produtos na API");
+            break; // Não há mais produtos
+          }
+
+          allApiProducts.push(...pageProducts);
+          fromAPI = true;
+
+          console.log(
+            `Página ${currentApiPage}: ${pageProducts.length} produtos (Total: ${allApiProducts.length})`
+          );
+
+          // Se retornou menos que o máximo, acabaram os produtos
+          if (pageProducts.length < maxPerPage) {
+            console.log("Última página de produtos obtida");
+            break;
+          }
+
+          // Se já temos o suficiente, parar
+          if (allApiProducts.length >= totalNeeded) {
+            console.log(
+              `Quantidade suficiente obtida: ${allApiProducts.length}/${totalNeeded}`
+            );
+            break;
+          }
+
+          // Incrementar página para próxima iteração
+          currentApiPage++;
+
+          // Rate limiting: aguardar 200ms entre requisições
+          if (allApiProducts.length < totalNeeded) {
+            console.log("Aguardando 200ms antes da próxima requisição...");
+            await new Promise((resolve) => setTimeout(resolve, 200));
+          }
+        } else {
+          console.error(
+            `Erro na página ${currentApiPage}: ${response.status} ${response.statusText}`
+          );
+          break;
         }
-      );
+      }
 
-      if (response.ok) {
-        const apiData = await response.json();
-        apiProducts = apiData.products || [];
-        fromAPI = true;
+      apiProducts = allApiProducts;
 
-        // Ordenar produtos da API por relevância
-        if (apiProducts.length > 0) {
-          console.log(
-            `Ordenando ${apiProducts.length} produtos da API por relevância...`
-          );
-          apiProducts = sortByRelevance(apiProducts, query);
+      // Ordenar produtos da API por relevância
+      if (apiProducts.length > 0) {
+        console.log(
+          `Ordenando ${apiProducts.length} produtos da API por relevância...`
+        );
+        apiProducts = sortByRelevance(apiProducts, query);
 
-          console.log(
-            `Salvando ${apiProducts.length} produtos da API no cache JSON...`
-          );
-          const saveResult = await jsonCacheManager.saveProducts(apiProducts);
-          console.log(
-            `Cache JSON atualizado: ${saveResult.saved} salvos, ${saveResult.failed} falharam`
-          );
-        }
+        console.log(
+          `Salvando ${apiProducts.length} produtos da API no cache JSON...`
+        );
+        const saveResult = await jsonCacheManager.saveProducts(apiProducts);
+        console.log(
+          `Cache JSON atualizado: ${saveResult.saved} salvos, ${saveResult.failed} falharam`
+        );
       }
     }
 
