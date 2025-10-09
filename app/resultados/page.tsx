@@ -5,28 +5,26 @@ import {
   Search,
   ArrowLeft,
   Loader2,
-  Grid,
-  List,
   SlidersHorizontal,
-  RefreshCw,
   Database,
-  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Product, sortProducts, fetchAllResults } from "@/lib/openFoodFactsApi";
 import { ProductCard } from "@/app/components/ProductCard";
 import { ProductCardSkeleton } from "@/app/components/ProductCardSkeleton";
 import { FilterSidebar } from "@/app/components/FilterSidebar";
-import { FilterBadges } from "@/app/components/FilterBadge";
-import { SortDropdown } from "@/app/components/SortDropdown";
+import { SearchBar } from "@/app/components/SearchBar";
 import { Pagination } from "@/app/components/Pagination";
 import { useProductFilters } from "@/hooks/useProductFilters";
 import { useSearchCache } from "@/hooks/useSearchCache";
+import { useStorageMonitor } from "@/hooks/useStorageMonitor";
+import { useCacheOnlyMode } from "@/hooks/useCacheOnlyMode";
+import { CacheOnlySwitch } from "@/app/components/CacheOnlySwitch";
 import { detectUserCountry } from "@/lib/geolocation";
 import { FilterRecord } from "@/lib/cacheManager";
 import { ProductFilters } from "@/lib/types";
 import Link from "next/link";
+import { Product, sortProducts } from "@/lib/openFoodFactsApi";
 
 // Função para converter ProductFilters para FilterRecord
 function convertFiltersToRecord(filters: ProductFilters): FilterRecord {
@@ -65,7 +63,6 @@ function ResultadosContent() {
     getCachedSearch,
     saveSearch,
     clearCache,
-    updateProgress,
     setError: setCacheError,
     setLoading: setCacheLoading,
   } = useSearchCache();
@@ -79,6 +76,13 @@ function ResultadosContent() {
     setTotalResults,
     setIsLoading,
   } = useProductFilters();
+
+  // Hook de monitoramento de storage
+  const { stats: storageStats, refreshStats: refreshStorageStats } =
+    useStorageMonitor();
+
+  // Hook de modo cache-only
+  const { cacheOnly } = useCacheOnlyMode();
 
   // Detectar país do usuário
   useEffect(() => {
@@ -124,15 +128,31 @@ function ResultadosContent() {
 
         console.log("Fazendo busca completa na API");
 
-        // Fazer busca completa
-        const result = await fetchAllResults(
-          query,
-          countryToUse,
-          10, // Máximo 10 páginas (500 produtos)
-          (currentPage, totalPages, loadedProducts) => {
-            updateProgress(currentPage, totalPages, loadedProducts, 0);
-          }
-        );
+        // Construir parâmetros da API
+        const params = new URLSearchParams({
+          q: query,
+          country: countryToUse,
+          page: "1",
+          page_size: "50", // Buscar até 50 produtos por página
+        });
+
+        if (cacheOnly) {
+          params.append("cache_only", "true");
+        }
+
+        // Fazer busca na API
+        const response = await fetch(`/api/search?${params.toString()}`);
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Erro ao buscar produtos");
+        }
+
+        const result = {
+          products: data.products || [],
+          totalCount: data.count || 0,
+          actualPages: 1,
+        };
 
         // Salvar no cache
         const searchId = saveSearch(
@@ -163,9 +183,9 @@ function ResultadosContent() {
       detectedCountry,
       countryParam,
       filters,
+      cacheOnly,
       getCachedSearch,
       saveSearch,
-      updateProgress,
       setIsLoading,
       setTotalResults,
       setCacheLoading,
@@ -179,6 +199,18 @@ function ResultadosContent() {
       setForceRefresh(false);
     }
   }, [query, countryParam, detectedCountry, loadProducts, forceRefresh]);
+
+  // Sincronizar produtos com cache do servidor
+  useEffect(() => {
+    if (allProducts.length > 0) {
+      // Enviar produtos para cache em background
+      fetch("/api/cache/sync", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ products: allProducts }),
+      }).catch((err) => console.error("Erro ao sincronizar cache:", err));
+    }
+  }, [allProducts]);
 
   // Produtos filtrados e ordenados para exibição
   const filteredAndSortedProducts = useMemo(() => {
@@ -220,6 +252,10 @@ function ResultadosContent() {
     );
     setForceRefresh(true);
   }, [clearCache, query, detectedCountry, countryParam, filters]);
+
+  const handleRefreshStorageStats = useCallback(() => {
+    refreshStorageStats();
+  }, [refreshStorageStats]);
 
   const handleSortChange = useCallback(
     (sortBy: string) => {
@@ -288,67 +324,38 @@ function ResultadosContent() {
                   {cacheState.isCached && (
                     <span className="ml-2 inline-flex items-center gap-1 text-blue-600 dark:text-blue-400">
                       <Database className="w-3 h-3" />
-                      Cache
+                      Cache Local
+                    </span>
+                  )}
+                  {storageStats && (
+                    <span className="ml-2 text-xs text-gray-400">
+                      • Storage: {storageStats.storageSizeMB} MB (
+                      {storageStats.totalProducts} produtos)
                     </span>
                   )}
                 </p>
               )}
             </div>
 
-            {/* Controles de visualização - Desktop */}
-            <div className="hidden lg:flex items-center gap-3">
-              <SortDropdown
-                value={filters.sortBy || "relevance"}
-                onValueChange={handleSortChange}
+            {/* Switch Cache-Only em produção */}
+            <CacheOnlySwitch />
+
+            {/* Barra de Pesquisa - Desktop */}
+            <div className="hidden lg:flex items-center">
+              <SearchBar
+                initialQuery={query}
+                className="w-full max-w-md"
+                placeholder="Buscar outros produtos..."
               />
-
-              <div className="flex items-center border border-gray-100 dark:border-gray-800 rounded-lg">
-                <Button
-                  variant={viewMode === "grid" ? "default" : "ghost"}
-                  size="sm"
-                  onClick={() => setViewMode("grid")}
-                  className="rounded-r-none"
-                >
-                  <Grid className="w-4 h-4" />
-                </Button>
-                <Button
-                  variant={viewMode === "list" ? "default" : "ghost"}
-                  size="sm"
-                  onClick={() => setViewMode("list")}
-                  className="rounded-l-none"
-                >
-                  <List className="w-4 h-4" />
-                </Button>
-              </div>
-
-              {/* Botões de controle de cache */}
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleRefresh}
-                  disabled={loading}
-                  title="Atualizar busca"
-                >
-                  <RefreshCw
-                    className={`w-4 h-4 ${loading ? "animate-spin" : ""}`}
-                  />
-                </Button>
-                {cacheState.isCached && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleClearCache}
-                    title="Limpar cache e refazer busca"
-                  >
-                    <X className="w-4 h-4" />
-                  </Button>
-                )}
-              </div>
             </div>
 
-            {/* Filtros Mobile */}
-            <div className="lg:hidden">
+            {/* Mobile Controls */}
+            <div className="lg:hidden flex items-center gap-2">
+              <SearchBar
+                initialQuery={query}
+                className="flex-1"
+                placeholder="Buscar..."
+              />
               <Sheet>
                 <SheetTrigger asChild>
                   <Button variant="outline" size="sm">
@@ -366,6 +373,25 @@ function ResultadosContent() {
                     onClearFilters={clearFilters}
                     isLoading={loading}
                     totalResults={totalItems}
+                    sortBy={filters.sortBy || "relevance"}
+                    onSortChange={handleSortChange}
+                    viewMode={viewMode}
+                    onViewModeChange={setViewMode}
+                    onRefresh={handleRefresh}
+                    onClearCache={handleClearCache}
+                    isCached={cacheState.isCached}
+                    onRemoveFilter={(key, value) => {
+                      if (value) {
+                        const currentArray =
+                          (filters[key as keyof typeof filters] as string[]) ||
+                          [];
+                        updateFilters({
+                          [key]: currentArray.filter((item) => item !== value),
+                        });
+                      } else {
+                        updateFilters({ [key]: undefined });
+                      }
+                    }}
                   />
                 </SheetContent>
               </Sheet>
@@ -373,29 +399,6 @@ function ResultadosContent() {
           </div>
         </div>
       </div>
-
-      {/* Filtros ativos */}
-      {hasActiveFilters && (
-        <div className="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-800">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-            <FilterBadges
-              filters={filters}
-              onRemoveFilter={(key, value) => {
-                if (value) {
-                  const currentArray =
-                    (filters[key as keyof typeof filters] as string[]) || [];
-                  updateFilters({
-                    [key]: currentArray.filter((item) => item !== value),
-                  });
-                } else {
-                  updateFilters({ [key]: undefined });
-                }
-              }}
-              onClearAll={clearFilters}
-            />
-          </div>
-        </div>
-      )}
 
       {/* Layout principal */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -409,6 +412,24 @@ function ResultadosContent() {
                 onClearFilters={clearFilters}
                 isLoading={loading}
                 totalResults={totalItems}
+                sortBy={filters.sortBy || "relevance"}
+                onSortChange={handleSortChange}
+                viewMode={viewMode}
+                onViewModeChange={setViewMode}
+                onRefresh={handleRefresh}
+                onClearCache={handleClearCache}
+                isCached={cacheState.isCached}
+                onRemoveFilter={(key, value) => {
+                  if (value) {
+                    const currentArray =
+                      (filters[key as keyof typeof filters] as string[]) || [];
+                    updateFilters({
+                      [key]: currentArray.filter((item) => item !== value),
+                    });
+                  } else {
+                    updateFilters({ [key]: undefined });
+                  }
+                }}
               />
             </div>
           </div>
@@ -546,19 +567,42 @@ function ResultadosContent() {
                 )}
 
                 {/* Informações adicionais */}
-                {cacheState.isCached && (
-                  <div className="text-center mt-6">
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      Dados carregados do cache •
-                      <button
-                        onClick={handleRefresh}
-                        className="ml-1 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline"
-                      >
-                        Atualizar busca
-                      </button>
-                    </p>
-                  </div>
-                )}
+                <div className="text-center mt-6">
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    {cacheState.isCached ? (
+                      <>
+                        Dados carregados do cache local •
+                        <button
+                          onClick={handleRefresh}
+                          className="ml-1 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline"
+                        >
+                          Atualizar busca
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        Dados carregados da API externa •
+                        <button
+                          onClick={handleRefresh}
+                          className="ml-1 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline"
+                        >
+                          Atualizar busca
+                        </button>
+                      </>
+                    )}
+                    {storageStats && (
+                      <>
+                        {" • "}
+                        <button
+                          onClick={handleRefreshStorageStats}
+                          className="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 underline"
+                        >
+                          Storage: {storageStats.storageSizeMB} MB
+                        </button>
+                      </>
+                    )}
+                  </p>
+                </div>
               </>
             )}
           </div>

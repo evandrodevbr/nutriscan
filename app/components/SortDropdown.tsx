@@ -48,12 +48,14 @@ interface SortDropdownProps {
   value: string;
   onValueChange: (value: string) => void;
   className?: string;
+  align?: "start" | "center" | "end";
 }
 
 export function SortDropdown({
   value,
   onValueChange,
   className = "",
+  align = "start",
 }: SortDropdownProps) {
   const selectedOption =
     SORT_OPTIONS.find((option) => option.value === value) || SORT_OPTIONS[0];
@@ -73,43 +75,48 @@ export function SortDropdown({
       </DropdownMenuTrigger>
 
       <DropdownMenuContent
-        align="end"
-        className="w-72 border-gray-100 dark:border-gray-800"
+        align={align}
+        side="bottom"
+        sideOffset={4}
+        avoidCollisions={false}
+        className="w-64 max-w-[calc(100vw-2rem)] border-gray-100 dark:border-gray-800 z-50 p-0"
       >
-        {SORT_OPTIONS.map((option) => {
-          const IconComponent = SORT_ICONS[option.value];
-          return (
-            <DropdownMenuItem
-              key={option.value}
-              onClick={() => onValueChange(option.value)}
-              className={`flex items-start gap-3 p-3 ${
-                value === option.value ? "bg-accent" : ""
-              }`}
-            >
-              {/* Ícone */}
-              <div className="mt-0.5">
-                {IconComponent && (
-                  <IconComponent className="w-4 h-4 text-muted-foreground" />
-                )}
-              </div>
-
-              {/* Conteúdo */}
-              <div className="flex-1">
-                <div className="flex items-center justify-between">
-                  <span className="font-medium">{option.label}</span>
-                  {value === option.value && (
-                    <Check className="w-4 h-4 text-primary" />
+        <div className="max-h-80 overflow-y-auto">
+          {SORT_OPTIONS.map((option) => {
+            const IconComponent = SORT_ICONS[option.value];
+            return (
+              <DropdownMenuItem
+                key={option.value}
+                onClick={() => onValueChange(option.value)}
+                className={`flex items-start gap-3 p-3 ${
+                  value === option.value ? "bg-accent" : ""
+                }`}
+              >
+                {/* Ícone */}
+                <div className="mt-0.5">
+                  {IconComponent && (
+                    <IconComponent className="w-4 h-4 text-muted-foreground" />
                   )}
                 </div>
-                {option.description && (
-                  <span className="text-xs text-muted-foreground mt-1 block">
-                    {option.description}
-                  </span>
-                )}
-              </div>
-            </DropdownMenuItem>
-          );
-        })}
+
+                {/* Conteúdo */}
+                <div className="flex-1">
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium">{option.label}</span>
+                    {value === option.value && (
+                      <Check className="w-4 h-4 text-primary" />
+                    )}
+                  </div>
+                  {option.description && (
+                    <span className="text-xs text-muted-foreground mt-1 block">
+                      {option.description}
+                    </span>
+                  )}
+                </div>
+              </DropdownMenuItem>
+            );
+          })}
+        </div>
       </DropdownMenuContent>
     </DropdownMenu>
   );

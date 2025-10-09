@@ -1,7 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { Filter, X, AlertTriangle, Zap } from "lucide-react";
+import {
+  Filter,
+  X,
+  AlertTriangle,
+  Zap,
+  Grid,
+  List,
+  RefreshCw,
+  ArrowUpDown,
+  LayoutGrid,
+  Tag,
+  Beaker,
+  BarChart3,
+} from "lucide-react";
 import * as LucideIcons from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,6 +30,8 @@ import {
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { SortDropdown } from "@/app/components/SortDropdown";
+import { FilterBadges } from "@/app/components/FilterBadge";
 import {
   ProductFilters,
   NUTRITION_GRADES,
@@ -32,6 +47,14 @@ interface FilterSidebarProps {
   isLoading?: boolean;
   totalResults?: number;
   className?: string;
+  sortBy?: string;
+  onSortChange?: (sortBy: string) => void;
+  viewMode?: "grid" | "list";
+  onViewModeChange?: (mode: "grid" | "list") => void;
+  onRefresh?: () => void;
+  onClearCache?: () => void;
+  isCached?: boolean;
+  onRemoveFilter?: (key: string, value?: string) => void;
 }
 
 export function FilterSidebar({
@@ -41,6 +64,14 @@ export function FilterSidebar({
   isLoading = false,
   totalResults = 0,
   className = "",
+  sortBy = "relevance",
+  onSortChange,
+  viewMode = "grid",
+  onViewModeChange,
+  onRefresh,
+  onClearCache,
+  isCached = false,
+  onRemoveFilter,
 }: FilterSidebarProps) {
   const [searchBrands, setSearchBrands] = useState("");
   const [searchCategories, setSearchCategories] = useState("");
@@ -117,11 +148,116 @@ export function FilterSidebar({
         </div>
       )}
 
+      {/* Controles de Visualização e Cache */}
+      <div className="space-y-4">
+        {/* Modo de Visualização */}
+        {onViewModeChange && (
+          <div className="space-y-2">
+            <div className="text-sm font-medium">Modo de visualização</div>
+            <div className="flex items-center border border-gray-100 dark:border-gray-800 rounded-lg">
+              <Button
+                variant={viewMode === "grid" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => onViewModeChange("grid")}
+                className="rounded-r-none flex-1"
+              >
+                <Grid className="w-4 h-4 mr-2" />
+                Grade
+              </Button>
+              <Button
+                variant={viewMode === "list" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => onViewModeChange("list")}
+                className="rounded-l-none flex-1"
+              >
+                <List className="w-4 h-4 mr-2" />
+                Lista
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* Controles de Cache */}
+        {(onRefresh || onClearCache) && (
+          <div className="space-y-2">
+            <div className="text-sm font-medium">Controles</div>
+            <div className="flex gap-2">
+              {onRefresh && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={onRefresh}
+                  disabled={isLoading}
+                  className="flex-1"
+                  title="Atualizar busca"
+                >
+                  <RefreshCw
+                    className={`w-4 h-4 mr-2 ${
+                      isLoading ? "animate-spin" : ""
+                    }`}
+                  />
+                  Atualizar
+                </Button>
+              )}
+              {onClearCache && isCached && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={onClearCache}
+                  className="flex-1"
+                  title="Limpar cache e refazer busca"
+                >
+                  <X className="w-4 h-4 mr-2" />
+                  Limpar Cache
+                </Button>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Filtros Ativos */}
+      {onRemoveFilter && hasActiveFilters && (
+        <div className="space-y-2">
+          <div className="text-sm font-medium">Filtros ativos</div>
+          <FilterBadges
+            filters={filters}
+            onRemoveFilter={onRemoveFilter}
+            onClearAll={onClearFilters}
+          />
+        </div>
+      )}
+
       <Accordion
         type="multiple"
-        defaultValue={["nutrition", "categories"]}
+        defaultValue={["sorting"]}
         className="space-y-4"
       >
+        {/* Ordenação */}
+        <AccordionItem
+          value="sorting"
+          className="border border-gray-100 dark:border-gray-800 rounded-lg"
+        >
+          <AccordionTrigger className="px-4 py-3 hover:no-underline">
+            <div className="flex items-center gap-2">
+              <ArrowUpDown className="h-4 w-4 text-indigo-500" />
+              <span className="font-medium">Ordenação</span>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent className="px-4 pb-4">
+            <div className="space-y-3">
+              <div className="text-sm font-medium mb-3">Ordenar por</div>
+              {onSortChange && (
+                <SortDropdown
+                  value={sortBy}
+                  onValueChange={onSortChange}
+                  className="w-full"
+                />
+              )}
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+
         {/* Nutri-Score */}
         <AccordionItem
           value="nutrition"
@@ -219,7 +355,7 @@ export function FilterSidebar({
         >
           <AccordionTrigger className="px-4 py-3 hover:no-underline">
             <div className="flex items-center gap-2">
-              <div className="h-4 w-4 rounded bg-blue-500" />
+              <LayoutGrid className="h-4 w-4 text-blue-500" />
               <span className="font-medium">Categorias</span>
             </div>
           </AccordionTrigger>
@@ -286,7 +422,7 @@ export function FilterSidebar({
         >
           <AccordionTrigger className="px-4 py-3 hover:no-underline">
             <div className="flex items-center gap-2">
-              <div className="h-4 w-4 rounded bg-purple-500" />
+              <Tag className="h-4 w-4 text-purple-500" />
               <span className="font-medium">Marcas</span>
             </div>
           </AccordionTrigger>
@@ -360,7 +496,7 @@ export function FilterSidebar({
         >
           <AccordionTrigger className="px-4 py-3 hover:no-underline">
             <div className="flex items-center gap-2">
-              <div className="h-4 w-4 rounded bg-orange-500" />
+              <Beaker className="h-4 w-4 text-orange-500" />
               <span className="font-medium">Aditivos</span>
             </div>
           </AccordionTrigger>
@@ -393,7 +529,7 @@ export function FilterSidebar({
         >
           <AccordionTrigger className="px-4 py-3 hover:no-underline">
             <div className="flex items-center gap-2">
-              <div className="h-4 w-4 rounded bg-green-500" />
+              <BarChart3 className="h-4 w-4 text-green-500" />
               <span className="font-medium">Valores Nutricionais</span>
             </div>
           </AccordionTrigger>
