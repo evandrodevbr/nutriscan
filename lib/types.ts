@@ -332,3 +332,58 @@ export interface PaginationProps {
   config?: Partial<PaginationConfig>;
   className?: string;
 }
+
+// Tipos para Cache de Produtos
+export interface CachedProduct {
+  code: string;
+  product_name: string;
+  brands?: string;
+  categories?: string;
+  ingredients_text?: string;
+  nutriments?: {
+    energy_100g?: number;
+    fat_100g?: number;
+    carbohydrates_100g?: number;
+    proteins_100g?: number;
+    sugars_100g?: number;
+    fiber_100g?: number;
+    sodium_100g?: number;
+  };
+  nutrition_grades?: string;
+  nova_group?: number;
+  image_url?: string;
+  image_small_url?: string;
+  image_front_url?: string;
+  image_front_small_url?: string;
+  countries?: string;
+  countries_tags?: string[];
+  allergens_tags?: string[];
+  additives_tags?: string[];
+  _metadata: {
+    firstSeen: number;
+    lastUpdated: number;
+    updateCount: number;
+  };
+}
+
+export interface StorageStats {
+  totalProducts: number;
+  storageSizeMB: number;
+  lastUpdated: number;
+  averageProductSize: number;
+}
+
+export interface CacheSearchResult {
+  products: CachedProduct[];
+  totalCount: number;
+  fromCache: boolean;
+  fromAPI: boolean;
+}
+
+export interface CacheFile {
+  products: Record<string, CachedProduct>;
+  metadata: {
+    totalProducts: number;
+    lastSync: number;
+  };
+}

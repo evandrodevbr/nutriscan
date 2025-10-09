@@ -1,4 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import { jsonCacheManager } from "@/lib/jsonCacheManager";
+import { Product } from "@/lib/openFoodFactsApi";
+import { sortByRelevance } from "@/lib/searchUtils";
 
 const USER_AGENT = "NutriScan/1.0 (https://nutriscan.com.br)";
 
@@ -8,6 +11,7 @@ export async function GET(request: NextRequest) {
   const country = searchParams.get("country");
   const page = searchParams.get("page") || "1";
   const pageSize = searchParams.get("page_size") || "20";
+  const cacheOnly = searchParams.get("cache_only") === "true";
 
   if (!query) {
     return NextResponse.json(
@@ -27,9 +31,9 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  if (isNaN(pageSizeNum) || pageSizeNum < 1 || pageSizeNum > 50) {
+  if (isNaN(pageSizeNum) || pageSizeNum < 1 || pageSizeNum > 100) {
     return NextResponse.json(
-      { error: "Invalid page_size parameter (max 50)" },
+      { error: "Invalid page_size parameter (max 100)" },
       { status: 400 }
     );
   }
@@ -180,29 +184,139 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const response = await fetch(
-      `https://world.openfoodfacts.org/cgi/search.pl?${params.toString()}`,
-      {
-        headers: {
-          "User-Agent": USER_AGENT,
-          Accept: "application/json",
-        },
-      }
+    console.log(
+      `[API] Iniciando busca: "${query}" (país: ${
+        country || "todos"
+      }, page_size: ${pageSizeNum})`
     );
 
-    if (!response.ok) {
-      return NextResponse.json(
-        { error: "Erro ao buscar produtos" },
-        { status: response.status }
+    // Primeiro, buscar no cache JSON
+    console.log(`[API] Buscando "${query}" no cache JSON...`);
+    const localResults = await jsonCacheManager.searchProducts(
+      query,
+      country || undefined,
+      pageSizeNum
+    );
+
+    // Se modo cache-only estiver ativo, retornar apenas resultados locais
+    if (cacheOnly || process.env.NEXT_PUBLIC_CACHE_ONLY_MODE === "true") {
+      console.log(
+        `[Cache-Only Mode] Retornando apenas ${localResults.products.length} produtos do cache`
       );
+      return NextResponse.json({
+        products: localResults.products,
+        count: localResults.products.length,
+        page: pageNum,
+        page_size: pageSizeNum,
+        fromCache: true,
+        fromAPI: false,
+        cacheOnly: true,
+      });
     }
 
-    const data = await response.json();
-    return NextResponse.json(data);
+    let fromAPI = false;
+    let apiProducts: Product[] = [];
+
+    // Se não encontrou resultados suficientes no cache JSON, buscar na API externa
+    if (localResults.products.length < pageSizeNum) {
+      console.log(
+        `Cache JSON retornou ${localResults.products.length} produtos, buscando na API externa...`
+      );
+
+      const response = await fetch(
+        `https://world.openfoodfacts.org/cgi/search.pl?${params.toString()}`,
+        {
+          headers: {
+            "User-Agent": USER_AGENT,
+            Accept: "application/json",
+          },
+        }
+      );
+
+      if (response.ok) {
+        const apiData = await response.json();
+        apiProducts = apiData.products || [];
+        fromAPI = true;
+
+        // Ordenar produtos da API por relevância
+        if (apiProducts.length > 0) {
+          console.log(
+            `Ordenando ${apiProducts.length} produtos da API por relevância...`
+          );
+          apiProducts = sortByRelevance(apiProducts, query);
+
+          console.log(
+            `Salvando ${apiProducts.length} produtos da API no cache JSON...`
+          );
+          const saveResult = await jsonCacheManager.saveProducts(apiProducts);
+          console.log(
+            `Cache JSON atualizado: ${saveResult.saved} salvos, ${saveResult.failed} falharam`
+          );
+        }
+      }
+    }
+
+    // Combinar resultados JSON e da API
+    const allProducts: Product[] = [...localResults.products];
+    const localProductCodes = new Set(localResults.products.map((p) => p.code));
+
+    // Adicionar apenas produtos da API que não estão no cache JSON
+    const newApiProducts = apiProducts.filter(
+      (p) => !localProductCodes.has(p.code)
+    );
+    allProducts.push(...newApiProducts);
+
+    // Reordenar a lista combinada por relevância
+    console.log(
+      `Reordenando ${allProducts.length} produtos combinados por relevância...`
+    );
+    const sortedProducts = sortByRelevance(allProducts, query);
+
+    // Limitar ao tamanho da página solicitada
+    const paginatedProducts = sortedProducts.slice(0, pageSizeNum);
+
+    const responseData = {
+      products: paginatedProducts,
+      count: allProducts.length,
+      page: pageNum,
+      page_size: pageSizeNum,
+      skip: (pageNum - 1) * pageSizeNum,
+      fromCache: localResults.fromCache,
+      fromAPI: fromAPI,
+      cacheStats: {
+        localProducts: localResults.products.length,
+        apiProducts: apiProducts.length,
+        newProducts: newApiProducts.length,
+        totalReturned: paginatedProducts.length,
+      },
+    };
+
+    console.log(
+      `Busca finalizada: ${paginatedProducts.length} produtos (${localResults.products.length} do cache JSON, ${newApiProducts.length} novos da API)`
+    );
+
+    return NextResponse.json(responseData);
   } catch (error) {
-    console.error("Erro ao buscar produtos:", error);
+    console.error("[API] Erro ao buscar produtos:", error);
+
+    // Retornar resposta de erro estruturada em vez de quebrar
     return NextResponse.json(
-      { error: "Erro ao buscar produtos" },
+      {
+        products: [],
+        count: 0,
+        page: pageNum,
+        page_size: pageSizeNum,
+        skip: (pageNum - 1) * pageSizeNum,
+        fromCache: false,
+        fromAPI: false,
+        error: "Erro interno do servidor",
+        cacheStats: {
+          localProducts: 0,
+          apiProducts: 0,
+          newProducts: 0,
+          totalReturned: 0,
+        },
+      },
       { status: 500 }
     );
   }
