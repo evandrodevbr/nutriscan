@@ -160,7 +160,7 @@ export async function fetchAllResults(
     let currentPage = 1;
     let hasMore = true;
     let totalCount = 0;
-    const pageSize = 50; // Usar tamanho máximo permitido pela API
+    const pageSize = 1000; // Usar tamanho máximo permitido pela API Open Food Facts
 
     console.log(`Iniciando busca completa para: "${query}"`);
 

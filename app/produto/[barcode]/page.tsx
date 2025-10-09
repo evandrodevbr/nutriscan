@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, Loader2, AlertCircle, Star } from "lucide-react";
+import { ArrowLeft, AlertCircle, Star, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import {
@@ -10,6 +10,9 @@ import {
   formatNutritionData,
 } from "@/lib/openFoodFactsApi";
 import Link from "next/link";
+import { NutriScoreBadge, NovaBadge } from "@/app/components/NutriScoreBadge";
+import { NutritionGrid } from "@/app/components/NutritionBar";
+import { ProductSkeleton } from "@/app/components/ProductSkeleton";
 
 export default function ProdutoPage() {
   const params = useParams();
@@ -127,16 +130,7 @@ export default function ProdutoPage() {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center">
-        <div className="text-center">
-          <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-4" />
-          <p className="text-gray-600 dark:text-gray-300">
-            Carregando produto...
-          </p>
-        </div>
-      </div>
-    );
+    return <ProductSkeleton />;
   }
 
   if (error || !product) {
@@ -172,28 +166,31 @@ export default function ProdutoPage() {
   const nutritionData = formatNutritionData(product);
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900">
-      {/* Header */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => router.back()}
-              className="flex items-center gap-2"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Voltar
-            </Button>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      {/* Hero Section com gradiente e animação */}
+      <div className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+        <div className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-b border-gray-200/50 dark:border-gray-700/50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div className="flex items-center gap-4">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => router.back()}
+                className="flex items-center gap-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Voltar
+              </Button>
 
-            <div className="flex-1">
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                {product.product_name || "Produto"}
-              </h1>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                Código: {product.code}
-              </p>
+              <div className="flex-1">
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 animate-fade-in">
+                  {product.product_name || "Produto"}
+                </h1>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Código: {product.code}
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -203,15 +200,15 @@ export default function ProdutoPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Product Image */}
-          <div className="space-y-4">
-            <div className="relative w-full max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-lg">
+          <div className="space-y-6">
+            <div className="relative w-full max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.04),0_8px_24px_rgba(0,0,0,0.08)] hover:shadow-[0_4px_16px_rgba(0,0,0,0.08),0_16px_32px_rgba(0,0,0,0.12)] transition-all duration-300 transform hover:-translate-y-1">
               <div className="aspect-square bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 p-8">
                 {imageUrl ? (
                   <Image
                     src={imageUrl}
                     alt={product.product_name || "Produto"}
                     fill
-                    className="object-contain"
+                    className="object-contain transition-transform duration-300 hover:scale-105"
                     priority
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     placeholder="blur"
@@ -229,37 +226,37 @@ export default function ProdutoPage() {
             </div>
 
             {/* Basic Info */}
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+            <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-gray-200/50 dark:border-gray-700/50 hover:shadow-md transition-all duration-300">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
                 Informações Básicas
               </h3>
-              <div className="space-y-2 text-sm">
+              <div className="space-y-3 text-sm">
                 {product.brands && (
-                  <div>
+                  <div className="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700">
                     <span className="font-medium text-gray-600 dark:text-gray-400">
                       Marca:
                     </span>
-                    <span className="ml-2 text-gray-900 dark:text-white">
+                    <span className="text-gray-900 dark:text-white font-medium">
                       {product.brands}
                     </span>
                   </div>
                 )}
                 {product.categories && (
-                  <div>
+                  <div className="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700">
                     <span className="font-medium text-gray-600 dark:text-gray-400">
                       Categoria:
                     </span>
-                    <span className="ml-2 text-gray-900 dark:text-white">
+                    <span className="text-gray-900 dark:text-white font-medium text-right max-w-xs">
                       {product.categories}
                     </span>
                   </div>
                 )}
                 {product.countries && (
-                  <div>
+                  <div className="flex justify-between items-center py-2">
                     <span className="font-medium text-gray-600 dark:text-gray-400">
                       Países:
                     </span>
-                    <span className="ml-2 text-gray-900 dark:text-white">
+                    <span className="text-gray-900 dark:text-white font-medium">
                       {product.countries}
                     </span>
                   </div>
@@ -271,24 +268,20 @@ export default function ProdutoPage() {
           {/* Product Details */}
           <div className="space-y-6">
             {/* Nutrition Grades */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {nutritionGrade && (
-                <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                  <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+                <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                     Nutri-Score
                   </h3>
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={`w-12 h-12 rounded-full ${nutritionGrade.color} flex items-center justify-center`}
-                    >
-                      <span
-                        className={`text-lg font-bold ${nutritionGrade.textColor}`}
-                      >
-                        {nutritionGrade.label}
-                      </span>
-                    </div>
+                  <div className="flex items-center gap-4">
+                    <NutriScoreBadge
+                      grade={product.nutrition_grades || ""}
+                      size="lg"
+                      showTooltip={true}
+                    />
                     <div>
-                      <p className="font-medium text-gray-900 dark:text-white">
+                      <p className="font-medium text-gray-900 dark:text-white text-lg">
                         {nutritionGrade.description}
                       </p>
                       <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -300,22 +293,18 @@ export default function ProdutoPage() {
               )}
 
               {novaGroup && (
-                <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                  <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+                <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                     NOVA
                   </h3>
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={`w-12 h-12 rounded-full ${novaGroup.color} flex items-center justify-center`}
-                    >
-                      <span
-                        className={`text-lg font-bold ${novaGroup.textColor}`}
-                      >
-                        {novaGroup.label}
-                      </span>
-                    </div>
+                  <div className="flex items-center gap-4">
+                    <NovaBadge
+                      group={product.nova_group || 0}
+                      size="lg"
+                      showTooltip={true}
+                    />
                     <div>
-                      <p className="font-medium text-gray-900 dark:text-white">
+                      <p className="font-medium text-gray-900 dark:text-white text-lg">
                         Grupo {novaGroup.label}
                       </p>
                       <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -329,75 +318,15 @@ export default function ProdutoPage() {
 
             {/* Nutritional Information */}
             {nutritionData && (
-              <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
-                  Informação Nutricional (por 100g)
-                </h3>
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">
-                      Energia:
-                    </span>
-                    <span className="font-medium text-gray-900 dark:text-white">
-                      {nutritionData.energy}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">
-                      Gorduras:
-                    </span>
-                    <span className="font-medium text-gray-900 dark:text-white">
-                      {nutritionData.fat}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">
-                      Carboidratos:
-                    </span>
-                    <span className="font-medium text-gray-900 dark:text-white">
-                      {nutritionData.carbohydrates}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">
-                      Proteínas:
-                    </span>
-                    <span className="font-medium text-gray-900 dark:text-white">
-                      {nutritionData.proteins}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">
-                      Açúcares:
-                    </span>
-                    <span className="font-medium text-gray-900 dark:text-white">
-                      {nutritionData.sugars}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">
-                      Fibras:
-                    </span>
-                    <span className="font-medium text-gray-900 dark:text-white">
-                      {nutritionData.fiber}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">
-                      Sódio:
-                    </span>
-                    <span className="font-medium text-gray-900 dark:text-white">
-                      {nutritionData.sodium}
-                    </span>
-                  </div>
-                </div>
+              <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+                <NutritionGrid nutritionData={nutritionData} />
               </div>
             )}
 
             {/* Ingredients */}
             {product.ingredients_text && (
-              <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+              <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                   Ingredientes
                 </h3>
                 <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
@@ -408,15 +337,20 @@ export default function ProdutoPage() {
 
             {/* Allergens */}
             {product.allergens_tags && product.allergens_tags.length > 0 && (
-              <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
-                <h3 className="font-semibold text-yellow-800 dark:text-yellow-200 mb-2">
-                  Alérgenos
-                </h3>
+              <div className="bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 border border-yellow-200 dark:border-yellow-800 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
+                    <AlertTriangle className="w-4 h-4 text-white" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-yellow-800 dark:text-yellow-200">
+                    Alérgenos
+                  </h3>
+                </div>
                 <div className="flex flex-wrap gap-2">
                   {product.allergens_tags.map((allergen, index) => (
                     <span
                       key={index}
-                      className="px-2 py-1 bg-yellow-100 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-200 text-xs rounded-full"
+                      className="px-3 py-1 bg-yellow-100 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-200 text-sm rounded-full font-medium border border-yellow-200 dark:border-yellow-700"
                     >
                       {allergen.replace("en:", "").replace("pt:", "")}
                     </span>
@@ -427,8 +361,8 @@ export default function ProdutoPage() {
 
             {/* Additives */}
             {product.additives_tags && product.additives_tags.length > 0 && (
-              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-                <h3 className="font-semibold text-blue-800 dark:text-blue-200 mb-2">
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-800 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+                <h3 className="text-lg font-semibold text-blue-800 dark:text-blue-200 mb-4">
                   Aditivos
                 </h3>
                 <div className="flex flex-wrap gap-2">
@@ -437,13 +371,13 @@ export default function ProdutoPage() {
                     .map((additive, index) => (
                       <span
                         key={index}
-                        className="px-2 py-1 bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-200 text-xs rounded-full"
+                        className="px-3 py-1 bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-200 text-sm rounded-full font-medium border border-blue-200 dark:border-blue-700"
                       >
                         {additive.replace("en:", "").replace("pt:", "")}
                       </span>
                     ))}
                   {product.additives_tags.length > 10 && (
-                    <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-xs rounded-full">
+                    <span className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-sm rounded-full font-medium border border-gray-200 dark:border-gray-600">
                       +{product.additives_tags.length - 10} mais
                     </span>
                   )}

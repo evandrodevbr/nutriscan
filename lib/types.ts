@@ -387,3 +387,45 @@ export interface CacheFile {
     lastSync: number;
   };
 }
+
+// Tipos para otimização de carregamento de imagens
+export interface OptimizedImageProps {
+  src: string;
+  alt: string;
+  priority?: number;
+  onPageChange?: number;
+  className?: string;
+  fill?: boolean;
+  width?: number;
+  height?: number;
+  sizes?: string;
+  placeholder?: "blur" | "empty";
+  blurDataURL?: string;
+  quality?: number;
+  loading?: "lazy" | "eager";
+  onLoad?: () => void;
+  onError?: (error: Error) => void;
+}
+
+export interface ImageLoadTask {
+  src: string;
+  priority: number;
+  load: () => void;
+  onComplete?: () => void;
+  onError?: (error: Error) => void;
+}
+
+export interface ImageLoadingState {
+  isVisible: boolean;
+  shouldLoad: boolean;
+  isLoading: boolean;
+  hasError: boolean;
+  error: Error | null;
+}
+
+export interface UseOptimizedImageLoadingOptions {
+  currentPage: number;
+  itemsPerPage: number;
+  rootMargin?: string;
+  threshold?: number;
+}
