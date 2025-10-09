@@ -1,21 +1,23 @@
-MIT License
+Personal Use License
 
-Copyright (c) 2024 Evandro Fonseca Junior
+Copyright (c) 2024 Evandro (evandro.dev.br)
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+Permission is hereby granted to the individual who obtained this software to use it for personal, non-commercial purposes on their local machine (localhost) only. This license allows:
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+1. Personal Use: You may use this software on your personal computer for learning, development, and personal projects.
+2. Code Inspection: You may examine, study, and learn from the source code.
+3. Local Development: You may run the application locally for development and testing purposes.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+The following restrictions apply:
+
+1. No Public Deployment: You may NOT deploy, host, or make this software available on any public web server, cloud platform, or any publicly accessible network.
+2. No Redistribution: You may NOT copy, distribute, or share this software with others.
+3. No Commercial Use: You may NOT use this software for any commercial purposes, including but not limited to selling, licensing, or offering services based on this software.
+4. No Derivative Works: You may NOT create derivative works or modifications for public distribution.
+5. No Third-Party Use: This software is licensed only to the individual who obtained it directly from the author.
+
+This license is non-transferable and applies only to the original recipient. Any violation of these terms will result in immediate termination of this license.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+For questions about this license, contact: evandro@evandro.dev.br
