@@ -138,6 +138,92 @@ export async function searchByName(
 }
 
 /**
+ * Busca TODOS os resultados de uma pesquisa
+ * Faz requisições paginadas até obter todos os produtos disponíveis
+ */
+export async function fetchAllResults(
+  query: string,
+  country?: string,
+  maxPages: number = 10,
+  onProgress?: (
+    currentPage: number,
+    totalPages: number,
+    loadedProducts: number
+  ) => void
+): Promise<{ products: Product[]; totalCount: number; actualPages: number }> {
+  try {
+    if (!query.trim()) {
+      throw new Error("Termo de busca não pode estar vazio");
+    }
+
+    const allProducts: Product[] = [];
+    let currentPage = 1;
+    let hasMore = true;
+    let totalCount = 0;
+    const pageSize = 50; // Usar tamanho máximo permitido pela API
+
+    console.log(`Iniciando busca completa para: "${query}"`);
+
+    while (hasMore && currentPage <= maxPages) {
+      try {
+        console.log(`Carregando página ${currentPage}...`);
+
+        // Chamar callback de progresso se fornecido
+        if (onProgress) {
+          onProgress(currentPage, maxPages, allProducts.length);
+        }
+
+        const result = await searchByName(
+          query,
+          country,
+          currentPage,
+          pageSize
+        );
+
+        if (result.products && result.products.length > 0) {
+          allProducts.push(...result.products);
+          totalCount = result.count || allProducts.length;
+
+          // Se retornou menos produtos que o pageSize, não há mais páginas
+          hasMore = result.products.length === pageSize;
+
+          console.log(
+            `Página ${currentPage}: ${result.products.length} produtos (Total: ${allProducts.length})`
+          );
+        } else {
+          hasMore = false;
+        }
+
+        currentPage++;
+
+        // Rate limiting: aguardar 200ms entre requisições
+        if (hasMore && currentPage <= maxPages) {
+          await new Promise((resolve) => setTimeout(resolve, 200));
+        }
+      } catch (pageError) {
+        console.error(`Erro na página ${currentPage}:`, pageError);
+        // Se falhar em uma página, parar a busca
+        hasMore = false;
+      }
+    }
+
+    const actualPages = currentPage - 1;
+    console.log(
+      `Busca completa finalizada: ${allProducts.length} produtos em ${actualPages} páginas`
+    );
+
+    return {
+      products: allProducts,
+      totalCount: totalCount || allProducts.length,
+      actualPages,
+    };
+  } catch (error) {
+    console.error("Erro ao buscar todos os resultados:", error);
+    throw error;
+  }
+}
+
+/**
  * Busca produtos por categoria
  */
 export async function searchByCategory(
@@ -406,9 +492,23 @@ export function sortProducts(
         break;
 
       case "energy":
-        const aEnergy = a.nutriments?.energy_100g || 0;
-        const bEnergy = b.nutriments?.energy_100g || 0;
-        comparison = aEnergy - bEnergy;
+        const aHasEnergy = !!a.nutriments?.energy_100g;
+        const bHasEnergy = !!b.nutriments?.energy_100g;
+
+        // Primeiro: produtos com dados calóricos vêm antes dos sem dados
+        if (aHasEnergy && !bHasEnergy) {
+          comparison = -1; // a vem antes de b
+        } else if (!aHasEnergy && bHasEnergy) {
+          comparison = 1; // b vem antes de a
+        } else if (aHasEnergy && bHasEnergy) {
+          // Ambos têm dados: ordenar pelo menor valor energético
+          const aEnergy = a.nutriments?.energy_100g || 0;
+          const bEnergy = b.nutriments?.energy_100g || 0;
+          comparison = aEnergy - bEnergy;
+        } else {
+          // Nenhum tem dados: manter ordem original
+          comparison = 0;
+        }
         break;
 
       case "fat":
