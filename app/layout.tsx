@@ -2,6 +2,7 @@ import "./globals.css";
 import { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/app/providers";
+import { FloatingDonateButton } from "@/app/components/FloatingDonateButton";
 
 // Use Inter como fallback já que é uma fonte similar à Geist
 const inter = Inter({ subsets: ["latin"] });
@@ -64,6 +65,7 @@ export default function RootLayout({
     <html lang="pt-BR" suppressHydrationWarning className={inter.className}>
       <body className="min-h-screen bg-background antialiased">
         <ThemeProvider>{children}</ThemeProvider>
+        <FloatingDonateButton />
       </body>
     </html>
   );
