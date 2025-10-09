@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import {
   Search,
@@ -8,33 +8,67 @@ import {
   Grid,
   List,
   SlidersHorizontal,
+  RefreshCw,
+  Database,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { searchByName, Product, sortProducts } from "@/lib/openFoodFactsApi";
+import { Product, sortProducts, fetchAllResults } from "@/lib/openFoodFactsApi";
 import { ProductCard } from "@/app/components/ProductCard";
 import { ProductCardSkeleton } from "@/app/components/ProductCardSkeleton";
 import { FilterSidebar } from "@/app/components/FilterSidebar";
 import { FilterBadges } from "@/app/components/FilterBadge";
 import { SortDropdown } from "@/app/components/SortDropdown";
+import { Pagination } from "@/app/components/Pagination";
 import { useProductFilters } from "@/hooks/useProductFilters";
+import { useSearchCache } from "@/hooks/useSearchCache";
 import { detectUserCountry } from "@/lib/geolocation";
+import { FilterRecord } from "@/lib/cacheManager";
+import { ProductFilters } from "@/lib/types";
 import Link from "next/link";
 
-export default function ResultadosPage() {
+// Função para converter ProductFilters para FilterRecord
+function convertFiltersToRecord(filters: ProductFilters): FilterRecord {
+  const record: FilterRecord = {};
+
+  Object.entries(filters).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) {
+      record[key] = value as FilterRecord[string];
+    }
+  });
+
+  return record;
+}
+
+function ResultadosContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const query = searchParams.get("q") || "";
   const countryParam = searchParams.get("country") || "";
 
-  const [products, setProducts] = useState<Product[]>([]);
+  // Estados principais
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
   const [detectedCountry, setDetectedCountry] = useState<string>("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [forceRefresh, setForceRefresh] = useState(false);
+
+  // Estados de paginação
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(20);
+
+  // Hook de cache
+  const {
+    state: cacheState,
+    getCachedSearch,
+    saveSearch,
+    clearCache,
+    updateProgress,
+    setError: setCacheError,
+    setLoading: setCacheLoading,
+  } = useSearchCache();
 
   // Hook de filtros
   const {
@@ -61,66 +95,131 @@ export default function ResultadosPage() {
   }, []);
 
   const loadProducts = useCallback(
-    async (pageNum: number) => {
+    async (forceRefresh: boolean = false) => {
       try {
-        if (pageNum === 1) {
-          setLoading(true);
-        } else {
-          setLoadingMore(true);
-        }
+        setLoading(true);
         setError(null);
         setIsLoading(true);
+        setCacheLoading(true);
 
         const countryToUse = detectedCountry || countryParam || "br";
 
-        const result = await searchByName(query, countryToUse, pageNum, 20);
-
-        // Aplicar ordenação se especificada
-        let sortedProducts = result.products;
-        if (filters.sortBy) {
-          sortedProducts = sortProducts(
-            result.products,
-            filters.sortBy,
-            filters.sortOrder || "asc"
+        // Verificar cache primeiro (se não for refresh forçado)
+        if (!forceRefresh) {
+          const cached = getCachedSearch(
+            query,
+            countryToUse,
+            convertFiltersToRecord(filters)
           );
+          if (cached) {
+            console.log("Usando dados do cache");
+            setAllProducts(cached.products);
+            setTotalResults(cached.totalCount);
+            setLoading(false);
+            setIsLoading(false);
+            setCacheLoading(false);
+            return;
+          }
         }
 
-        setProducts((prevProducts) =>
-          pageNum === 1 ? sortedProducts : [...prevProducts, ...sortedProducts]
+        console.log("Fazendo busca completa na API");
+
+        // Fazer busca completa
+        const result = await fetchAllResults(
+          query,
+          countryToUse,
+          10, // Máximo 10 páginas (500 produtos)
+          (currentPage, totalPages, loadedProducts) => {
+            updateProgress(currentPage, totalPages, loadedProducts, 0);
+          }
         );
-        setHasMore(result.products.length === 20);
-        setPage(pageNum);
-        setTotalResults(result.count || result.products.length);
+
+        // Salvar no cache
+        const searchId = saveSearch(
+          query,
+          countryToUse,
+          result.products,
+          result.totalCount,
+          convertFiltersToRecord(filters)
+        );
+        console.log(`Busca salva no cache com ID: ${searchId}`);
+
+        setAllProducts(result.products);
+        setTotalResults(result.totalCount);
+        setCurrentPage(1); // Voltar para primeira página
       } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "Erro ao buscar produtos"
-        );
+        const errorMessage =
+          err instanceof Error ? err.message : "Erro ao buscar produtos";
+        setError(errorMessage);
+        setCacheError(errorMessage);
       } finally {
         setLoading(false);
-        setLoadingMore(false);
         setIsLoading(false);
+        setCacheLoading(false);
       }
     },
     [
       query,
       detectedCountry,
       countryParam,
-      filters.sortBy,
-      filters.sortOrder,
+      filters,
+      getCachedSearch,
+      saveSearch,
+      updateProgress,
       setIsLoading,
       setTotalResults,
+      setCacheLoading,
+      setCacheError,
     ]
   );
 
   useEffect(() => {
     if (query) {
-      loadProducts(1);
+      loadProducts(forceRefresh);
+      setForceRefresh(false);
     }
-  }, [query, countryParam, detectedCountry, loadProducts]);
+  }, [query, countryParam, detectedCountry, loadProducts, forceRefresh]);
 
-  const handleLoadMore = useCallback(() => {
-    loadProducts(page + 1);
-  }, [loadProducts, page]);
+  // Produtos filtrados e ordenados para exibição
+  const filteredAndSortedProducts = useMemo(() => {
+    let filtered = [...allProducts];
+
+    // Aplicar filtros aqui (implementar conforme necessário)
+    // Por enquanto, apenas ordenação
+    if (filters.sortBy) {
+      filtered = sortProducts(
+        filtered,
+        filters.sortBy,
+        filters.sortOrder || "asc"
+      );
+    }
+
+    return filtered;
+  }, [allProducts, filters.sortBy, filters.sortOrder]);
+
+  // Produtos da página atual
+  const currentPageProducts = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredAndSortedProducts.slice(startIndex, endIndex);
+  }, [filteredAndSortedProducts, currentPage, itemsPerPage]);
+
+  // Cálculos de paginação
+  const totalPages = Math.ceil(filteredAndSortedProducts.length / itemsPerPage);
+  const totalItems = filteredAndSortedProducts.length;
+
+  const handleRefresh = useCallback(() => {
+    setForceRefresh(true);
+  }, []);
+
+  const handleClearCache = useCallback(() => {
+    clearCache(
+      query,
+      detectedCountry || countryParam || "br",
+      convertFiltersToRecord(filters)
+    );
+    setForceRefresh(true);
+  }, [clearCache, query, detectedCountry, countryParam, filters]);
 
   const handleSortChange = useCallback(
     (sortBy: string) => {
@@ -181,11 +280,17 @@ export default function ResultadosPage() {
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
                 Resultados para &quot;{query}&quot;
               </h1>
-              {!loading && products.length > 0 && (
+              {!loading && totalItems > 0 && (
                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                  {products.length} produto{products.length !== 1 ? "s" : ""}{" "}
-                  encontrado{products.length !== 1 ? "s" : ""}
+                  {totalItems} produto{totalItems !== 1 ? "s" : ""} encontrado
+                  {totalItems !== 1 ? "s" : ""}
                   {detectedCountry && ` em ${detectedCountry}`}
+                  {cacheState.isCached && (
+                    <span className="ml-2 inline-flex items-center gap-1 text-blue-600 dark:text-blue-400">
+                      <Database className="w-3 h-3" />
+                      Cache
+                    </span>
+                  )}
                 </p>
               )}
             </div>
@@ -215,6 +320,31 @@ export default function ResultadosPage() {
                   <List className="w-4 h-4" />
                 </Button>
               </div>
+
+              {/* Botões de controle de cache */}
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleRefresh}
+                  disabled={loading}
+                  title="Atualizar busca"
+                >
+                  <RefreshCw
+                    className={`w-4 h-4 ${loading ? "animate-spin" : ""}`}
+                  />
+                </Button>
+                {cacheState.isCached && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleClearCache}
+                    title="Limpar cache e refazer busca"
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                )}
+              </div>
             </div>
 
             {/* Filtros Mobile */}
@@ -235,7 +365,7 @@ export default function ResultadosPage() {
                     onFiltersChange={updateFilters}
                     onClearFilters={clearFilters}
                     isLoading={loading}
-                    totalResults={products.length}
+                    totalResults={totalItems}
                   />
                 </SheetContent>
               </Sheet>
@@ -278,7 +408,7 @@ export default function ResultadosPage() {
                 onFiltersChange={updateFilters}
                 onClearFilters={clearFilters}
                 isLoading={loading}
-                totalResults={products.length}
+                totalResults={totalItems}
               />
             </div>
           </div>
@@ -287,16 +417,51 @@ export default function ResultadosPage() {
           <div className="flex-1 min-w-0">
             {/* Loading Inicial */}
             {loading && (
-              <div
-                className={`grid gap-6 ${
-                  viewMode === "grid"
-                    ? "grid-cols-1 sm:grid-cols-2 xl:grid-cols-3"
-                    : "grid-cols-1"
-                }`}
-              >
-                {[...Array(8)].map((_, i) => (
-                  <ProductCardSkeleton key={i} />
-                ))}
+              <div className="space-y-4">
+                {/* Indicador de progresso do cache */}
+                {cacheState.progress && (
+                  <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                    <div className="flex items-center gap-3">
+                      <Loader2 className="w-5 h-5 animate-spin text-blue-600" />
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-blue-900 dark:text-blue-100">
+                          Carregando todos os resultados...
+                        </p>
+                        <p className="text-xs text-blue-700 dark:text-blue-300">
+                          Página {cacheState.progress.currentPage} de{" "}
+                          {cacheState.progress.totalPages} •
+                          {cacheState.progress.loadedProducts} produtos
+                          carregados
+                        </p>
+                        <div className="w-full bg-blue-200 dark:bg-blue-800 rounded-full h-2 mt-2">
+                          <div
+                            className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                            style={{
+                              width: `${
+                                (cacheState.progress.currentPage /
+                                  cacheState.progress.totalPages) *
+                                100
+                              }%`,
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Skeleton dos produtos */}
+                <div
+                  className={`grid gap-6 ${
+                    viewMode === "grid"
+                      ? "grid-cols-1 sm:grid-cols-2 xl:grid-cols-3"
+                      : "grid-cols-1"
+                  }`}
+                >
+                  {[...Array(8)].map((_, i) => (
+                    <ProductCardSkeleton key={i} />
+                  ))}
+                </div>
               </div>
             )}
 
@@ -308,7 +473,7 @@ export default function ResultadosPage() {
                     Erro ao buscar produtos
                   </h2>
                   <p className="text-red-600 dark:text-red-300 mb-4">{error}</p>
-                  <Button onClick={() => loadProducts(1)} variant="outline">
+                  <Button onClick={() => loadProducts(true)} variant="outline">
                     Tentar novamente
                   </Button>
                 </div>
@@ -316,7 +481,7 @@ export default function ResultadosPage() {
             )}
 
             {/* Sem Resultados */}
-            {!loading && !error && products.length === 0 && (
+            {!loading && !error && totalItems === 0 && (
               <div className="text-center py-12">
                 <Search className="w-16 h-16 text-gray-400 mx-auto mb-4" />
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
@@ -337,7 +502,7 @@ export default function ResultadosPage() {
             )}
 
             {/* Grid de Produtos */}
-            {!loading && products.length > 0 && (
+            {!loading && totalItems > 0 && (
               <>
                 <div
                   className={`product-grid grid gap-6 mb-8 ${
@@ -346,7 +511,7 @@ export default function ResultadosPage() {
                       : "grid-cols-1"
                   }`}
                 >
-                  {products.map((product, index) => (
+                  {currentPageProducts.map((product, index) => (
                     <div
                       key={product.code}
                       className="animate-in fade-in-0 slide-in-from-bottom-4"
@@ -360,33 +525,37 @@ export default function ResultadosPage() {
                   ))}
                 </div>
 
-                {/* Botão Carregar Mais */}
-                {hasMore && (
-                  <div className="text-center">
-                    <Button
-                      onClick={handleLoadMore}
-                      disabled={loadingMore}
-                      size="lg"
-                      className="min-w-[200px]"
-                    >
-                      {loadingMore ? (
-                        <>
-                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          Carregando...
-                        </>
-                      ) : (
-                        "Carregar Mais"
-                      )}
-                    </Button>
+                {/* Paginação */}
+                {totalPages > 1 && (
+                  <div className="mt-8">
+                    <Pagination
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      totalItems={totalItems}
+                      itemsPerPage={itemsPerPage}
+                      onPageChange={setCurrentPage}
+                      onItemsPerPageChange={setItemsPerPage}
+                      config={{
+                        itemsPerPage: 20,
+                        maxVisiblePages: 5,
+                        showFirstLast: true,
+                        showPrevNext: true,
+                      }}
+                    />
                   </div>
                 )}
 
-                {/* Contador de Resultados */}
-                {!hasMore && products.length > 0 && (
-                  <div className="text-center mt-8">
+                {/* Informações adicionais */}
+                {cacheState.isCached && (
+                  <div className="text-center mt-6">
                     <p className="text-sm text-gray-500 dark:text-gray-400">
-                      Todos os {products.length} produto
-                      {products.length !== 1 ? "s" : ""} foram carregados
+                      Dados carregados do cache •
+                      <button
+                        onClick={handleRefresh}
+                        className="ml-1 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline"
+                      >
+                        Atualizar busca
+                      </button>
                     </p>
                   </div>
                 )}
@@ -396,5 +565,19 @@ export default function ResultadosPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ResultadosPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      }
+    >
+      <ResultadosContent />
+    </Suspense>
   );
 }

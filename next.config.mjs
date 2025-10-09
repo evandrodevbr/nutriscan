@@ -50,7 +50,7 @@ const nextConfig = {
 
   // Otimizações de bundle
   experimental: {
-    optimizeCss: true,
+    // optimizeCss: true, // Removido para evitar erro de build com critters
   },
 };
 

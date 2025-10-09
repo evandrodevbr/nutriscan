@@ -288,3 +288,47 @@ export const COMMON_ADDITIVES = [
   "stabilizers",
   "thickeners",
 ];
+
+// Tipos para sistema de cache e paginação
+export interface PaginationState {
+  currentPage: number;
+  totalPages: number;
+  itemsPerPage: number;
+  totalItems: number;
+  startIndex: number;
+  endIndex: number;
+}
+
+export interface PaginationConfig {
+  itemsPerPage: number;
+  maxVisiblePages: number;
+  showFirstLast: boolean;
+  showPrevNext: boolean;
+}
+
+export interface CacheProgress {
+  currentPage: number;
+  totalPages: number;
+  loadedProducts: number;
+  totalProducts: number;
+  isLoading: boolean;
+  error?: string;
+}
+
+export interface SearchCacheConfig {
+  ttl: number; // Time to live em milissegundos
+  maxSize: number; // Tamanho máximo em bytes
+  maxEntries: number; // Número máximo de entradas
+  enableCompression: boolean; // Se deve comprimir dados
+}
+
+export interface PaginationProps {
+  currentPage: number;
+  totalPages: number;
+  totalItems: number;
+  itemsPerPage: number;
+  onPageChange: (page: number) => void;
+  onItemsPerPageChange?: (itemsPerPage: number) => void;
+  config?: Partial<PaginationConfig>;
+  className?: string;
+}

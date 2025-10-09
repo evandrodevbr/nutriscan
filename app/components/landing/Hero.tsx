@@ -80,7 +80,7 @@ export function Hero() {
     } else if (searchType === "name") {
       return "Digite o nome do produto (ex: coca cola)";
     }
-    return "Digite o código de barras ou nome do produto";
+    return "Digite nome do produto";
   };
 
   const getSearchButtonText = () => {
