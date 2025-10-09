@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
-import { Sun, Moon, Menu, X, ScanLine } from "lucide-react";
+import { Sun, Moon, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function Header() {
@@ -27,9 +27,11 @@ export function Header() {
         <div className="flex items-center justify-between h-14 sm:h-16">
           {/* Logo - compacto em mobile */}
           <div className="flex items-center gap-2 sm:gap-3">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-blue-600 to-green-600 rounded-xl flex items-center justify-center">
-              <ScanLine className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-            </div>
+            <img
+              src="/apple-touch-icon.png"
+              alt="NutriScan Logo"
+              className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl"
+            />
             <div className="hidden sm:block">
               <h1 className="text-xl font-bold text-gray-900 dark:text-white">
                 NutriScan

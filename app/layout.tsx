@@ -25,6 +25,13 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Evandro", url: "https://evandro.dev.br" }],
   creator: "Evandro",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [{ url: "/icon.png", sizes: "512x512", type: "image/png" }],
+  },
   openGraph: {
     type: "website",
     locale: "pt_BR",
@@ -33,6 +40,14 @@ export const metadata: Metadata = {
     description:
       "Descubra informações nutricionais completas de milhares de produtos alimentícios.",
     siteName: "NutriScan",
+    images: [
+      {
+        url: "/icon.png",
+        width: 512,
+        height: 512,
+        alt: "NutriScan Logo",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
@@ -40,6 +55,7 @@ export const metadata: Metadata = {
     description:
       "Descubra informações nutricionais completas de milhares de produtos alimentícios.",
     creator: "@evandrodev",
+    images: ["/icon.png"],
   },
   manifest: "/manifest.json",
   robots: {
