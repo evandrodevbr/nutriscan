@@ -4,16 +4,9 @@ import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import Image from "next/image";
 import { Product } from "@/lib/openFoodFactsApi";
-import {
-  Heart,
-  AlertTriangle,
-  Zap,
-  Star,
-  Plus,
-  Eye,
-  TrendingUp,
-} from "lucide-react";
+import { Heart, AlertTriangle, Zap, Plus, Eye } from "lucide-react";
 import { formatNutritionData } from "@/lib/openFoodFactsApi";
 
 interface ProductCardProps {
@@ -111,15 +104,19 @@ export function ProductCard({ product, className = "" }: ProductCardProps) {
 
   return (
     <Card
-      className={`group relative overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 ${className}`}
+      className={`product-card group relative overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 ${className}`}
     >
       {/* Imagem do Produto */}
       <div className="relative h-56 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 overflow-hidden">
-        <img
+        <Image
           src={imageUrl}
           alt={product.product_name || "Produto"}
-          className="w-full h-full object-contain p-6 group-hover:scale-110 transition-transform duration-500"
+          fill
+          className="object-contain p-6 group-hover:scale-110 transition-transform duration-500"
           loading="lazy"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          placeholder="blur"
+          blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
         />
 
         {/* Overlay com badges */}

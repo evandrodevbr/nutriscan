@@ -1,10 +1,4 @@
-import {
-  ScanLine,
-  Search,
-  BarChart3,
-  CheckCircle,
-  ArrowRight,
-} from "lucide-react";
+import { ScanLine, Search, BarChart3, CheckCircle } from "lucide-react";
 
 const steps = [
   {
@@ -100,8 +94,22 @@ export function HowItWorks() {
             <div key={index} className="relative">
               {/* Arrow (desktop only) */}
               {index < steps.length - 1 && (
-                <div className="hidden lg:block absolute top-16 left-full w-8 h-0.5 bg-gray-300 dark:bg-gray-600 transform translate-x-4">
-                  <ArrowRight className="absolute -right-2 -top-1.5 w-3 h-3 text-gray-400" />
+                <div className="hidden lg:flex absolute top-1/2 -right-4 transform -translate-y-1/2 z-10">
+                  <svg
+                    width="32"
+                    height="24"
+                    viewBox="0 0 32 24"
+                    fill="none"
+                    className="text-gray-400 dark:text-gray-600"
+                  >
+                    <path
+                      d="M0 12H30M30 12L20 2M30 12L20 22"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
                 </div>
               )}
 

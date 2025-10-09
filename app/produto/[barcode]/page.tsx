@@ -1,8 +1,9 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, Loader2, AlertCircle, Globe, Star } from "lucide-react";
+import { ArrowLeft, Loader2, AlertCircle, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 import {
   searchByBarcode,
   Product,
@@ -19,13 +20,7 @@ export default function ProdutoPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (barcode) {
-      searchProduct();
-    }
-  }, [barcode]);
-
-  const searchProduct = async () => {
+  const searchProduct = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -41,7 +36,13 @@ export default function ProdutoPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [barcode]);
+
+  useEffect(() => {
+    if (barcode) {
+      searchProduct();
+    }
+  }, [barcode, searchProduct]);
 
   const getProductImageUrl = (product: Product): string | null => {
     return (
@@ -206,10 +207,15 @@ export default function ProdutoPage() {
             <div className="relative w-full max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-lg">
               <div className="aspect-square bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 p-8">
                 {imageUrl ? (
-                  <img
+                  <Image
                     src={imageUrl}
-                    alt={product.product_name}
-                    className="w-full h-full object-contain"
+                    alt={product.product_name || "Produto"}
+                    fill
+                    className="object-contain"
+                    priority
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    placeholder="blur"
+                    blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-gray-400">

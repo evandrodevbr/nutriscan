@@ -1,16 +1,6 @@
 "use client";
 
-import {
-  CheckCircle2,
-  XCircle,
-  Zap,
-  BarChart3,
-  GitCompare,
-  Download,
-  Code,
-  MessageSquare,
-  Shield,
-} from "lucide-react";
+import { CheckCircle2, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -25,10 +15,22 @@ interface Feature {
 interface PricingCardProps {
   plan: "basic" | "premium" | "free";
   isAnnual?: boolean;
+  isDisabled?: boolean;
+  isSelected?: boolean;
   className?: string;
 }
 
-const planData = {
+const planData: Record<
+  string,
+  {
+    name: string;
+    monthlyPrice: number;
+    annualPrice: number;
+    description: string;
+    badge: string | null;
+    features: Feature[];
+  }
+> = {
   basic: {
     name: "Básico",
     monthlyPrice: 5,
@@ -91,15 +93,7 @@ const planData = {
   },
 };
 
-const featureIcons: Record<string, any> = {
-  consultas: Zap,
-  filtros: BarChart3,
-  comparação: GitCompare,
-  exportação: Download,
-  api: Code,
-  suporte: MessageSquare,
-  beta: Shield,
-};
+// featureIcons removido - não utilizado
 
 export function PricingCard({
   plan,
@@ -111,16 +105,7 @@ export function PricingCard({
   const isPopular = plan === "premium";
   const isFree = plan === "free";
 
-  const getFeatureIcon = (featureText: string) => {
-    if (featureText.includes("consultas") || featureText.includes("API"))
-      return Zap;
-    if (featureText.includes("filtros")) return BarChart3;
-    if (featureText.includes("comparação")) return GitCompare;
-    if (featureText.includes("exportação")) return Download;
-    if (featureText.includes("suporte")) return MessageSquare;
-    if (featureText.includes("Beta")) return Shield;
-    return CheckCircle2;
-  };
+  // getFeatureIcon removido - não utilizado
 
   return (
     <Card
@@ -229,7 +214,6 @@ export function PricingCard({
         {/* Features */}
         <div className="space-y-3">
           {data.features.map((feature, index) => {
-            const IconComponent = getFeatureIcon(feature.text);
             return (
               <div key={index} className="flex items-start space-x-3">
                 <div className="flex-shrink-0 mt-0.5">

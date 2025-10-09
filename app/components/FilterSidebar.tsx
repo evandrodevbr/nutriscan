@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Search, Filter, X, AlertTriangle, Zap } from "lucide-react";
+import { useState } from "react";
+import { Filter, X, AlertTriangle, Zap } from "lucide-react";
 import * as LucideIcons from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,17 +15,14 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import {
   ProductFilters,
   NUTRITION_GRADES,
   NOVA_GROUPS,
-  POPULAR_CATEGORIES,
   POPULAR_CATEGORIES_WITH_ICONS,
   COMMON_ALLERGENS,
-  COMMON_ADDITIVES,
 } from "@/lib/types";
 
 interface FilterSidebarProps {
@@ -49,7 +46,7 @@ export function FilterSidebar({
   const [searchCategories, setSearchCategories] = useState("");
   const [searchAllergens, setSearchAllergens] = useState("");
 
-  const updateFilter = (key: keyof ProductFilters, value: any) => {
+  const updateFilter = (key: keyof ProductFilters, value: unknown) => {
     onFiltersChange({ ...filters, [key]: value });
   };
 
@@ -244,8 +241,9 @@ export function FilterSidebar({
                       .toLowerCase()
                       .includes(searchCategories.toLowerCase())
                 ).map((category) => {
-                  const IconComponent =
-                    LucideIcons[category.icon as keyof typeof LucideIcons];
+                  const IconComponent = LucideIcons[
+                    category.icon as keyof typeof LucideIcons
+                  ] as React.ComponentType<{ className?: string }> | undefined;
                   return (
                     <div
                       key={category.value}

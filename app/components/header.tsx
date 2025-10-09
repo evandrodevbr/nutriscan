@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
-import { Sun, Moon, Menu, X, ScanLine, Info } from "lucide-react";
+import { Sun, Moon, Menu, X, ScanLine } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function Header() {
@@ -43,13 +43,13 @@ export function Header() {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
             <a
-              href="#como-funciona"
+              href="/"
               className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
             >
               Como funciona
             </a>
             <a
-              href="#recursos"
+              href="/#recursos"
               className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
             >
               Recursos
@@ -108,14 +108,14 @@ export function Header() {
           <div className="md:hidden border-t border-gray-200 dark:border-gray-700 py-4">
             <nav className="flex flex-col gap-4">
               <a
-                href="#como-funciona"
+                href="/"
                 className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors py-2"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Como funciona
               </a>
               <a
-                href="#recursos"
+                href="/#recursos"
                 className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors py-2"
                 onClick={() => setIsMenuOpen(false)}
               >

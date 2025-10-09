@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+// useState removido - não utilizado
 import { Badge } from "@/components/ui/badge";
 
 interface BillingToggleProps {

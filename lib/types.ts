@@ -41,8 +41,16 @@ export interface ProductFilters {
     | "brand"
     | "energy"
     | "fat"
-    | "sugars";
+    | "sugars"
+    | "completeness"
+    | "with_images"
+    | "with_nutrition"
+    | "eco_score"
+    | "nova_group";
   sortOrder?: "asc" | "desc";
+
+  // Assinatura de índice para compatibilidade
+  [key: string]: unknown;
 }
 
 export interface FilterOption {
