@@ -1,10 +1,9 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Search, ScanLine, Sparkles, Camera, Globe } from "lucide-react";
+import { Search, ScanLine, Sparkles, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { BarcodeScanner } from "./BarcodeScanner";
 import { detectUserCountry } from "@/lib/geolocation";
 import { detectSearchType, isValidBarcode } from "@/lib/openFoodFactsApi";
 
@@ -12,7 +11,6 @@ export function Hero() {
   const [searchQuery, setSearchQuery] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [userCountry, setUserCountry] = useState<string | null>(null);
   const [searchType, setSearchType] = useState<"auto" | "barcode" | "name">(
     "auto"
@@ -29,9 +27,7 @@ export function Hero() {
         // Forçar nova detecção para garantir país correto
         const country = await detectUserCountry(true);
         setUserCountry(country.code);
-        console.log("País detectado:", country.code, country.name);
-      } catch (error) {
-        console.warn("Erro ao detectar país:", error);
+      } catch {
         setUserCountry("br"); // Fallback para Brasil
       }
     };
@@ -54,7 +50,7 @@ export function Hero() {
     setError("");
 
     if (!searchQuery.trim()) {
-      setError("Digite um código de barras ou nome do produto");
+      setError("Digite nome do produto");
       return;
     }
 
@@ -69,28 +65,13 @@ export function Hero() {
 
       setLoading(true);
       // Redirecionar para página do produto
-      setTimeout(() => {
-        router.push(`/produto/${query}`);
-      }, 1000);
+      router.push(`/produto/${query}`);
     } else {
       setLoading(true);
       // Redirecionar para página de resultados
       const countryParam = userCountry ? `&country=${userCountry}` : "";
-      setTimeout(() => {
-        router.push(
-          `/resultados?q=${encodeURIComponent(query)}${countryParam}`
-        );
-      }, 1000);
+      router.push(`/resultados?q=${encodeURIComponent(query)}${countryParam}`);
     }
-  };
-
-  const handleScannerResult = (barcode: string) => {
-    setSearchQuery(barcode);
-    setIsScannerOpen(false);
-    // Disparar busca automaticamente
-    setTimeout(() => {
-      router.push(`/produto/${barcode}`);
-    }, 500);
   };
 
   const getPlaceholder = () => {
@@ -110,13 +91,13 @@ export function Hero() {
   };
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-hidden">
+    <section className="relative min-h-[calc(100vh-4rem)] flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-hidden py-12 sm:py-16 lg:py-20">
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%230055ff%22%20fill-opacity%3D%220.05%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%222%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-40"></div>
 
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         {/* Badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm font-medium mb-8">
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm font-medium mb-6 sm:mb-8">
           <Sparkles className="w-4 h-4" />
           Desenvolvido por{" "}
           <a
@@ -131,7 +112,7 @@ export function Hero() {
         </div>
 
         {/* Main Heading */}
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6 leading-tight">
           Descubra tudo sobre seus{" "}
           <span className="bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
             alimentos
@@ -139,45 +120,37 @@ export function Hero() {
         </h1>
 
         {/* Subtitle */}
-        <p className="text-xl sm:text-2xl text-gray-600 dark:text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed">
+        <p className="text-lg sm:text-xl lg:text-2xl text-gray-600 dark:text-gray-300 mb-8 sm:mb-12 max-w-3xl mx-auto leading-relaxed">
           Consulte informações nutricionais completas, ingredientes e
-          classificações de qualidade de milhares de produtos alimentícios com
-          apenas um código de barras.
+          classificações de qualidade de milhares de produtos alimentícios.
         </p>
 
         {/* Search Form */}
-        <form onSubmit={handleSearch} className="max-w-2xl mx-auto mb-12">
+        <form
+          onSubmit={handleSearch}
+          className="max-w-2xl mx-auto mb-10 sm:mb-12"
+        >
           <div className="relative">
-            <div className="flex items-center bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <div className="flex items-center bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden focus-within:ring-2 focus-within:ring-blue-500 transition-all duration-200">
               <div className="flex-1 relative">
                 {searchType === "barcode" ? (
-                  <ScanLine className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <ScanLine className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none" />
                 ) : (
-                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none" />
                 )}
                 <Input
                   type="text"
                   placeholder={getPlaceholder()}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-12 pr-4 py-4 text-lg border-0 bg-transparent focus:ring-0 placeholder:text-gray-400"
+                  className="pl-12 pr-4 py-4 text-lg border-0 bg-transparent focus:ring-0 focus:outline-none focus:border-transparent focus:shadow-none focus-visible:ring-0 placeholder:text-gray-400 w-full"
                 />
               </div>
-
-              {/* Scanner Button (Mobile only) */}
-              <Button
-                type="button"
-                onClick={() => setIsScannerOpen(true)}
-                className="m-2 px-3 py-4 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-300 rounded-xl transition-all duration-200"
-                title="Escanear código de barras"
-              >
-                <Camera className="w-5 h-5" />
-              </Button>
 
               <Button
                 type="submit"
                 disabled={loading}
-                className="m-2 px-8 py-4 bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white font-semibold rounded-xl transition-all duration-200 transform hover:scale-105 disabled:opacity-50"
+                className="m-2 px-6 sm:px-8 py-4 bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white font-semibold rounded-xl transition-all duration-200 transform hover:scale-105 disabled:opacity-50 flex-shrink-0"
               >
                 {loading ? (
                   <div className="flex items-center gap-2">
@@ -223,17 +196,10 @@ export function Hero() {
           )}
         </form>
 
-        {/* Barcode Scanner Modal */}
-        <BarcodeScanner
-          isOpen={isScannerOpen}
-          onClose={() => setIsScannerOpen(false)}
-          onScan={handleScannerResult}
-        />
-
         {/* Quick Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 max-w-4xl mx-auto">
           <div className="text-center">
-            <div className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">
+            <div className="text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">
               2M+
             </div>
             <div className="text-gray-600 dark:text-gray-400">
@@ -241,7 +207,7 @@ export function Hero() {
             </div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-green-600 dark:text-green-400 mb-2">
+            <div className="text-2xl sm:text-3xl font-bold text-green-600 dark:text-green-400 mb-2">
               100+
             </div>
             <div className="text-gray-600 dark:text-gray-400">
@@ -249,7 +215,7 @@ export function Hero() {
             </div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-purple-600 dark:text-purple-400 mb-2">
+            <div className="text-2xl sm:text-3xl font-bold text-purple-600 dark:text-purple-400 mb-2">
               24/7
             </div>
             <div className="text-gray-600 dark:text-gray-400">
@@ -260,7 +226,7 @@ export function Hero() {
       </div>
 
       {/* Scroll Indicator */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+      <div className="absolute bottom-4 sm:bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce mt-12 sm:mt-16">
         <div className="w-6 h-10 border-2 border-gray-400 dark:border-gray-500 rounded-full flex justify-center">
           <div className="w-1 h-3 bg-gray-400 dark:bg-gray-500 rounded-full mt-2 animate-pulse"></div>
         </div>

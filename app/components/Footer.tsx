@@ -41,7 +41,7 @@ export function Footer() {
             <ul className="space-y-3">
               <li>
                 <a
-                  href="#como-funciona"
+                  href="/#como-funciona"
                   className="text-gray-400 hover:text-white transition-colors"
                 >
                   Como funciona
@@ -49,7 +49,7 @@ export function Footer() {
               </li>
               <li>
                 <a
-                  href="#recursos"
+                  href="/#recursos"
                   className="text-gray-400 hover:text-white transition-colors"
                 >
                   Recursos

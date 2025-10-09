@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown } from "lucide-react";
+// ChevronDown removido - não utilizado
 import {
   Accordion,
   AccordionContent,

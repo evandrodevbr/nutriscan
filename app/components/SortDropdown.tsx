@@ -4,7 +4,7 @@ import {
   ChevronDown,
   TrendingUp,
   Zap,
-  AlphabeticalOrder,
+  SortAsc,
   Building2,
   Flame,
   Droplet,
@@ -23,13 +23,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { SORT_OPTIONS, SortOption } from "@/lib/types";
+import { SORT_OPTIONS } from "@/lib/types";
 
 // Mapear ícones para cada opção
-const SORT_ICONS: Record<string, any> = {
+const SORT_ICONS: Record<
+  string,
+  React.ComponentType<{ className?: string }>
+> = {
   relevance: TrendingUp,
   nutrition_grade: Zap,
-  name: AlphabeticalOrder,
+  name: SortAsc,
   brand: Building2,
   energy: Flame,
   fat: Droplet,
@@ -60,7 +63,7 @@ export function SortDropdown({
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
-          className={`flex items-center gap-2 ${className}`}
+          className={`flex items-center gap-2 border-gray-100 dark:border-gray-800 ${className}`}
         >
           <span className="text-sm font-medium">
             Ordenar por: {selectedOption.label}
@@ -69,7 +72,10 @@ export function SortDropdown({
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" className="w-72">
+      <DropdownMenuContent
+        align="end"
+        className="w-72 border-gray-100 dark:border-gray-800"
+      >
         {SORT_OPTIONS.map((option) => {
           const IconComponent = SORT_ICONS[option.value];
           return (

@@ -10,7 +10,7 @@ interface CountryInfo {
 
 // Cache para evitar múltiplas requisições
 const CACHE_KEY = "nutriscan_user_country";
-const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 horas
+const CACHE_DURATION = 7 * 24 * 60 * 60 * 1000; // 7 dias
 
 /**
  * Verifica se o cache ainda é válido

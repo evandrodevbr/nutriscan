@@ -4,14 +4,14 @@ import { useState } from "react";
 import { Header } from "@/app/components/header";
 import { Footer } from "@/app/components/Footer";
 import { PricingHero } from "@/app/components/pricing/PricingHero";
-import { BillingToggle } from "@/app/components/pricing/BillingToggle";
+// BillingToggle removido - não utilizado
 import { PricingCard } from "@/app/components/pricing/PricingCard";
 import { PricingFAQ } from "@/app/components/pricing/PricingFAQ";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 
 export default function PricingPage() {
-  const [isAnnual, setIsAnnual] = useState(false);
+  const [isAnnual] = useState(false);
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
@@ -25,14 +25,15 @@ export default function PricingPage() {
           </div>
         </section>
 
-        {/* Billing Toggle */}
+        {/* Beta Message */}
         <section className="pb-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <BillingToggle
-              isAnnual={isAnnual}
-              onToggle={setIsAnnual}
-              className="mb-8"
-            />
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300 rounded-full text-sm font-medium">
+                <CheckCircle2 className="w-4 h-4" />
+                Atualmente em fase beta com acesso gratuito
+              </div>
+            </div>
           </div>
         </section>
 
@@ -43,16 +44,19 @@ export default function PricingPage() {
               <PricingCard
                 plan="basic"
                 isAnnual={isAnnual}
+                isDisabled={true}
                 className="md:order-1"
               />
               <PricingCard
                 plan="premium"
                 isAnnual={isAnnual}
+                isDisabled={true}
                 className="md:order-2"
               />
               <PricingCard
                 plan="free"
                 isAnnual={isAnnual}
+                isSelected={true}
                 className="md:order-3"
               />
             </div>

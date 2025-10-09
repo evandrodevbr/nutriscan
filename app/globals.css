@@ -2,6 +2,42 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Otimizações de performance para animações */
+@layer utilities {
+  .animate-in {
+    animation: fadeInUp 0.6s ease-out forwards;
+  }
+
+  .fade-in-0 {
+    opacity: 0;
+  }
+
+  .slide-in-from-bottom-4 {
+    transform: translateY(1rem);
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(1rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Otimização para listas grandes */
+  .product-grid {
+    contain: layout style paint;
+  }
+
+  .product-card {
+    will-change: transform;
+    backface-visibility: hidden;
+  }
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

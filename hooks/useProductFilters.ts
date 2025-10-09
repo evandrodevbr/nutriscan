@@ -42,68 +42,75 @@ export function useProductFilters(options: UseProductFiltersOptions = {}) {
     }
   }, [filters, persistToLocalStorage, localStorageKey]);
 
-  // Sincronizar filtros com URL
-  useEffect(() => {
-    const url = new URL(window.location.href);
-    const currentParams = new URLSearchParams(url.search);
+  // Sincronizar filtros com URL (debounced)
+  const debouncedSyncURL = useCallback(
+    debounce((filters: ProductFilters) => {
+      const url = new URL(window.location.href);
+      const currentParams = new URLSearchParams(url.search);
 
-    // Remover parâmetros de filtro existentes
-    const filterParams = [
-      "nutrition_grades",
-      "nova_groups",
-      "categories",
-      "brands",
-      "allergens",
-      "exclude_allergens",
-      "additives",
-      "exclude_additives",
-      "no_additives",
-      "countries",
-      "sort_by",
-      "sort_order",
-      "energy_min",
-      "energy_max",
-      "fat_min",
-      "fat_max",
-      "sugars_min",
-      "sugars_max",
-      "sodium_min",
-      "sodium_max",
-    ];
+      // Remover parâmetros de filtro existentes
+      const filterParams = [
+        "nutrition_grades",
+        "nova_groups",
+        "categories",
+        "brands",
+        "allergens",
+        "exclude_allergens",
+        "additives",
+        "exclude_additives",
+        "no_additives",
+        "countries",
+        "sort_by",
+        "sort_order",
+        "energy_min",
+        "energy_max",
+        "fat_min",
+        "fat_max",
+        "sugars_min",
+        "sugars_max",
+        "sodium_min",
+        "sodium_max",
+      ];
 
-    filterParams.forEach((param) => {
-      currentParams.delete(param);
-    });
+      filterParams.forEach((param) => {
+        currentParams.delete(param);
+      });
 
-    // Adicionar novos parâmetros de filtro
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value !== undefined && value !== null && value !== "") {
-        if (Array.isArray(value)) {
-          if (value.length > 0) {
-            currentParams.set(key, value.join(","));
+      // Adicionar novos parâmetros de filtro
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== "") {
+          if (Array.isArray(value)) {
+            if (value.length > 0) {
+              currentParams.set(key, value.join(","));
+            }
+          } else if (typeof value === "object" && value !== null) {
+            // Para nutritionRanges
+            Object.entries(value).forEach(([rangeKey, rangeValue]) => {
+              if (rangeValue?.min !== undefined) {
+                currentParams.set(`${rangeKey}_min`, rangeValue.min.toString());
+              }
+              if (rangeValue?.max !== undefined) {
+                currentParams.set(`${rangeKey}_max`, rangeValue.max.toString());
+              }
+            });
+          } else {
+            currentParams.set(key, value.toString());
           }
-        } else if (typeof value === "object" && value !== null) {
-          // Para nutritionRanges
-          Object.entries(value).forEach(([rangeKey, rangeValue]) => {
-            if (rangeValue?.min !== undefined) {
-              currentParams.set(`${rangeKey}_min`, rangeValue.min.toString());
-            }
-            if (rangeValue?.max !== undefined) {
-              currentParams.set(`${rangeKey}_max`, rangeValue.max.toString());
-            }
-          });
-        } else {
-          currentParams.set(key, value.toString());
         }
-      }
-    });
+      });
 
-    // Atualizar URL sem recarregar a página
-    const newUrl = `${url.pathname}?${currentParams.toString()}`;
-    if (newUrl !== window.location.pathname + window.location.search) {
-      router.replace(newUrl, { scroll: false });
-    }
-  }, [filters, router]);
+      // Atualizar URL sem recarregar a página
+      const newUrl = `${url.pathname}?${currentParams.toString()}`;
+      if (newUrl !== window.location.pathname + window.location.search) {
+        router.replace(newUrl, { scroll: false });
+      }
+    }, 500),
+    [router]
+  );
+
+  useEffect(() => {
+    debouncedSyncURL(filters);
+  }, [filters, debouncedSyncURL]);
 
   // Debounced update dos filtros
   const debouncedUpdateFilters = useCallback(

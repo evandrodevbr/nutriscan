@@ -1,11 +1,10 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import {
   Search,
   ArrowLeft,
   Loader2,
-  Filter,
   Grid,
   List,
   SlidersHorizontal,
@@ -53,8 +52,7 @@ export default function ResultadosPage() {
       try {
         const country = await detectUserCountry(true);
         setDetectedCountry(country.code);
-      } catch (error) {
-        console.warn("Erro ao detectar país:", error);
+      } catch {
         setDetectedCountry("br");
       }
     };
@@ -62,88 +60,88 @@ export default function ResultadosPage() {
     detectCountry();
   }, []);
 
+  const loadProducts = useCallback(
+    async (pageNum: number) => {
+      try {
+        if (pageNum === 1) {
+          setLoading(true);
+        } else {
+          setLoadingMore(true);
+        }
+        setError(null);
+        setIsLoading(true);
+
+        const countryToUse = detectedCountry || countryParam || "br";
+
+        const result = await searchByName(query, countryToUse, pageNum, 20);
+
+        // Aplicar ordenação se especificada
+        let sortedProducts = result.products;
+        if (filters.sortBy) {
+          sortedProducts = sortProducts(
+            result.products,
+            filters.sortBy,
+            filters.sortOrder || "asc"
+          );
+        }
+
+        setProducts((prevProducts) =>
+          pageNum === 1 ? sortedProducts : [...prevProducts, ...sortedProducts]
+        );
+        setHasMore(result.products.length === 20);
+        setPage(pageNum);
+        setTotalResults(result.count || result.products.length);
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : "Erro ao buscar produtos"
+        );
+      } finally {
+        setLoading(false);
+        setLoadingMore(false);
+        setIsLoading(false);
+      }
+    },
+    [
+      query,
+      detectedCountry,
+      countryParam,
+      filters.sortBy,
+      filters.sortOrder,
+      setIsLoading,
+      setTotalResults,
+    ]
+  );
+
   useEffect(() => {
     if (query) {
       loadProducts(1);
     }
-  }, [query, countryParam, detectedCountry, filters]);
+  }, [query, countryParam, detectedCountry, loadProducts]);
 
-  const loadProducts = async (pageNum: number) => {
-    try {
-      if (pageNum === 1) {
-        setLoading(true);
-      } else {
-        setLoadingMore(true);
-      }
-      setError(null);
-      setIsLoading(true);
-
-      const countryToUse = detectedCountry || countryParam || "br";
-
-      // Construir parâmetros de busca com filtros
-      const searchParams = new URLSearchParams({
-        q: query,
-        country: countryToUse,
-        page: pageNum.toString(),
-        page_size: "20",
-      });
-
-      // Adicionar filtros à URL
-      Object.entries(filters).forEach(([key, value]) => {
-        if (value !== undefined && value !== null && value !== "") {
-          if (Array.isArray(value)) {
-            if (value.length > 0) {
-              searchParams.set(key, value.join(","));
-            }
-          } else if (typeof value === "object" && value !== null) {
-            Object.entries(value).forEach(([rangeKey, rangeValue]) => {
-              if (rangeValue?.min !== undefined) {
-                searchParams.set(`${rangeKey}_min`, rangeValue.min.toString());
-              }
-              if (rangeValue?.max !== undefined) {
-                searchParams.set(`${rangeKey}_max`, rangeValue.max.toString());
-              }
-            });
-          } else {
-            searchParams.set(key, value.toString());
-          }
-        }
-      });
-
-      const result = await searchByName(query, countryToUse, pageNum, 20);
-
-      // Aplicar ordenação se especificada
-      let sortedProducts = result.products;
-      if (filters.sortBy) {
-        sortedProducts = sortProducts(
-          result.products,
-          filters.sortBy,
-          filters.sortOrder || "asc"
-        );
-      }
-
-      setProducts(
-        pageNum === 1 ? sortedProducts : [...products, ...sortedProducts]
-      );
-      setHasMore(result.products.length === 20);
-      setPage(pageNum);
-      setTotalResults(result.count || result.products.length);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro ao buscar produtos");
-    } finally {
-      setLoading(false);
-      setLoadingMore(false);
-      setIsLoading(false);
-    }
-  };
-
-  const handleLoadMore = () => {
+  const handleLoadMore = useCallback(() => {
     loadProducts(page + 1);
-  };
+  }, [loadProducts, page]);
 
-  const handleSortChange = (sortBy: string) => {
-    updateFilters({ sortBy: sortBy as any });
-  };
+  const handleSortChange = useCallback(
+    (sortBy: string) => {
+      updateFilters({
+        sortBy: sortBy as
+          | "relevance"
+          | "nutrition_grade"
+          | "name"
+          | "brand"
+          | "energy"
+          | "fat"
+          | "sugars"
+          | "completeness"
+          | "with_images"
+          | "with_nutrition"
+          | "eco_score"
+          | "nova_group",
+      });
+    },
+    [updateFilters]
+  );
 
   if (!query) {
     return (
@@ -181,7 +179,7 @@ export default function ResultadosPage() {
 
             <div className="flex-1">
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                Resultados para "{query}"
+                Resultados para &quot;{query}&quot;
               </h1>
               {!loading && products.length > 0 && (
                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
@@ -342,7 +340,7 @@ export default function ResultadosPage() {
             {!loading && products.length > 0 && (
               <>
                 <div
-                  className={`grid gap-6 mb-8 ${
+                  className={`product-grid grid gap-6 mb-8 ${
                     viewMode === "grid"
                       ? "grid-cols-1 sm:grid-cols-2 xl:grid-cols-3"
                       : "grid-cols-1"
@@ -352,7 +350,10 @@ export default function ResultadosPage() {
                     <div
                       key={product.code}
                       className="animate-in fade-in-0 slide-in-from-bottom-4"
-                      style={{ animationDelay: `${index * 50}ms` }}
+                      style={{
+                        animationDelay: `${Math.min(index * 50, 500)}ms`,
+                        animationFillMode: "both",
+                      }}
                     >
                       <ProductCard product={product} />
                     </div>
