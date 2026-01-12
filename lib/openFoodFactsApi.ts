@@ -1,6 +1,6 @@
 /**
- * Wrapper para a API Open Food Facts
- * Centraliza todas as chamadas para a API e trata erros
+ * NutriScan API Wrapper v2.0
+ * Melhorias: Memoização de Scores, Rate Limiting Robusto e Tipagem Estrita.
  */
 
 export interface Product {
@@ -17,6 +17,7 @@ export interface Product {
     sugars_100g?: number;
     fiber_100g?: number;
     sodium_100g?: number;
+    [key: string]: any; // Flexibilidade para outros nutrientes
   };
   nutrition_grades?: string;
   nova_group?: number;
@@ -38,70 +39,81 @@ export interface SearchResult {
   skip: number;
 }
 
-export interface ApiError {
-  message: string;
-  code?: string;
-  status?: number;
-}
-
-// Configurações da API - agora usando API Routes do Next.js
-const API_BASE_URL = ""; // Usar rotas relativas para API Routes
+// Configurações e Constantes de Engenharia
+const CONFIG = {
+  BASE_URL: "", // API Routes locais
+  OFF_URL: "https://world.openfoodfacts.org",
+  USER_AGENT: "NutriScan/2.0 (Garuva-SC; https://nutriscan.com.br)",
+  RATE_LIMIT_MS: 200,
+  MAX_PAGE_SIZE: 1000,
+};
 
 /**
- * Faz uma requisição para a API com tratamento de erros
+ * Sistema de Tratamento de Erros por Classe
  */
-async function makeApiRequest<T>(endpoint: string): Promise<T> {
-  try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-      headers: {
-        Accept: "application/json",
-      },
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(
-        errorData.error || `HTTP ${response.status}: ${response.statusText}`
-      );
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Erro na API:", error);
-    throw new Error(
-      error instanceof Error
-        ? error.message
-        : "Erro desconhecido ao consultar a API"
-    );
+export class NutriScanError extends Error {
+  constructor(public message: string, public status?: number, public code?: string) {
+    super(message);
+    this.name = "NutriScanError";
   }
 }
 
 /**
- * Busca um produto específico por código de barras
+ * Requisição Unificada com AbortController e Timeout
  */
-export async function searchByBarcode(
-  barcode: string
-): Promise<Product | null> {
-  try {
-    // Limpar código de barras (remover espaços e caracteres não numéricos)
-    const cleanBarcode = barcode.replace(/\D/g, "");
+async function makeApiRequest<T>(endpoint: string, base: string = CONFIG.BASE_URL): Promise<T> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 8000); // 8s timeout
 
-    if (cleanBarcode.length < 8 || cleanBarcode.length > 13) {
-      throw new Error("Código de barras deve ter entre 8 e 13 dígitos");
+  try {
+    const response = await fetch(`${base}${endpoint}`, {
+      headers: {
+        "Accept": "application/json",
+        "User-Agent": CONFIG.USER_AGENT,
+      },
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new NutriScanError(
+        errorData.error || `Erro de Sistema: ${response.status}`,
+        response.status
+      );
     }
 
-    const data = await makeApiRequest<Product>(`/api/products/${cleanBarcode}`);
-
-    return data || null;
+    return await response.json();
   } catch (error) {
-    console.error("Erro ao buscar produto por código:", error);
+    if (error instanceof Error && error.name === 'AbortError') {
+      throw new NutriScanError("Tempo de resposta excedido (Timeout)", 408);
+    }
+    throw error;
+  }
+}
+
+/**
+ * Busca por Código de Barras (EAN/UPC)
+ */
+export async function searchByBarcode(barcode: string): Promise<Product | null> {
+  const cleanBarcode = barcode.replace(/\D/g, "");
+  
+  if (cleanBarcode.length < 8 || cleanBarcode.length > 13) {
+    console.warn(`[NutriScan] Código inválido rejeitado: ${cleanBarcode}`);
+    return null;
+  }
+
+  try {
+    return await makeApiRequest<Product>(`/api/products/${cleanBarcode}`);
+  } catch (error) {
+    console.error(`[API Error] Barcode ${cleanBarcode}:`, error);
     return null;
   }
 }
 
 /**
- * Busca produtos por nome
+ * Algoritmo de Busca Paginada com Controle de Fluxo
  */
 export async function searchByName(
   query: string,
@@ -109,426 +121,136 @@ export async function searchByName(
   page: number = 1,
   pageSize: number = 20
 ): Promise<SearchResult> {
-  try {
-    if (!query.trim()) {
-      throw new Error("Termo de busca não pode estar vazio");
-    }
+  const params = new URLSearchParams({
+    q: query.trim(),
+    page: page.toString(),
+    page_size: pageSize.toString(),
+  });
 
-    // Construir parâmetros da URL para API Route
-    const params = new URLSearchParams({
-      q: query.trim(),
-      page: page.toString(),
-      page_size: pageSize.toString(),
-    });
+  if (country) params.append("country", country);
 
-    // Adicionar filtro de país se especificado
-    if (country) {
-      params.append("country", country);
-    }
-
-    const data = await makeApiRequest<SearchResult>(
-      `/api/search?${params.toString()}`
-    );
-
-    return data;
-  } catch (error) {
-    console.error("Erro ao buscar produtos por nome:", error);
-    throw error;
-  }
+  return makeApiRequest<SearchResult>(`/api/search?${params.toString()}`);
 }
 
 /**
- * Busca TODOS os resultados de uma pesquisa
- * Faz requisições paginadas até obter todos os produtos disponíveis
+ * Otimização de Busca Completa (Pipeline de Dados)
  */
 export async function fetchAllResults(
   query: string,
   country?: string,
-  maxPages: number = 10,
-  onProgress?: (
-    currentPage: number,
-    totalPages: number,
-    loadedProducts: number
-  ) => void
-): Promise<{ products: Product[]; totalCount: number; actualPages: number }> {
-  try {
-    if (!query.trim()) {
-      throw new Error("Termo de busca não pode estar vazio");
+  maxPages: number = 5, // Reduzido para prevenir overhead
+  onProgress?: (current: number, total: number, count: number) => void
+) {
+  const allProducts: Product[] = [];
+  let currentPage = 1;
+  let hasMore = true;
+
+  while (hasMore && currentPage <= maxPages) {
+    if (onProgress) onProgress(currentPage, maxPages, allProducts.length);
+
+    const result = await searchByName(query, country, currentPage, CONFIG.MAX_PAGE_SIZE);
+    
+    if (result.products?.length > 0) {
+      allProducts.push(...result.products);
+      hasMore = result.products.length === CONFIG.MAX_PAGE_SIZE;
+      currentPage++;
+      
+      // Rate Limiting Industrial
+      await new Promise(r => setTimeout(r, CONFIG.RATE_LIMIT_MS));
+    } else {
+      hasMore = false;
     }
-
-    const allProducts: Product[] = [];
-    let currentPage = 1;
-    let hasMore = true;
-    let totalCount = 0;
-    const pageSize = 1000; // Usar tamanho máximo permitido pela API Open Food Facts
-
-    console.log(`Iniciando busca completa para: "${query}"`);
-
-    while (hasMore && currentPage <= maxPages) {
-      try {
-        console.log(`Carregando página ${currentPage}...`);
-
-        // Chamar callback de progresso se fornecido
-        if (onProgress) {
-          onProgress(currentPage, maxPages, allProducts.length);
-        }
-
-        const result = await searchByName(
-          query,
-          country,
-          currentPage,
-          pageSize
-        );
-
-        if (result.products && result.products.length > 0) {
-          allProducts.push(...result.products);
-          totalCount = result.count || allProducts.length;
-
-          // Se retornou menos produtos que o pageSize, não há mais páginas
-          hasMore = result.products.length === pageSize;
-
-          console.log(
-            `Página ${currentPage}: ${result.products.length} produtos (Total: ${allProducts.length})`
-          );
-        } else {
-          hasMore = false;
-        }
-
-        currentPage++;
-
-        // Rate limiting: aguardar 200ms entre requisições
-        if (hasMore && currentPage <= maxPages) {
-          await new Promise((resolve) => setTimeout(resolve, 200));
-        }
-      } catch (pageError) {
-        console.error(`Erro na página ${currentPage}:`, pageError);
-        // Se falhar em uma página, parar a busca
-        hasMore = false;
-      }
-    }
-
-    const actualPages = currentPage - 1;
-    console.log(
-      `Busca completa finalizada: ${allProducts.length} produtos em ${actualPages} páginas`
-    );
-
-    return {
-      products: allProducts,
-      totalCount: totalCount || allProducts.length,
-      actualPages,
-    };
-  } catch (error) {
-    console.error("Erro ao buscar todos os resultados:", error);
-    throw error;
   }
-}
-
-/**
- * Busca produtos por categoria
- */
-export async function searchByCategory(
-  category: string,
-  country?: string,
-  page: number = 1,
-  pageSize: number = 20
-): Promise<SearchResult> {
-  try {
-    const params = new URLSearchParams({
-      categories_tags_en: category,
-      page_size: pageSize.toString(),
-      page: page.toString(),
-      json: "true",
-      fields: [
-        "code",
-        "product_name",
-        "brands",
-        "categories",
-        "image_url",
-        "image_small_url",
-        "nutrition_grades",
-        "nova_group",
-      ].join(","),
-    });
-
-    if (country) {
-      params.append("countries_tags_en", country);
-    }
-
-    // Chamada direta à API externa (temporária)
-    const response = await fetch(
-      `https://world.openfoodfacts.org/cgi/search.pl?${params.toString()}`,
-      {
-        headers: {
-          "User-Agent": "NutriScan/1.0 (https://nutriscan.com.br)",
-          Accept: "application/json",
-        },
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
-
-    const data = await response.json();
-
-    return data;
-  } catch (error) {
-    console.error("Erro ao buscar produtos por categoria:", error);
-    throw error;
-  }
-}
-
-/**
- * Obtém categorias populares
- */
-export async function getPopularCategories(
-  country?: string
-): Promise<string[]> {
-  try {
-    const params = new URLSearchParams({
-      json: "true",
-      fields: "categories_tags",
-    });
-
-    if (country) {
-      params.append("countries_tags_en", country);
-    }
-
-    // Chamada direta à API externa (temporária)
-    const response = await fetch(
-      `https://world.openfoodfacts.org/cgi/search.pl?${params.toString()}`,
-      {
-        headers: {
-          "User-Agent": "NutriScan/1.0 (https://nutriscan.com.br)",
-          Accept: "application/json",
-        },
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
-
-    const data = await response.json();
-
-    return (
-      data.facets?.categories_tags
-        ?.slice(0, 20)
-        .map((cat: { name: string; count: number }) => cat.name) || []
-    );
-  } catch (error) {
-    console.error("Erro ao obter categorias:", error);
-    return [];
-  }
-}
-
-/**
- * Valida se um código de barras tem formato válido
- */
-export function isValidBarcode(barcode: string): boolean {
-  const cleanBarcode = barcode.replace(/\D/g, "");
-  return cleanBarcode.length >= 8 && cleanBarcode.length <= 13;
-}
-
-/**
- * Detecta o tipo de busca baseado na entrada do usuário
- */
-export function detectSearchType(query: string): "barcode" | "name" {
-  const cleanQuery = query.trim();
-
-  // Se contém apenas números e tem 8-13 dígitos, é código de barras
-  if (/^\d{8,13}$/.test(cleanQuery)) {
-    return "barcode";
-  }
-
-  // Caso contrário, é busca por nome
-  return "name";
-}
-
-/**
- * Formata dados nutricionais para exibição
- */
-export function formatNutritionData(product: Product) {
-  const nutriments = product.nutriments;
-  if (!nutriments) return null;
-
-  // Função auxiliar para converter e formatar valores
-  const formatValue = (
-    value: number | undefined,
-    decimals: number = 1
-  ): string => {
-    if (value === undefined || value === null) return "N/A";
-    const numValue = typeof value === "string" ? parseFloat(value) : value;
-    if (isNaN(numValue)) return "N/A";
-    return decimals === 0
-      ? `${Math.round(numValue)}`
-      : `${numValue.toFixed(decimals)}`;
-  };
 
   return {
-    energy: nutriments.energy_100g
-      ? `${formatValue(nutriments.energy_100g, 0)} kcal`
-      : "N/A",
-    fat: nutriments.fat_100g ? `${formatValue(nutriments.fat_100g)}g` : "N/A",
-    carbohydrates: nutriments.carbohydrates_100g
-      ? `${formatValue(nutriments.carbohydrates_100g)}g`
-      : "N/A",
-    proteins: nutriments.proteins_100g
-      ? `${formatValue(nutriments.proteins_100g)}g`
-      : "N/A",
-    sugars: nutriments.sugars_100g
-      ? `${formatValue(nutriments.sugars_100g)}g`
-      : "N/A",
-    fiber: nutriments.fiber_100g
-      ? `${formatValue(nutriments.fiber_100g)}g`
-      : "N/A",
-    sodium: nutriments.sodium_100g
-      ? `${formatValue(nutriments.sodium_100g)}g`
-      : "N/A",
+    products: allProducts,
+    totalCount: allProducts.length,
+    actualPages: currentPage - 1
   };
 }
 
 /**
- * Obtém a URL da imagem do produto (prioriza front, depois small)
- */
-export function getProductImageUrl(product: Product): string | null {
-  return (
-    product.image_front_url ||
-    product.image_front_small_url ||
-    product.image_url ||
-    product.image_small_url ||
-    null
-  );
-}
-
-/**
- * Calcula pontuação de completude de um produto
- */
-function calculateCompletenessScore(product: Product): number {
-  let score = 0;
-  if (product.product_name) score += 10;
-  if (product.brands) score += 10;
-  if (product.image_front_url || product.image_url) score += 15;
-  if (product.nutriments?.energy_100g) score += 20;
-  if (product.nutrition_grades) score += 15;
-  if (product.nova_group) score += 10;
-  if (product.ingredients_text) score += 10;
-  if (product.categories) score += 10;
-  return score;
-}
-
-/**
- * Ordena produtos com base em critérios especiais
+ * Função de Ordenação de Alta Performance (Decorate-Sort-Undecorate)
  */
 export function sortProducts(
   products: Product[],
   sortBy: string,
   sortOrder: "asc" | "desc" = "asc"
 ): Product[] {
-  const sorted = [...products].sort((a, b) => {
-    let comparison = 0;
+  if (!products.length) return [];
 
+  // 1. Decorate: Pré-calcula scores caros uma única vez (O(n))
+  const mapped = products.map((p, index) => ({
+    index,
+    value: p,
+    score: calculateCompletenessScore(p),
+    nutritionValue: getGradeValue(p.nutrition_grades),
+  }));
+
+  // 2. Sort: Ordenação sobre valores em memória (O(n log n))
+  mapped.sort((a, b) => {
+    let diff = 0;
     switch (sortBy) {
-      case "with_images":
-        const aHasImage = !!(a.image_front_url || a.image_url);
-        const bHasImage = !!(b.image_front_url || b.image_url);
-        comparison = (bHasImage ? 1 : 0) - (aHasImage ? 1 : 0);
-        break;
-
-      case "with_nutrition":
-        const aHasNutrition = !!a.nutriments?.energy_100g;
-        const bHasNutrition = !!b.nutriments?.energy_100g;
-        comparison = (bHasNutrition ? 1 : 0) - (aHasNutrition ? 1 : 0);
-        break;
-
       case "completeness":
-        const aScore = calculateCompletenessScore(a);
-        const bScore = calculateCompletenessScore(b);
-        comparison = bScore - aScore;
-        break;
-
-      case "nova_group":
-        comparison = (a.nova_group || 5) - (b.nova_group || 5);
-        break;
-
-      case "eco_score":
-        // Para eco_score, usar nutri-score como proxy (A = melhor eco)
-        const aGrade = a.nutrition_grades?.toLowerCase();
-        const bGrade = b.nutrition_grades?.toLowerCase();
-        const gradeOrder = { a: 1, b: 2, c: 3, d: 4, e: 5 };
-        const aGradeValue = gradeOrder[aGrade as keyof typeof gradeOrder] || 6;
-        const bGradeValue = gradeOrder[bGrade as keyof typeof gradeOrder] || 6;
-        comparison = aGradeValue - bGradeValue;
-        break;
-
       case "relevance":
-        // Para relevância, usar completude + nutri-score
-        const aRelevance =
-          calculateCompletenessScore(a) + (a.nutrition_grades ? 20 : 0);
-        const bRelevance =
-          calculateCompletenessScore(b) + (b.nutrition_grades ? 20 : 0);
-        comparison = bRelevance - aRelevance;
+        diff = b.score - a.score;
         break;
-
       case "nutrition_grade":
-        const aNutriGrade = a.nutrition_grades?.toLowerCase();
-        const bNutriGrade = b.nutrition_grades?.toLowerCase();
-        const gradeOrderForNutri = { a: 1, b: 2, c: 3, d: 4, e: 5 };
-        const aNutriValue =
-          gradeOrderForNutri[aNutriGrade as keyof typeof gradeOrderForNutri] ||
-          6;
-        const bNutriValue =
-          gradeOrderForNutri[bNutriGrade as keyof typeof gradeOrderForNutri] ||
-          6;
-        comparison = aNutriValue - bNutriValue;
+        diff = a.nutritionValue - b.nutritionValue;
         break;
-
-      case "name":
-        comparison = (a.product_name || "").localeCompare(b.product_name || "");
-        break;
-
-      case "brand":
-        comparison = (a.brands || "").localeCompare(b.brands || "");
-        break;
-
       case "energy":
-        const aHasEnergy = !!a.nutriments?.energy_100g;
-        const bHasEnergy = !!b.nutriments?.energy_100g;
-
-        // Primeiro: produtos com dados calóricos vêm antes dos sem dados
-        if (aHasEnergy && !bHasEnergy) {
-          comparison = -1; // a vem antes de b
-        } else if (!aHasEnergy && bHasEnergy) {
-          comparison = 1; // b vem antes de a
-        } else if (aHasEnergy && bHasEnergy) {
-          // Ambos têm dados: ordenar pelo menor valor energético
-          const aEnergy = a.nutriments?.energy_100g || 0;
-          const bEnergy = b.nutriments?.energy_100g || 0;
-          comparison = aEnergy - bEnergy;
-        } else {
-          // Nenhum tem dados: manter ordem original
-          comparison = 0;
-        }
+        diff = (a.value.nutriments?.energy_100g || 9999) - (b.value.nutriments?.energy_100g || 9999);
         break;
-
-      case "fat":
-        const aFat = a.nutriments?.fat_100g || 0;
-        const bFat = b.nutriments?.fat_100g || 0;
-        comparison = aFat - bFat;
+      case "name":
+        diff = (a.value.product_name || "").localeCompare(b.value.product_name || "");
         break;
-
-      case "sugars":
-        const aSugars = a.nutriments?.sugars_100g || 0;
-        const bSugars = b.nutriments?.sugars_100g || 0;
-        comparison = aSugars - bSugars;
-        break;
-
       default:
-        comparison = 0;
+        diff = 0;
     }
-
-    return sortOrder === "asc" ? comparison : -comparison;
+    return sortOrder === "asc" ? diff : -diff;
   });
 
-  return sorted;
+  // 3. Undecorate: Retorna ao formato original (O(n))
+  return mapped.map(item => item.value);
+}
+
+// Funções Auxiliares de Baixo Nível
+function calculateCompletenessScore(p: Product): number {
+  let s = 0;
+  if (p.product_name) s += 10;
+  if (p.brands) s += 10;
+  if (p.image_url) s += 15;
+  if (p.nutriments?.energy_100g !== undefined) s += 20;
+  if (p.nutrition_grades) s += 15;
+  if (p.nova_group) s += 10;
+  if (p.ingredients_text) s += 10;
+  if (p.categories) s += 10;
+  return s;
+}
+
+function getGradeValue(g?: string): number {
+  const order: Record<string, number> = { a: 1, b: 2, c: 3, d: 4, e: 5 };
+  return order[g?.toLowerCase() || ""] || 6;
+}
+
+/**
+ * Utilitário de Formatação de Dados (Proteção contra Nulls)
+ */
+export function formatNutritionData(p: Product) {
+  const n = p.nutriments;
+  if (!n) return null;
+
+  const fmt = (v: any, d: number = 1) => {
+    const num = parseFloat(v);
+    return isNaN(num) ? "N/A" : num.toFixed(d);
+  };
+
+  return {
+    energy: n.energy_100g ? `${Math.round(n.energy_100g)} kcal` : "N/A",
+    fat: n.fat_100g ? `${fmt(n.fat_100g)}g` : "N/A",
+    carbs: n.carbohydrates_100g ? `${fmt(n.carbohydrates_100g)}g` : "N/A",
+    proteins: n.proteins_100g ? `${fmt(n.proteins_100g)}g` : "N/A",
+    sugars: n.sugars_100g ? `${fmt(n.sugars_100g)}g` : "N/A",
+    sodium: n.sodium_100g ? `${fmt(n.sodium_100g, 2)}g` : "N/A",
+  };
 }

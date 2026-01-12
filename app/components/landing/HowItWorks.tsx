@@ -1,203 +1,178 @@
 "use client";
 
-import { ScanLine, Search, BarChart3, CheckCircle } from "lucide-react";
+import React from "react";
+import { motion } from "framer-motion";
+import { ScanLine, Search, BarChart3, CheckCircle, Globe, Zap } from "lucide-react";
+import Image from "next/image";
+import { cn } from "@/lib/utils";
 
-const steps = [
+interface Step {
+  number: string;
+  icon: React.ElementType;
+  title: string;
+  description: string;
+  color: string;
+  glow: string;
+}
+
+const steps: Step[] = [
   {
     number: "01",
     icon: ScanLine,
-    title: "Digitalize sem complicação",
-    description:
-      "Encontre o código de barras na embalagem e escaneie instantaneamente. Nossa tecnologia reconhece produtos de mais de 100 países em segundos.",
-    color: "text-blue-600 dark:text-blue-400",
-    bgColor: "bg-blue-50 dark:bg-blue-900/20",
-    iconBg: "bg-blue-100 dark:bg-blue-900/40",
+    title: "Digitalize",
+    description: "Reconhecimento instantâneo de códigos em mais de 100 países com tecnologia de baixa latência.",
+    color: "text-blue-500",
+    glow: "shadow-blue-500/20",
   },
   {
     number: "02",
     icon: Search,
-    title: "Acesso a milhões de dados colaborativos",
-    description:
-      "Conectamos você diretamente ao Open Food Facts, a Wikipedia dos alimentos — onde a comunidade global contribui com informações sobre produtos.",
-    color: "text-green-600 dark:text-green-400",
-    bgColor: "bg-green-50 dark:bg-green-900/20",
-    iconBg: "bg-green-100 dark:bg-green-900/40",
+    title: "Consulte",
+    description: "Conexão direta ao Open Food Facts, a base de dados colaborativa global (Wikipedia dos alimentos).",
+    color: "text-green-500",
+    glow: "shadow-green-500/20",
   },
   {
     number: "03",
     icon: BarChart3,
-    title: "Informações que fazem diferença",
-    description:
-      "Receba dados nutricionais detalhados, alertas de alérgenos e classificações Nutri-Score. Informações fornecidas pela base de dados Open Food Facts.",
-    color: "text-purple-600 dark:text-purple-400",
-    bgColor: "bg-purple-50 dark:bg-purple-900/20",
-    iconBg: "bg-purple-100 dark:bg-purple-900/40",
+    title: "Analise",
+    description: "Processamento de Nutri-Score, graus de processamento NOVA e alertas de alérgenos críticos.",
+    color: "text-purple-500",
+    glow: "shadow-purple-500/20",
   },
   {
     number: "04",
     icon: CheckCircle,
-    title: "Decisões mais inteligentes, saúde melhor",
-    description:
-      "Use informações transparentes para escolher alimentos alinhados aos seus objetivos. Sem interesses comerciais, sem dados manipulados.",
-    color: "text-orange-600 dark:text-orange-400",
-    bgColor: "bg-orange-50 dark:bg-orange-900/20",
-    iconBg: "bg-orange-100 dark:bg-orange-900/40",
-  },
-];
-
-const features = [
-  {
-    title: "Dados Nutricionais",
-    items: [
-      "Calorias por 100g",
-      "Proteínas, carboidratos e gorduras",
-      "Vitaminas e minerais",
-      "Fibra alimentar",
-    ],
-  },
-  {
-    title: "Classificações",
-    items: [
-      "Nutri-Score (A a E)",
-      "NOVA (processamento)",
-      "Alérgenos identificados",
-      "Aditivos alimentares",
-    ],
-  },
-  {
-    title: "Ingredientes",
-    items: [
-      "Lista completa de ingredientes",
-      "Ordem de quantidade",
-      "Alérgenos destacados",
-      "Origem dos ingredientes",
-    ],
+    title: "Decida",
+    description: "Informação técnica pura e sem vieses comerciais para decisões alinhadas à sua saúde.",
+    color: "text-orange-500",
+    glow: "shadow-orange-500/20",
   },
 ];
 
 export function HowItWorks() {
   return (
-    <section className="py-20 bg-white dark:bg-gray-800">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            Alimentação consciente em 4 passos simples
-          </h2>
-          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            Descubra como milhares de pessoas já tomam decisões alimentares mais
-            conscientes com informações transparentes e confiáveis.
+    <section className="py-24 bg-white dark:bg-[#030712] transition-colors duration-500">
+      <div className="max-w-7xl mx-auto px-6">
+        
+        {/* Header - Foco em Valor Técnico */}
+        <div className="text-center mb-24">
+          <motion.h2 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="text-4xl md:text-5xl font-black text-gray-900 dark:text-white mb-6 tracking-tighter"
+          >
+            Pipeline de <span className="text-blue-600">Consciência Alimentar</span>
+          </motion.h2>
+          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto font-medium">
+            Quatro estágios de processamento de dados para transformar um código de barras em inteligência nutricional.
           </p>
         </div>
 
-        {/* Steps */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-20">
+        {/* Steps Grid - O "Motor" da Seção */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 relative">
           {steps.map((step, index) => (
-            <div key={index} className="relative">
-              {/* Arrow (desktop only) */}
+            <motion.div
+              key={step.number}
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ delay: index * 0.15 }}
+              className="relative group"
+            >
+              {/* Conector Visual (Desktop) */}
               {index < steps.length - 1 && (
-                <div className="hidden lg:flex absolute top-1/2 -right-4 transform -translate-y-1/2 z-10">
-                  <svg
-                    width="32"
-                    height="24"
-                    viewBox="0 0 32 24"
-                    fill="none"
-                    className="text-gray-400 dark:text-gray-600"
-                  >
-                    <path
-                      d="M0 12H30M30 12L20 2M30 12L20 22"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </div>
+                <div className="hidden lg:block absolute top-12 -right-8 w-16 h-[2px] bg-gradient-to-r from-gray-200 to-transparent dark:from-gray-800 z-0" />
               )}
 
-              <div
-                className={`${step.bgColor} p-8 rounded-2xl border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-all duration-300 group`}
-              >
-                {/* Number */}
-                <div className="text-6xl font-bold text-gray-200 dark:text-gray-600 mb-4">
-                  {step.number}
+              <div className={cn(
+                "relative z-10 p-8 rounded-3xl bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-800 transition-all duration-500 hover:border-blue-500/30",
+                "group-hover:translate-y-[-8px] group-hover:shadow-2xl",
+                step.glow
+              )}>
+                {/* Badge de Número em Estilo Industrial */}
+                <span className="absolute top-4 right-6 text-sm font-black font-mono text-gray-300 dark:text-gray-700">
+                  STEP_{step.number}
+                </span>
+
+                <div className={cn(
+                  "w-14 h-14 rounded-2xl flex items-center justify-center mb-8 bg-white dark:bg-gray-800 shadow-sm transition-transform duration-500 group-hover:rotate-[10deg]",
+                  step.color
+                )}>
+                  <step.icon className="w-7 h-7" />
                 </div>
 
-                {/* Icon */}
-                <div
-                  className={`${step.iconBg} w-16 h-16 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}
-                >
-                  <step.icon className={`w-8 h-8 ${step.color}`} />
-                </div>
-
-                {/* Content */}
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 tracking-tight">
                   {step.title}
                 </h3>
-                <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+                <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed font-medium">
                   {step.description}
                 </p>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
 
-        {/* Features Grid */}
-        <div className="bg-gray-50 dark:bg-gray-900 rounded-2xl p-8">
-          <div className="text-center mb-12">
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-              O que você vai encontrar?
-            </h3>
-            <p className="text-gray-600 dark:text-gray-300">
-              Informações detalhadas e confiáveis sobre cada produto
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {features.map((feature, index) => (
-              <div
-                key={index}
-                className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700"
-              >
-                <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                  {feature.title}
-                </h4>
-                <ul className="space-y-2">
-                  {feature.items.map((item, itemIndex) => (
-                    <li
-                      key={itemIndex}
-                      className="flex items-center gap-2 text-gray-600 dark:text-gray-300"
-                    >
-                      <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
-                      <span className="text-sm">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+        {/* Technical Datasheet (O que você vai encontrar) */}
+        <div className="mt-32 mb-12 flex justify-center">
+          <div className="relative w-full max-w-2xl h-64 rounded-2xl overflow-hidden shadow-2xl">
+            <Image
+              src="/images/nut-facts.webp"
+              alt="Lista de ingredientes e informações nutricionais de produto alimentar"
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+            />
           </div>
         </div>
+        <div className="mt-32 p-10 rounded-[2.5rem] bg-slate-900 text-white relative overflow-hidden shadow-3xl">
+          <div className="absolute top-0 right-0 p-10 opacity-10">
+             <BarChart3 size={200} />
+          </div>
 
-        {/* Bottom CTA */}
-        <div className="text-center mt-16">
-          <a
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              const input = document.querySelector(
-                'input[placeholder*="código de barras"]'
-              ) as HTMLInputElement;
-              input?.focus();
-              window.scrollTo({ top: 0, behavior: "smooth" });
-            }}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-green-600 text-white rounded-full font-semibold hover:shadow-lg transition-all duration-300 hover:scale-105 cursor-pointer"
-          >
-            <ScanLine className="w-5 h-5" />
-            Começar agora
-          </a>
-          <p className="text-gray-500 dark:text-gray-400 text-sm mt-4">
-            É rápido, fácil e totalmente gratuito
-          </p>
+          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-3 gap-12">
+            <div className="lg:col-span-1">
+              <h3 className="text-3xl font-black mb-4 tracking-tighter">Data Specification</h3>
+              <p className="text-slate-400 text-sm leading-relaxed mb-6">
+                Extração de metadados via Open Food Facts API v2. Suporte a protocolos Nutri-Score e classificações NOVA.
+              </p>
+              <div className="flex items-center gap-4 text-xs font-mono text-blue-400 uppercase tracking-widest">
+                <Globe size={14} /> Open Source Database
+              </div>
+            </div>
+
+            <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-8">
+               {/* Lista de Features Refinada */}
+               <div className="space-y-4">
+                  <h4 className="text-blue-500 font-bold text-xs uppercase tracking-widest">Bio-Markers & Macros</h4>
+                  <ul className="space-y-3">
+                    {["Calorias (Kcal/100g)", "Perfil Lipídico e Glicêmico", "Micronutrientes & Fibras"].map(item => (
+                      <li key={item} className="flex items-center gap-3 text-sm text-slate-300">
+                        <Zap size={12} className="text-blue-500" /> {item}
+                      </li>
+                    ))}
+                  </ul>
+               </div>
+               <div className="relative w-full h-48 rounded-xl overflow-hidden">
+                 <Image
+                   src="/images/nutscore.webp"
+                   alt="Sistema de classificação Nutri-Score"
+                   fill
+                   className="object-cover"
+                   sizes="(max-width: 768px) 100vw, 50vw"
+                 />
+               </div>
+               <div className="space-y-4">
+                  <h4 className="text-green-500 font-bold text-xs uppercase tracking-widest">Compliance & Alerta</h4>
+                  <ul className="space-y-3">
+                    {["Identificação de Alérgenos", "Aditivos e Conservantes", "Classificação de Processamento"].map(item => (
+                      <li key={item} className="flex items-center gap-3 text-sm text-slate-300">
+                        <CheckCircle size={12} className="text-green-500" /> {item}
+                      </li>
+                    ))}
+                  </ul>
+               </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>

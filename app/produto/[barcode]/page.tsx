@@ -1,7 +1,12 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
+
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, AlertCircle, Star, AlertTriangle } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  ArrowLeft, AlertCircle, AlertTriangle, 
+  Database, Globe, ShieldCheck, Beaker, ClipboardList 
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import {
@@ -13,6 +18,7 @@ import Link from "next/link";
 import { NutriScoreBadge, NovaBadge } from "@/app/components/NutriScoreBadge";
 import { NutritionGrid } from "@/app/components/NutritionBar";
 import { ProductSkeleton } from "@/app/components/ProductSkeleton";
+import { cn } from "@/lib/utils";
 
 export default function ProdutoPage() {
   const params = useParams();
@@ -27,365 +33,198 @@ export default function ProdutoPage() {
     try {
       setLoading(true);
       setError(null);
-
       const result = await searchByBarcode(barcode);
-      if (result) {
-        setProduct(result);
-      } else {
-        setError("Produto não encontrado");
-      }
+      if (result) setProduct(result);
+      else setError("Produto não catalogado na base ODbL.");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro ao buscar produto");
+      setError("Falha crítica na sincronização de dados.");
     } finally {
       setLoading(false);
     }
   }, [barcode]);
 
   useEffect(() => {
-    if (barcode) {
-      searchProduct();
-    }
+    if (barcode) searchProduct();
   }, [barcode, searchProduct]);
 
-  const getProductImageUrl = (product: Product): string | null => {
-    return (
-      product.image_front_url ||
-      product.image_front_small_url ||
-      product.image_url ||
-      product.image_small_url ||
-      null
-    );
-  };
+  if (loading) return <ProductSkeleton />;
 
-  const getNutritionGrade = (grade?: string) => {
-    if (!grade) return null;
-
-    const grades = {
-      a: {
-        label: "A",
-        color: "bg-green-500",
-        textColor: "text-green-700",
-        description: "Muito bom",
-      },
-      b: {
-        label: "B",
-        color: "bg-green-400",
-        textColor: "text-green-700",
-        description: "Bom",
-      },
-      c: {
-        label: "C",
-        color: "bg-yellow-500",
-        textColor: "text-yellow-700",
-        description: "Regular",
-      },
-      d: {
-        label: "D",
-        color: "bg-orange-500",
-        textColor: "text-orange-700",
-        description: "Ruim",
-      },
-      e: {
-        label: "E",
-        color: "bg-red-500",
-        textColor: "text-red-700",
-        description: "Muito ruim",
-      },
-    };
-
-    return grades[grade.toLowerCase() as keyof typeof grades] || null;
-  };
-
-  const getNovaGroup = (group?: number) => {
-    if (!group) return null;
-
-    const groups = {
-      1: {
-        label: "1",
-        color: "bg-green-500",
-        textColor: "text-green-700",
-        description: "Alimentos não processados ou minimamente processados",
-      },
-      2: {
-        label: "2",
-        color: "bg-yellow-500",
-        textColor: "text-yellow-700",
-        description: "Ingredientes culinários processados",
-      },
-      3: {
-        label: "3",
-        color: "bg-orange-500",
-        textColor: "text-orange-700",
-        description: "Alimentos processados",
-      },
-      4: {
-        label: "4",
-        color: "bg-red-500",
-        textColor: "text-red-700",
-        description: "Alimentos ultraprocessados",
-      },
-    };
-
-    return groups[group as keyof typeof groups] || null;
-  };
-
-  if (loading) {
-    return <ProductSkeleton />;
-  }
-
+  // Handler de Erro - Estética Industrial
   if (error || !product) {
     return (
-      <div className="min-h-screen bg-white dark:bg-gray-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="text-center py-12">
-            <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-              Produto não encontrado
-            </h1>
-            <p className="text-gray-600 dark:text-gray-300 mb-6">
-              {error ||
-                "O produto com este código de barras não foi encontrado na base de dados."}
-            </p>
-            <div className="flex gap-4 justify-center">
-              <Link href="/">
-                <Button>Nova Busca</Button>
-              </Link>
-              <Button variant="outline" onClick={() => router.back()}>
-                Voltar
-              </Button>
-            </div>
+      <div className="min-h-screen bg-white flex items-center justify-center p-6 dark:bg-[#030712]">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="max-w-md w-full text-center space-y-6 border border-slate-200 p-10 rounded-[2.5rem] bg-slate-50 dark:bg-red-950/10 dark:border-red-900/20"
+        >
+          <AlertCircle className="w-16 h-16 text-red-500 mx-auto" />
+          <h1 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">Erro de Protocolo</h1>
+          <p className="text-slate-600 text-sm dark:text-slate-400 font-medium">{error}</p>
+          <div className="flex gap-3">
+            <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white" onClick={() => router.push("/")}>Nova Busca</Button>
+            <Button variant="outline" className="w-full border-slate-300 dark:border-slate-800" onClick={() => router.back()}>Retornar</Button>
           </div>
-        </div>
+        </motion.div>
       </div>
     );
   }
 
-  const imageUrl = getProductImageUrl(product);
-  const nutritionGrade = getNutritionGrade(product.nutrition_grades);
-  const novaGroup = getNovaGroup(product.nova_group);
-  const nutritionData = formatNutritionData(product);
+  const imageUrl = product.image_front_url || product.image_url || null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      {/* Hero Section com gradiente e animação */}
-      <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
-        <div className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-b border-gray-200/50 dark:border-gray-700/50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => router.back()}
-                className="flex items-center gap-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                Voltar
-              </Button>
-
-              <div className="flex-1">
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 animate-fade-in">
-                  {product.product_name || "Produto"}
-                </h1>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Código: {product.code}
-                </p>
-              </div>
+    <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-[#030712] dark:text-slate-200 transition-colors duration-500">
+      
+      {/* 1. NAVEGAÇÃO E TÍTULO (Sticky Header) */}
+      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-200 dark:bg-[#030712]/80 dark:border-white/5">
+        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center gap-6">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={() => router.back()}
+            className="rounded-full hover:bg-slate-100 dark:hover:bg-white/5"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </Button>
+          <div className="flex-1 min-w-0">
+            <h1 className="text-xl font-black tracking-tighter text-slate-900 dark:text-white truncate uppercase">
+              {product.product_name || "Unlabeled Product"}
+            </h1>
+            <div className="flex items-center gap-2 text-[10px] font-mono font-bold text-slate-500 uppercase tracking-widest">
+              <Database size={10} className="text-blue-500" /> {product.code}
             </div>
           </div>
         </div>
-      </div>
+      </header>
 
-      {/* Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Product Image */}
-          <div className="space-y-6">
-            <div className="relative w-full max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.04),0_8px_24px_rgba(0,0,0,0.08)] hover:shadow-[0_4px_16px_rgba(0,0,0,0.08),0_16px_32px_rgba(0,0,0,0.12)] transition-all duration-300 transform hover:-translate-y-1">
-              <div className="aspect-square bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 p-8">
-                {imageUrl ? (
-                  <Image
-                    src={imageUrl}
-                    alt={product.product_name || "Produto"}
-                    fill
-                    className="object-contain transition-transform duration-300 hover:scale-105"
-                    priority
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    placeholder="blur"
-                    blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k="
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-400">
-                    <div className="text-center">
-                      <Star className="w-16 h-16 mx-auto mb-4" />
-                      <p className="text-lg">Sem imagem disponível</p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
+      <main className="max-w-7xl mx-auto px-6 py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+          
+          {/* COLUNA ESQUERDA: Ativos Visuais (5 Colunas) */}
+          <div className="lg:col-span-5 space-y-8">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="relative aspect-square bg-white rounded-[3rem] border border-slate-200 overflow-hidden shadow-2xl dark:bg-slate-900 dark:border-white/5 group"
+            >
+              {imageUrl ? (
+                <Image
+                  src={imageUrl}
+                  alt={product.product_name || "Product"}
+                  fill
+                  className="object-contain p-12 transition-transform duration-700 group-hover:scale-110"
+                  priority
+                  sizes="(max-width: 768px) 100vw, 500px"
+                />
+              ) : (
+                <div className="h-full flex flex-col items-center justify-center text-slate-300 dark:text-slate-800">
+                  <Beaker size={80} className="mb-4 opacity-50" />
+                  <span className="text-xs font-mono font-black uppercase tracking-[0.4em]">No Visual Metadata</span>
+                </div>
+              )}
+            </motion.div>
 
-            {/* Basic Info */}
-            <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-gray-200/50 dark:border-gray-700/50 hover:shadow-md transition-all duration-300">
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-                Informações Básicas
-              </h3>
-              <div className="space-y-3 text-sm">
-                {product.brands && (
-                  <div className="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700">
-                    <span className="font-medium text-gray-600 dark:text-gray-400">
-                      Marca:
+            {/* Ficha Técnica (Bento-style) */}
+            <div className="p-8 rounded-[2.5rem] bg-white border border-slate-200 shadow-sm dark:bg-white/[0.02] dark:border-white/5 space-y-6">
+              <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-blue-600 dark:text-blue-400">SKU Datasheet</h3>
+              <div className="space-y-4 font-medium">
+                {[
+                  { label: "Fabricante", val: product.brands, icon: ShieldCheck },
+                  { label: "Região", val: product.countries, icon: Globe },
+                  { label: "Registro", val: "Auditado", icon: ClipboardList }
+                ].map((item, i) => item.val && (
+                  <div key={i} className="flex justify-between items-center text-sm">
+                    <span className="text-slate-400 flex items-center gap-2 font-bold uppercase text-[11px] tracking-tight">
+                      <item.icon size={14} className="text-slate-300" /> {item.label}
                     </span>
-                    <span className="text-gray-900 dark:text-white font-medium">
-                      {product.brands}
-                    </span>
+                    <span className="text-slate-900 dark:text-white text-right max-w-[60%] truncate">{item.val}</span>
                   </div>
-                )}
-                {product.categories && (
-                  <div className="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700">
-                    <span className="font-medium text-gray-600 dark:text-gray-400">
-                      Categoria:
-                    </span>
-                    <span className="text-gray-900 dark:text-white font-medium text-right max-w-xs">
-                      {product.categories}
-                    </span>
-                  </div>
-                )}
-                {product.countries && (
-                  <div className="flex justify-between items-center py-2">
-                    <span className="font-medium text-gray-600 dark:text-gray-400">
-                      Países:
-                    </span>
-                    <span className="text-gray-900 dark:text-white font-medium">
-                      {product.countries}
-                    </span>
-                  </div>
-                )}
+                ))}
               </div>
             </div>
           </div>
 
-          {/* Product Details */}
-          <div className="space-y-6">
-            {/* Nutrition Grades */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              {nutritionGrade && (
-                <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                    Nutri-Score
-                  </h3>
-                  <div className="flex items-center gap-4">
-                    <NutriScoreBadge
-                      grade={product.nutrition_grades || ""}
-                      size="lg"
-                      showTooltip={true}
-                    />
-                    <div>
-                      <p className="font-medium text-gray-900 dark:text-white text-lg">
-                        {nutritionGrade.description}
-                      </p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        Classificação nutricional
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {novaGroup && (
-                <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                    NOVA
-                  </h3>
-                  <div className="flex items-center gap-4">
-                    <NovaBadge
-                      group={product.nova_group || 0}
-                      size="lg"
-                      showTooltip={true}
-                    />
-                    <div>
-                      <p className="font-medium text-gray-900 dark:text-white text-lg">
-                        Grupo {novaGroup.label}
-                      </p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        Nível de processamento
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
+          {/* COLUNA DIREITA: Inteligência de Dados (7 Colunas) */}
+          <div className="lg:col-span-7 space-y-8">
+            
+            {/* Veredito Rápido: Scores */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <DataCard 
+                title="Nutri-Score" 
+                desc="Indicador de Qualidade Nutricional"
+                badge={<NutriScoreBadge grade={product.nutrition_grades || ""} size="lg" />}
+              />
+              <DataCard 
+                title="Protocolo NOVA" 
+                desc="Nível de Processamento Industrial"
+                badge={<NovaBadge group={product.nova_group || 0} size="lg" />}
+              />
             </div>
 
-            {/* Nutritional Information */}
-            {nutritionData && (
-              <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
-                <NutritionGrid nutritionData={nutritionData} />
-              </div>
-            )}
-
-            {/* Ingredients */}
-            {product.ingredients_text && (
-              <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                  Ingredientes
+            {/* Análise Macronutricional */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="p-1 rounded-[3rem] bg-gradient-to-br from-slate-200 to-slate-100 dark:from-white/10 dark:to-transparent"
+            >
+              <div className="bg-white rounded-[2.9rem] p-10 dark:bg-[#030712]">
+                <h3 className="text-lg font-black text-slate-900 dark:text-white mb-8 flex items-center gap-3 uppercase tracking-tighter">
+                  <div className="w-2 h-6 bg-blue-600 rounded-full" />
+                  Composição Nutricional <span className="text-slate-400 font-mono text-xs font-normal">/ 100g</span>
                 </h3>
-                <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-                  {product.ingredients_text}
-                </p>
+                <NutritionGrid nutritionData={formatNutritionData(product)} />
               </div>
-            )}
+            </motion.div>
 
-            {/* Allergens */}
-            {product.allergens_tags && product.allergens_tags.length > 0 && (
-              <div className="bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 border border-yellow-200 dark:border-yellow-800 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
-                    <AlertTriangle className="w-4 h-4 text-white" />
+            {/* Bloqueadores e Alérgenos */}
+            <AnimatePresence>
+              {product.allergens_tags && product.allergens_tags.length > 0 && (
+                <motion.div 
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  className="p-8 rounded-[2.5rem] bg-orange-50 border border-orange-200 dark:bg-orange-500/5 dark:border-orange-500/20"
+                >
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="p-2 bg-orange-600 rounded-xl text-white shadow-lg shadow-orange-600/20">
+                      <AlertTriangle size={20} />
+                    </div>
+                    <h3 className="text-lg font-black text-orange-950 dark:text-orange-500 uppercase tracking-tighter">Detecção de Alérgenos</h3>
                   </div>
-                  <h3 className="text-lg font-semibold text-yellow-800 dark:text-yellow-200">
-                    Alérgenos
-                  </h3>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {product.allergens_tags.map((allergen, index) => (
-                    <span
-                      key={index}
-                      className="px-3 py-1 bg-yellow-100 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-200 text-sm rounded-full font-medium border border-yellow-200 dark:border-yellow-700"
-                    >
-                      {allergen.replace("en:", "").replace("pt:", "")}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Additives */}
-            {product.additives_tags && product.additives_tags.length > 0 && (
-              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-800 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
-                <h3 className="text-lg font-semibold text-blue-800 dark:text-blue-200 mb-4">
-                  Aditivos
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {product.additives_tags
-                    .slice(0, 10)
-                    .map((additive, index) => (
-                      <span
-                        key={index}
-                        className="px-3 py-1 bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-200 text-sm rounded-full font-medium border border-blue-200 dark:border-blue-700"
-                      >
-                        {additive.replace("en:", "").replace("pt:", "")}
+                  <div className="flex flex-wrap gap-2">
+                    {product.allergens_tags.map(tag => (
+                      <span key={tag} className="px-4 py-2 rounded-xl bg-white border border-orange-200 text-orange-700 text-[10px] font-black uppercase tracking-widest dark:bg-orange-500/10 dark:text-orange-400 dark:border-orange-500/20 shadow-sm">
+                        {tag.replace(/en:|pt:/g, "")}
                       </span>
                     ))}
-                  {product.additives_tags.length > 10 && (
-                    <span className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-sm rounded-full font-medium border border-gray-200 dark:border-gray-600">
-                      +{product.additives_tags.length - 10} mais
-                    </span>
-                  )}
-                </div>
-              </div>
-            )}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Lista de Ingredientes (OCR Interpretation) */}
+            <div className="p-10 rounded-[2.5rem] bg-white border border-slate-200 shadow-sm dark:bg-white/[0.02] dark:border-white/5">
+              <h3 className="text-lg font-black text-slate-900 dark:text-white mb-6 uppercase tracking-tighter">Relatório de Ingredientes</h3>
+              <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-400 font-medium">
+                {product.ingredients_text || "O fabricante não forneceu a lista de ingredientes para este SKU."}
+              </p>
+            </div>
+
           </div>
         </div>
+      </main>
+    </div>
+  );
+}
+
+// Sub-componente para cards de dados
+function DataCard({ title, desc, badge }: { title: string, desc: string, badge: React.ReactNode }) {
+  return (
+    <div className="p-8 rounded-[2.5rem] bg-white border border-slate-200 shadow-sm dark:bg-white/[0.02] dark:border-white/5 hover:border-blue-500/30 transition-all duration-300">
+      <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-1">{title}</h3>
+      <p className="text-sm text-slate-600 dark:text-slate-300 mb-8 font-bold leading-tight">{desc}</p>
+      <div className="flex justify-start transform hover:scale-105 transition-transform origin-left">
+        {badge}
       </div>
     </div>
   );
