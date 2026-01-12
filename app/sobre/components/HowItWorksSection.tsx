@@ -1,224 +1,133 @@
 "use client";
 
-import { Scan, Search, CheckCircle, ArrowRight } from "lucide-react";
+import React from "react";
+import { motion } from "framer-motion";
+import { Scan, Search, CheckCircle, Zap, Shield, Globe, Clock } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+// Tipagem para escalabilidade
+interface Step {
+  id: number;
+  title: string;
+  description: string;
+  icon: React.ElementType;
+  color: string;
+  features: string[];
+}
+
+const STEPS: Step[] = [
+  {
+    id: 1,
+    title: "Captura de Dados",
+    description: "Input instantâneo via scanner óptico ou entrada manual de protocolo.",
+    icon: Scan,
+    color: "from-blue-500 to-cyan-400",
+    features: ["OCR de alta precisão", "Busca por SKU/EAN", "Detecção automática"],
+  },
+  {
+    id: 2,
+    title: "Análise de Base",
+    description: "Cruzamento com o dataset global Open Food Facts em milissegundos.",
+    icon: Search,
+    color: "from-green-500 to-emerald-400",
+    features: ["Nutri-Score v2.0", "Grau NOVA", "Alertas de Alérgenos"],
+  },
+  {
+    id: 3,
+    title: "Veredito Técnico",
+    description: "Saída de dados interpretada para uma tomada de decisão consciente.",
+    icon: CheckCircle,
+    color: "from-purple-500 to-pink-500",
+    features: ["Sugestões saudáveis", "Histórico local", "Comparativo de ROI nutricional"],
+  },
+];
 
 export function HowItWorksSection() {
   return (
-    <section className="py-20 bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-800 dark:to-gray-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-6">
-            Como{" "}
-            <span className="bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
-              funciona
-            </span>
-          </h2>
-          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            Em menos de 10 segundos, você tem todas as informações que precisa
-            para tomar a melhor decisão.
-          </p>
+    <section className="relative py-32 bg-white dark:bg-[#030712] overflow-hidden transition-colors duration-500">
+      {/* Background Decor: Engenharia de Luz */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-500/5 via-transparent to-transparent pointer-events-none" />
+
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        <div className="text-center mb-24">
+          <motion.span 
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            className="text-blue-600 font-mono text-sm font-black uppercase tracking-[0.3em]"
+          >
+            Pipeline de Operação
+          </motion.span>
+          <motion.h2 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="text-5xl md:text-7xl font-black text-gray-900 dark:text-white mt-4 mb-8 tracking-tighter"
+          >
+            A inteligência por trás do <span className="bg-gradient-to-r from-blue-600 to-green-500 bg-clip-text text-transparent italic">scan</span>.
+          </motion.h2>
         </div>
 
-        {/* Steps */}
-        <div className="relative">
-          {/* Connection Lines */}
-          <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-200 via-green-200 to-blue-200 transform -translate-y-1/2"></div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-            {/* Step 1 */}
-            <div className="relative text-center">
-              {/* Step Circle */}
-              <div className="relative z-10 w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-                <Scan className="w-10 h-10 text-white" />
+        {/* Main Pipeline Flow */}
+        [Image of a modern user interface flow diagram]
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-32 relative">
+          {STEPS.map((step, index) => (
+            <motion.div
+              key={step.id}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.2 }}
+              viewport={{ once: true }}
+              className="group relative p-8 rounded-[2.5rem] bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-800 hover:border-blue-500/30 transition-all duration-500"
+            >
+              {/* Step Badge */}
+              <div className="absolute top-8 right-8 text-4xl font-black opacity-5 dark:opacity-10 group-hover:opacity-20 transition-opacity italic">
+                0{step.id}
               </div>
 
-              {/* Step Number */}
-              <div className="absolute -top-2 -right-2 w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold text-sm">
-                1
+              <div className={cn(
+                "w-16 h-16 rounded-2xl bg-gradient-to-br flex items-center justify-center mb-10 shadow-xl transition-transform group-hover:scale-110 group-hover:rotate-3",
+                step.color
+              )}>
+                <step.icon className="w-8 h-8 text-white" />
               </div>
 
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                Escaneie
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 tracking-tight">
+                {step.title}
               </h3>
-              <p className="text-gray-600 dark:text-gray-300 mb-4">
-                Use seu celular para escanear o código de barras do produto ou
-                digite o código manualmente.
+              <p className="text-gray-600 dark:text-gray-400 mb-8 leading-relaxed font-medium">
+                {step.description}
               </p>
 
-              {/* Feature List */}
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm">
-                <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-2">
-                  <li className="flex items-center">
-                    <CheckCircle className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                    Códigos de 8-13 dígitos
+              <ul className="space-y-3 border-t border-gray-200 dark:border-gray-800 pt-6">
+                {step.features.map((f) => (
+                  <li key={f} className="flex items-center text-xs font-bold text-gray-500 dark:text-gray-500 uppercase tracking-widest">
+                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mr-3 animate-pulse" />
+                    {f}
                   </li>
-                  <li className="flex items-center">
-                    <CheckCircle className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                    Busca por nome/marca
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                    Detecção automática
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            {/* Arrow */}
-            <div className="hidden lg:flex items-center justify-center">
-              <ArrowRight className="w-8 h-8 text-gray-400" />
-            </div>
-
-            {/* Step 2 */}
-            <div className="relative text-center">
-              {/* Step Circle */}
-              <div className="relative z-10 w-20 h-20 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-                <Search className="w-10 h-10 text-white" />
-              </div>
-
-              {/* Step Number */}
-              <div className="absolute -top-2 -right-2 w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center text-green-600 dark:text-green-400 font-bold text-sm">
-                2
-              </div>
-
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                Descubra
-              </h3>
-              <p className="text-gray-600 dark:text-gray-300 mb-4">
-                Receba informações completas sobre ingredientes, valores
-                nutricionais e classificações de saúde.
-              </p>
-
-              {/* Feature List */}
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm">
-                <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-2">
-                  <li className="flex items-center">
-                    <CheckCircle className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                    Tabela nutricional completa
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                    Nutri-Score e NOVA
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                    Lista de alérgenos
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            {/* Arrow */}
-            <div className="hidden lg:flex items-center justify-center">
-              <ArrowRight className="w-8 h-8 text-gray-400" />
-            </div>
-
-            {/* Step 3 */}
-            <div className="relative text-center">
-              {/* Step Circle */}
-              <div className="relative z-10 w-20 h-20 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-                <CheckCircle className="w-10 h-10 text-white" />
-              </div>
-
-              {/* Step Number */}
-              <div className="absolute -top-2 -right-2 w-8 h-8 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center text-purple-600 dark:text-purple-400 font-bold text-sm">
-                3
-              </div>
-
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                Decida
-              </h3>
-              <p className="text-gray-600 dark:text-gray-300 mb-4">
-                Com todas as informações em mãos, tome a decisão mais adequada
-                para sua saúde e bem-estar.
-              </p>
-
-              {/* Feature List */}
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm">
-                <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-2">
-                  <li className="flex items-center">
-                    <CheckCircle className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                    Comparação com similares
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                    Sugestões de alternativas
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle className="w-4 h-4 text-green-500 mr-2 flex-shrink-0" />
-                    Salvar para depois
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
+                ))}
+              </ul>
+            </motion.div>
+          ))}
         </div>
 
-        {/* Time Highlight */}
-        <div className="mt-16 text-center">
-          <div className="inline-flex items-center gap-3 bg-white dark:bg-gray-800 rounded-full px-6 py-3 shadow-lg">
-            <div className="w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
-              <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
+        {/* Global Stats Footer: O 80/20 do Valor */}
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          className="grid grid-cols-2 lg:grid-cols-4 gap-4"
+        >
+          {[
+            { icon: Globe, label: "Global", text: "2M+ Alimentos" },
+            { icon: Shield, label: "Seguro", text: "100% Gratuito" },
+            { icon: Clock, label: "Veloz", text: "< 10 Segundos" },
+            { icon: Zap, label: "Offline", text: "Cache Inteligente" },
+          ].map((item, i) => (
+            <div key={i} className="flex flex-col items-center p-6 bg-white dark:bg-gray-900 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm">
+              <item.icon className="w-6 h-6 text-blue-500 mb-3" />
+              <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">{item.label}</span>
+              <span className="text-sm font-bold text-gray-900 dark:text-white">{item.text}</span>
             </div>
-            <span className="text-lg font-semibold text-gray-900 dark:text-white">
-              Em menos de 10 segundos
-            </span>
-          </div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400">
-            Do escaneamento à decisão informada
-          </p>
-        </div>
-
-        {/* Additional Features */}
-        <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm text-center">
-            <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <Scan className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-            </div>
-            <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
-              Offline
-            </h4>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              Funciona sem internet com cache local
-            </p>
-          </div>
-
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm text-center">
-            <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <Search className="w-6 h-6 text-green-600 dark:text-green-400" />
-            </div>
-            <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
-              Gratuito
-            </h4>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              Sem custos, sem anúncios, sem pegadinhas
-            </p>
-          </div>
-
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm text-center">
-            <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <CheckCircle className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-            </div>
-            <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
-              Atualizado
-            </h4>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              Dados sempre atualizados pela comunidade
-            </p>
-          </div>
-
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm text-center">
-            <div className="w-12 h-12 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <ArrowRight className="w-6 h-6 text-orange-600 dark:text-orange-400" />
-            </div>
-            <h4 className="font-semibold text-gray-900 dark:text-white mb-2">
-              Rápido
-            </h4>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              Interface otimizada para velocidade
-            </p>
-          </div>
-        </div>
+          ))}
+        </motion.div>
       </div>
     </section>
   );

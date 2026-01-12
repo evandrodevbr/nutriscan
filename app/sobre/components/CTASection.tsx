@@ -1,158 +1,111 @@
 "use client";
 
-import { ArrowRight, Heart, Users, Globe } from "lucide-react";
+import React from "react";
+import { motion } from "framer-motion";
+import { ArrowRight, Code2, Heart, Globe, Database, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 export function CTASection() {
   return (
-    <section className="py-20 bg-gradient-to-br from-blue-600 via-purple-600 to-green-600 relative overflow-hidden">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.1%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%222%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-40"></div>
+    <section className="relative py-32 bg-[#030712] overflow-hidden transition-colors duration-500">
+      
+      {/* 1. LAYER DE INFRAESTRUTURA: Background Glows Inteligentes */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] bg-blue-600/10 blur-[160px] rounded-full" />
+        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-emerald-500/5 blur-[120px] rounded-full" />
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml,...')] opacity-[0.03] invert dark:invert-0" />
+      </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        {/* Main CTA */}
-        <div className="mb-16">
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6">
-            Mais que uma ferramenta,
-            <br />
-            <span className="bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">
-              um movimento
+      <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
+        
+        {/* 2. LAYER DE CONTEXTO: Tag de Sistema */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/5 border border-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-[0.3em] mb-8"
+        >
+          <Database size={12} /> Open Access Protocol
+        </motion.div>
+
+        {/* 3. LAYER DE MENSAGEM: Headlines de Alta Densidade */}
+        <div className="mb-12">
+          <motion.h2 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="text-5xl md:text-7xl font-black text-white mb-8 tracking-tighter leading-[0.9]"
+          >
+            Soberania alimentar via <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-300 to-emerald-400">
+              transparência algorítmica.
             </span>
-            <br />
-            por transparência
-          </h2>
-          <p className="text-xl text-blue-100 max-w-3xl mx-auto mb-12 leading-relaxed">
-            Junte-se a milhares de pessoas que já transformaram a forma como
-            escolhem seus alimentos. Sua jornada por uma alimentação mais
-            consciente começa agora.
+          </motion.h2>
+          <p className="text-lg md:text-xl text-slate-400 max-w-3xl mx-auto leading-relaxed font-medium">
+            Junte-se à infraestrutura global que está devolvendo o poder de escolha ao cidadão. Dados abertos para uma vida sem processados ocultos.
           </p>
-
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
-            <Link href="/">
-              <Button
-                size="lg"
-                className="bg-white text-blue-600 hover:bg-blue-50 hover:text-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
-              >
-                <span className="mr-2">Comece Agora</span>
-                <ArrowRight className="w-5 h-5" />
-              </Button>
-            </Link>
-
-            <Link
-              href="https://github.com/evandrodevbr/lista-compras"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button
-                variant="outline"
-                size="lg"
-                className="border-white text-white hover:bg-white hover:text-blue-600 transition-all duration-300"
-              >
-                <span className="mr-2">Contribua</span>
-                <Heart className="w-5 h-5" />
-              </Button>
-            </Link>
-          </div>
         </div>
 
-        {/* Community Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
-            <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <Users className="w-6 h-6 text-white" />
-            </div>
-            <div className="text-3xl font-bold text-white mb-2">Milhares</div>
-            <p className="text-blue-100">
-              de usuários ativos fazendo escolhas mais conscientes
-            </p>
-          </div>
+        {/* 4. LAYER DE EXECUÇÃO: CTAs de Alta Tração */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-24"
+        >
+          <Link href="/" className="w-full sm:w-auto">
+            <Button
+              size="lg"
+              className="w-full sm:w-auto h-16 px-10 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-bold text-lg shadow-2xl shadow-blue-500/20 transition-all hover:scale-[1.02] active:scale-95 group"
+            >
+              <span>Executar Scan</span>
+              <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </Button>
+          </Link>
 
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
-            <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <Globe className="w-6 h-6 text-white" />
-            </div>
-            <div className="text-3xl font-bold text-white mb-2">Global</div>
-            <p className="text-blue-100">
-              comunidade internacional comprometida com transparência
-            </p>
-          </div>
+          <Link
+            href="https://github.com/evandrodevbr/lista-compras"
+            target="_blank"
+            className="w-full sm:w-auto"
+          >
+            <Button
+              variant="outline"
+              size="lg"
+              className="w-full sm:w-auto h-16 px-10 border-slate-800 text-white hover:bg-slate-900 rounded-2xl font-bold text-lg transition-all"
+            >
+              <Code2 className="mr-2 w-5 h-5 text-black" />
+              <span className="text-gray-800">Audit Code</span>
+            </Button>
+          </Link>
+        </motion.div>
 
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
-            <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <Heart className="w-6 h-6 text-white" />
+        {/* 5. LAYER DE VALIDAÇÃO: Bento Grid de Metadados */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {[
+            { icon: Globe, label: "Rede", val: "Global Node", desc: "Integridade em 100+ países" },
+            { icon: ShieldCheck, label: "Segurança", val: "Privacy First", desc: "Zero tracking de dados" },
+            { icon: Heart, label: "Sustentabilidade", val: "Open Source", desc: "Mantido pela comunidade" },
+          ].map((item, i) => (
+            <div key={i} className="p-6 rounded-3xl bg-white/[0.02] border border-white/[0.05] backdrop-blur-sm text-left group hover:bg-white/[0.04] transition-colors">
+              <item.icon className="w-6 h-6 text-blue-500 mb-4" />
+              <div className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">{item.label}</div>
+              <div className="text-white font-bold text-lg mb-1 tracking-tight">{item.val}</div>
+              <p className="text-xs text-slate-500 leading-relaxed">{item.desc}</p>
             </div>
-            <div className="text-3xl font-bold text-white mb-2">Crescendo</div>
-            <p className="text-blue-100">
-              movimento que não para de expandir e impactar vidas
-            </p>
-          </div>
+          ))}
         </div>
 
-        {/* Final Message */}
-        <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 max-w-4xl mx-auto">
-          <blockquote className="text-2xl sm:text-3xl font-medium text-white italic mb-6">
-            &ldquo;Porque alimentação é mais que nutrição. É autocuidado, é
-            conexão, é vida.&rdquo;
-          </blockquote>
-          <cite className="block text-lg text-blue-100 mb-8">
-            — Filosofia NutriScan
-          </cite>
-
-          <div className="text-center">
-            <p className="text-lg text-blue-100 mb-6">
-              Faça parte dessa transformação. Sua próxima escolha alimentar pode
-              ser a mais consciente de todas.
-            </p>
-
-            <div className="inline-flex items-center gap-2 text-white/80">
-              <span>Comece sua jornada hoje</span>
-              <ArrowRight className="w-5 h-5" />
-            </div>
-          </div>
-        </div>
-
-        {/* Social Links */}
-        <div className="mt-16">
-          <p className="text-blue-100 mb-6">Conecte-se conosco</p>
-          <div className="flex justify-center gap-6">
-            <Link
-              href="https://github.com/evandrodevbr/lista-compras"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
-            >
-              <svg
-                className="w-6 h-6 text-white"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
-              </svg>
-            </Link>
-
-            <Link
-              href="https://evandro.dev.br"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
-            >
-              <svg
-                className="w-6 h-6 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9"
-                />
-              </svg>
-            </Link>
-          </div>
+        {/* 6. MENSAGEM FINAL: Minimalismo de Autoridade */}
+        <div className="mt-24 pt-12 border-t border-white/[0.05]">
+          <p className="text-[10px] font-mono font-bold text-slate-600 uppercase tracking-[0.5em] mb-6">
+            NutriScan Governance Protocol v2.0
+          </p>
+          <Link 
+            href="/sobre" 
+            className="inline-flex items-center gap-2 text-sm font-bold text-blue-500 hover:text-blue-400 transition-colors group"
+          >
+            Conheça nossa arquitetura de dados 
+            <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+          </Link>
         </div>
       </div>
     </section>

@@ -1,185 +1,158 @@
 "use client";
 
-import { TrendingUp, Globe, Clock, Database } from "lucide-react";
+import React from "react";
+import { motion } from "framer-motion";
+import { Globe, Database, Activity, Zap } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+// Variantes para animação de entrada (Stagger)
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1 }
+  }
+};
+
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: { y: 0, opacity: 1 }
+};
 
 export function ImpactSection() {
   return (
-    <section className="py-20 bg-gray-50 dark:bg-gray-800">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-6">
-            Nosso{" "}
-            <span className="bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
-              impacto
-            </span>
-          </h2>
-          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            Números que mostram como estamos transformando a forma como as
-            pessoas escolhem seus alimentos.
+    <section className="py-32 bg-white dark:bg-[#030712] relative overflow-hidden transition-colors duration-500">
+      
+      {/* Background Decor - Grid de Engenharia */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
+
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        
+        {/* Header - Autoridade Técnica */}
+        <div className="text-center mb-24">
+          <motion.h2 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="text-4xl md:text-6xl font-black text-gray-900 dark:text-white mb-6 tracking-tighter"
+          >
+            Escalabilidade e <span className="bg-gradient-to-r from-blue-600 to-emerald-500 bg-clip-text text-transparent">Impacto Global</span>
+          </motion.h2>
+          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto font-medium">
+            Métricas de performance da maior rede colaborativa de transparência alimentar do planeta.
           </p>
         </div>
 
-        {/* Impact Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
-          <div className="bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-lg text-center hover:shadow-xl transition-shadow">
-            <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center mx-auto mb-6">
-              <Database className="w-8 h-8 text-blue-600 dark:text-blue-400" />
-            </div>
-            <div className="text-4xl font-bold text-blue-600 dark:text-blue-400 mb-2">
-              2.000.000+
-            </div>
-            <div className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-              Produtos
-            </div>
-            <p className="text-gray-600 dark:text-gray-400 text-sm">
-              Na base de dados Open Food Facts
-            </p>
-          </div>
+        {/* Stats Grid - Estilo Bento Box Sênior */}
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-20"
+        >
+          {[
+            { label: "Data Nodes", val: "2.0M+", icon: Database, color: "text-blue-500", bg: "bg-blue-500/10" },
+            { label: "Regions", val: "100+", icon: Globe, color: "text-emerald-500", bg: "bg-emerald-500/10" },
+            { label: "Uptime", val: "24/7", icon: Activity, color: "text-purple-500", bg: "bg-purple-500/10" },
+            { label: "Local Cache", val: "218k", icon: Zap, color: "text-orange-500", bg: "bg-orange-500/10" },
+          ].map((stat) => (
+            <motion.div
+              key={stat.label}
+              variants={itemVariants}
+              whileHover={{ y: -5 }}
+              className="bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-800 p-8 rounded-[2rem] shadow-sm hover:shadow-xl transition-all"
+            >
+              <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center mb-6", stat.bg)}>
+                <stat.icon className={cn("w-6 h-6", stat.color)} />
+              </div>
+              <div className={cn("text-3xl font-mono font-bold tracking-tighter mb-1", stat.color)}>
+                {stat.val}
+              </div>
+              <div className="text-sm font-black uppercase tracking-widest text-gray-400">
+                {stat.label}
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
 
-          <div className="bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-lg text-center hover:shadow-xl transition-shadow">
-            <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-2xl flex items-center justify-center mx-auto mb-6">
-              <Globe className="w-8 h-8 text-green-600 dark:text-green-400" />
-            </div>
-            <div className="text-4xl font-bold text-green-600 dark:text-green-400 mb-2">
-              100+
-            </div>
-            <div className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-              Países
-            </div>
-            <p className="text-gray-600 dark:text-gray-400 text-sm">
-              Com produtos cadastrados
-            </p>
-          </div>
-
-          <div className="bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-lg text-center hover:shadow-xl transition-shadow">
-            <div className="w-16 h-16 bg-purple-100 dark:bg-purple-900/30 rounded-2xl flex items-center justify-center mx-auto mb-6">
-              <Clock className="w-8 h-8 text-purple-600 dark:text-purple-400" />
-            </div>
-            <div className="text-4xl font-bold text-purple-600 dark:text-purple-400 mb-2">
-              24/7
-            </div>
-            <div className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-              Disponível
-            </div>
-            <p className="text-gray-600 dark:text-gray-400 text-sm">
-              Acesso instantâneo aos dados
-            </p>
-          </div>
-
-          <div className="bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-lg text-center hover:shadow-xl transition-shadow">
-            <div className="w-16 h-16 bg-orange-100 dark:bg-orange-900/30 rounded-2xl flex items-center justify-center mx-auto mb-6">
-              <TrendingUp className="w-8 h-8 text-orange-600 dark:text-orange-400" />
-            </div>
-            <div className="text-4xl font-bold text-orange-600 dark:text-orange-400 mb-2">
-              218
-            </div>
-            <div className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-              Cache Local
-            </div>
-            <p className="text-gray-600 dark:text-gray-400 text-sm">
-              Produtos populares offline
-            </p>
-          </div>
-        </div>
-
-        {/* World Map Visualization */}
-        <div className="bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-lg mb-16">
-          <div className="text-center mb-8">
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-              Alcance Global
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400">
-              Nossa plataforma conecta usuários de todos os continentes à maior
-              base de dados alimentar do mundo
-            </p>
-          </div>
-
-          {/* Simplified World Map */}
-          <div className="relative max-w-4xl mx-auto">
-            <div className="aspect-video bg-gradient-to-br from-blue-100 to-green-100 dark:from-blue-900/20 dark:to-green-900/20 rounded-xl overflow-hidden relative">
-              {/* Dots representing global coverage */}
-              <div className="absolute top-1/4 left-1/4 w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
-              <div className="absolute top-1/3 right-1/3 w-3 h-3 bg-green-500 rounded-full animate-pulse delay-300"></div>
-              <div className="absolute bottom-1/3 left-1/3 w-3 h-3 bg-purple-500 rounded-full animate-pulse delay-500"></div>
-              <div className="absolute top-2/3 right-1/4 w-3 h-3 bg-orange-500 rounded-full animate-pulse delay-700"></div>
-              <div className="absolute bottom-1/4 left-1/2 w-3 h-3 bg-red-500 rounded-full animate-pulse delay-1000"></div>
-
-              {/* Center text */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="text-4xl font-bold text-gray-700 dark:text-gray-300 mb-2">
-                    🌍
-                  </div>
-                  <div className="text-lg font-semibold text-gray-600 dark:text-gray-400">
-                    Cobertura Global
-                  </div>
+        {/* World Map - Visualização de Rede de Dados */}
+        [Image of a world map with data points and connections]
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          className="relative bg-slate-950 rounded-[3rem] p-12 overflow-hidden shadow-3xl mb-20"
+        >
+          <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
+          
+          <div className="relative z-10 flex flex-col items-center">
+            <h3 className="text-2xl font-bold text-white mb-2 tracking-tight">Rede Global de Sincronização</h3>
+            <p className="text-slate-500 text-sm mb-12">Monitoramento de tráfego de metadados em tempo real</p>
+            
+            <div className="w-full aspect-[21/9] relative bg-blue-500/5 rounded-2xl border border-blue-500/10 flex items-center justify-center">
+              {/* Pulsing Data Points (Engineering nodes) */}
+              {[
+                { t: "20%", l: "25%", c: "bg-blue-500" },
+                { t: "40%", l: "60%", c: "bg-emerald-500" },
+                { t: "70%", l: "30%", c: "bg-purple-500" },
+                { t: "25%", l: "80%", c: "bg-orange-500" },
+                { t: "55%", l: "15%", c: "bg-red-500" },
+              ].map((dot, i) => (
+                <div key={i} className="absolute" style={{ top: dot.t, left: dot.l }}>
+                  <div className={cn("w-3 h-3 rounded-full animate-ping opacity-75 absolute", dot.c)} />
+                  <div className={cn("w-3 h-3 rounded-full relative", dot.c)} />
                 </div>
+              ))}
+              <Globe className="w-24 h-24 text-blue-500/20 animate-pulse" />
+              <div className="absolute bottom-4 right-6 flex items-center gap-2 text-[10px] font-mono text-blue-400 uppercase tracking-[0.3em]">
+                 <span className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" /> Live Node Updates
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        {/* Community Impact */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-2xl p-8">
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-              Transformação Individual
-            </h3>
-            <div className="space-y-4">
-              <div className="flex items-start">
-                <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                <p className="text-gray-700 dark:text-gray-300">
-                  <strong>Escolhas mais conscientes:</strong> Usuários relatam
-                  tomar decisões mais informadas sobre sua alimentação
-                </p>
-              </div>
-              <div className="flex items-start">
-                <div className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                <p className="text-gray-700 dark:text-gray-300">
-                  <strong>Economia de tempo:</strong> Redução de 80% no tempo
-                  gasto analisando rótulos
-                </p>
-              </div>
-              <div className="flex items-start">
-                <div className="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                <p className="text-gray-700 dark:text-gray-300">
-                  <strong>Confiança aumentada:</strong> Maior segurança na
-                  identificação de alérgenos e ingredientes
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-2xl p-8">
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-              Impacto Coletivo
-            </h3>
-            <div className="space-y-4">
-              <div className="flex items-start">
-                <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                <p className="text-gray-700 dark:text-gray-300">
-                  <strong>Transparência da indústria:</strong> Pressão por
-                  rótulos mais claros e honestos
-                </p>
-              </div>
-              <div className="flex items-start">
-                <div className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                <p className="text-gray-700 dark:text-gray-300">
-                  <strong>Dados colaborativos:</strong> Milhares de
-                  contribuições diárias à base global
-                </p>
-              </div>
-              <div className="flex items-start">
-                <div className="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                <p className="text-gray-700 dark:text-gray-300">
-                  <strong>Democratização:</strong> Acesso universal a
-                  informações nutricionais de qualidade
-                </p>
-              </div>
-            </div>
-          </div>
+        {/* Impact Logs - High Density Info */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 font-medium">
+          <ImpactCard 
+            title="Individual Protocol" 
+            items={[
+              { label: "Cognitive Efficiency", text: "Redução de 80% no tempo de análise de rótulos via algoritmos de OCR." },
+              { label: "Data Sovereignty", text: "Usuários com controle total sobre o histórico de consumo local." },
+              { label: "Safety Layer", text: "Detecção imediata de alérgenos via cruzamento de base de dados." }
+            ]}
+            type="blue"
+          />
+          <ImpactCard 
+            title="Collective Governance" 
+            items={[
+              { label: "Market Transparency", text: "Pressão algorítmica por rótulos honestos e dados auditáveis." },
+              { label: "Crowdsourced Intelligence", text: "Milhares de contribuições diárias validando a integridade da base." },
+              { label: "Universal Access", text: "Democratização da informação nutricional de alta fidelidade." }
+            ]}
+            type="emerald"
+          />
         </div>
       </div>
     </section>
+  );
+}
+
+function ImpactCard({ title, items, type }: { title: string, items: {label: string, text: string}[], type: 'blue' | 'emerald' }) {
+  return (
+    <div className={cn(
+      "p-10 rounded-[2.5rem] border transition-all duration-500 hover:shadow-2xl",
+      type === 'blue' ? "bg-blue-50/50 dark:bg-blue-900/10 border-blue-100 dark:border-blue-900/20" : "bg-emerald-50/50 dark:bg-emerald-900/10 border-emerald-100 dark:border-emerald-900/20"
+    )}>
+      <h3 className="text-xl font-black mb-8 tracking-tighter uppercase">{title}</h3>
+      <div className="space-y-6">
+        {items.map((item, i) => (
+          <div key={i} className="flex gap-4">
+            <div className={cn("w-1.5 h-1.5 rounded-full mt-2 shrink-0", type === 'blue' ? "bg-blue-500" : "bg-emerald-500")} />
+            <p className="text-sm leading-relaxed text-gray-700 dark:text-gray-300">
+              <span className="font-bold text-gray-900 dark:text-white">{item.label}:</span> {item.text}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }

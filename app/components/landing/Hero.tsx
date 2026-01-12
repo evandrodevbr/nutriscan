@@ -1,246 +1,261 @@
 "use client";
-import { useState, useEffect } from "react";
+
+import React, { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { Search, ScanLine, Sparkles, Globe } from "lucide-react";
+import { Search, ScanLine, Globe, Activity, Database, Zap, Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { detectUserCountry } from "@/lib/geolocation";
-import { detectSearchType, isValidBarcode } from "@/lib/openFoodFactsApi";
+import { useGeolocation } from "@/hooks/use-geolocation";
+import { useSearchLogic } from "@/hooks/use-search-logic";
+import { useTheme } from "next-themes";
+import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 
 export function Hero() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [userCountry, setUserCountry] = useState<string | null>(null);
-  const [searchType, setSearchType] = useState<"auto" | "barcode" | "name">(
-    "auto"
-  );
-  const [mounted, setMounted] = useState(false);
   const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState("");
+  const { countryCode, isMounted } = useGeolocation();
+  const { searchType, isValid, loading, setLoading } = useSearchLogic(searchQuery);
+  const { theme } = useTheme();
 
-  // Detectar país do usuário ao carregar
-  useEffect(() => {
-    setMounted(true);
-
-    const detectCountry = async () => {
-      try {
-        // Forçar nova detecção para garantir país correto
-        const country = await detectUserCountry(true);
-        setUserCountry(country.code);
-      } catch {
-        setUserCountry("br"); // Fallback para Brasil
-      }
-    };
-
-    detectCountry();
-  }, []);
-
-  // Detectar tipo de busca baseado na entrada
-  useEffect(() => {
-    if (searchQuery.trim()) {
-      const detectedType = detectSearchType(searchQuery);
-      setSearchType(detectedType);
-    } else {
-      setSearchType("auto");
+  const searchConfig = useMemo(() => ({
+    barcode: {
+      placeholder: "Insira o código EAN/UPC (ex: 789...)",
+      button: "Analisar Produto",
+      icon: <ScanLine className="w-5 h-5" />,
+      subtext: "Protocolo: Detecção de Código de Barras",
+      color: "blue",
+      gradient: "from-blue-600 via-cyan-500 to-blue-400"
+    },
+    name: {
+      placeholder: "Qual alimento deseja investigar?",
+      button: "Consultar Banco",
+      icon: <Search className="w-5 h-5" />,
+      subtext: "Protocolo: Pesquisa em Base Colaborativa",
+      color: "emerald",
+      gradient: "from-emerald-600 via-teal-500 to-green-400"
+    },
+    auto: {
+      placeholder: "Digite o nome ou aponte o código...",
+      button: "Buscar",
+      icon: <Activity className="w-5 h-5" />,
+      subtext: "Aguardando input do operador...",
+      color: "slate",
+      gradient: "from-slate-600 via-blue-500 to-slate-400"
     }
-  }, [searchQuery]);
+  }), []);
+
+  const current = searchConfig[searchType];
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
-
-    if (!searchQuery.trim()) {
-      setError("Digite nome do produto");
-      return;
-    }
-
-    const query = searchQuery.trim();
-    const detectedType = detectSearchType(query);
-
-    if (detectedType === "barcode") {
-      if (!isValidBarcode(query)) {
-        setError("Código de barras deve ter entre 8 e 13 dígitos");
-        return;
-      }
-
-      setLoading(true);
-      // Redirecionar para página do produto
-      router.push(`/produto/${query}`);
-    } else {
-      setLoading(true);
-      // Redirecionar para página de resultados
-      const countryParam = userCountry ? `&country=${userCountry}` : "";
-      router.push(`/resultados?q=${encodeURIComponent(query)}${countryParam}`);
-    }
-  };
-
-  const getPlaceholder = () => {
-    if (searchType === "barcode") {
-      return "Digite o código de barras (ex: 7896004713588)";
-    } else if (searchType === "name") {
-      return "Digite o nome do produto (ex: coca cola)";
-    }
-    return "Digite nome do produto";
-  };
-
-  const getSearchButtonText = () => {
-    if (loading) return "Buscando...";
-    if (searchType === "barcode") return "Buscar Produto";
-    if (searchType === "name") return "Buscar Produtos";
-    return "Buscar";
+    if (!searchQuery.trim()) return;
+    setLoading(true);
+    
+    const target = searchType === "barcode" && isValid 
+      ? `/produto/${searchQuery.trim()}` 
+      : `/resultados?q=${encodeURIComponent(searchQuery.trim())}${countryCode ? `&country=${countryCode}` : ""}`;
+    
+    router.push(target);
   };
 
   return (
-    <section className="relative min-h-[calc(100vh-4rem)] flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-hidden py-12 sm:py-16 lg:py-20">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%230055ff%22%20fill-opacity%3D%220.05%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%222%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-40"></div>
+    <section className="relative min-h-[90vh] flex flex-col items-center justify-center px-6 py-20 overflow-hidden bg-white dark:bg-[#030712] transition-colors duration-500">
+      
+      {/* 1. INFRAESTRUTURA VISUAL: Background de Engenharia */}
+      <div className="absolute inset-0 z-0">
+        {/* Grid de Coordenadas */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#e2e8f0_1px,transparent_1px),linear-gradient(to_bottom,#e2e8f0_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-20 dark:opacity-20 transition-opacity duration-500" />
+        
+        {/* Glow de Fundo Reativo */}
+        <motion.div 
+          animate={{ 
+            scale: searchQuery ? 1.2 : 1,
+            opacity: searchQuery ? (theme === "dark" ? 0.15 : 0.08) : (theme === "dark" ? 0.05 : 0.02)
+          }}
+          className={cn(
+            "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] rounded-full blur-[120px] transition-colors duration-700",
+            searchType === "barcode" ? "bg-blue-600 dark:bg-blue-600" : searchType === "name" ? "bg-emerald-600 dark:bg-emerald-600" : "bg-blue-400 dark:bg-blue-900"
+          )}
+        />
 
-      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        {/* Badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm font-medium mb-6 sm:mb-8">
-          <Sparkles className="w-4 h-4" />
-          Desenvolvido por{" "}
-          <a
-            href="https://evandro.dev.br"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-semibold hover:underline transition-all hover:text-blue-800 dark:hover:text-blue-200"
-          >
-            evandrodevbr
-          </a>
-          {" • "}Dados do Open Food Facts
-        </div>
+        {/* Elemento Decorativo Lua/Sol */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1, delay: 0.5 }}
+          className="absolute top-16 right-8 md:top-24 md:right-16 lg:top-32 lg:right-24 z-0 pointer-events-none"
+        >
+          <AnimatePresence mode="wait">
+            {theme === "dark" ? (
+              <motion.div
+                key="moon"
+                initial={{ opacity: 0, rotate: -90 }}
+                animate={{ opacity: 1, rotate: 0 }}
+                exit={{ opacity: 0, rotate: 90 }}
+                transition={{ duration: 0.5 }}
+              >
+                <Moon className="w-24 h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 text-blue-400/20 transition-colors duration-500" />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="sun"
+                initial={{ opacity: 0, rotate: 90 }}
+                animate={{ opacity: 1, rotate: 0 }}
+                exit={{ opacity: 0, rotate: -90 }}
+                transition={{ duration: 0.5 }}
+              >
+                <Sun className="w-24 h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 text-yellow-400/30 transition-colors duration-500" />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
+      </div>
 
-        {/* Main Heading */}
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-gray-900 dark:text-white mb-4 sm:mb-6 leading-tight">
-          Descubra o que a comunidade alimentar sabe sobre{" "}
-          <span className="bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
-            seus alimentos
+      <div className="relative z-10 max-w-5xl mx-auto text-center">
+        
+        {/* 2. BADGE DE STATUS DO SISTEMA */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-gray-100/80 dark:bg-white/5 border border-gray-200 dark:border-white/10 backdrop-blur-md mb-12 transition-colors duration-500"
+        >
+          <div className="flex -space-x-2">
+            <div className="w-6 h-6 rounded-full border-2 border-white dark:border-[#030712] bg-blue-500 flex items-center justify-center">
+              <Database size={10} className="text-white" />
+            </div>
+            <div className="w-6 h-6 rounded-full border-2 border-white dark:border-[#030712] bg-emerald-500 flex items-center justify-center">
+              <Zap size={10} className="text-white" />
+            </div>
+          </div>
+          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-600 dark:text-slate-400 transition-colors duration-500">
+            NutriScan Protocol <span className="text-blue-600 dark:text-blue-500">v2.1</span> • {isMounted ? countryCode?.toUpperCase() : "INTL"}
+          </span>
+        </motion.div>
+
+        {/* 3. HEADLINE DE ALTA DENSIDADE */}
+        <h1 className="text-5xl md:text-8xl font-black text-gray-900 dark:text-white mb-8 tracking-tighter leading-[0.85] perspective-1000 transition-colors duration-500">
+          A verdade sobre <br />
+          <span className={cn(
+            "text-transparent bg-clip-text bg-gradient-to-r transition-all duration-700",
+            current.gradient
+          )}>
+            seus alimentos.
           </span>
         </h1>
 
-        {/* Subtitle */}
-        <p className="text-lg sm:text-xl lg:text-2xl text-gray-600 dark:text-gray-300 mb-4 max-w-3xl mx-auto leading-relaxed">
-          Transparência total, zero custo, milhões de dados colaborativos ao seu
-          alcance.
+        <p className="text-gray-600 dark:text-slate-400 text-lg md:text-xl max-w-2xl mx-auto mb-16 leading-relaxed font-medium transition-colors duration-500">
+          Engenharia de dados aplicada à transparência nutricional. 
+          Descriptografamos rótulos para que você tome decisões soberanas.
         </p>
 
-        <p className="text-base sm:text-lg text-gray-500 dark:text-gray-400 mb-8 sm:mb-12 max-w-4xl mx-auto leading-relaxed">
-          Consulte informações nutricionais completas, ingredientes e
-          classificações de qualidade — tudo baseado no{" "}
-          <span className="font-semibold text-blue-600">Open Food Facts</span>,
-          a maior base de dados colaborativa do mundo.
-        </p>
+        {/* 4. O TERMINAL DE BUSCA (A PEÇA CENTRAL) */}
+        <form onSubmit={handleSearch} className="relative max-w-3xl mx-auto group">
+          {/* Efeito de Borda Neon Reativa */}
+          <div className={cn(
+            "absolute -inset-[2px] rounded-[2rem] blur-sm opacity-20 group-focus-within:opacity-100 transition-all duration-500 bg-gradient-to-r",
+            current.gradient
+          )} />
 
-        {/* Estatísticas Visuais */}
-        <div className="flex justify-center gap-6 sm:gap-8 mb-8 sm:mb-12 text-center">
-          <div className="animate-fadeIn">
-            <div className="text-2xl sm:text-3xl font-bold text-blue-600">
-              2M+
-            </div>
-            <div className="text-xs sm:text-sm text-gray-500">
-              produtos no banco
-            </div>
-          </div>
-          <div className="animate-fadeIn" style={{ animationDelay: "0.2s" }}>
-            <div className="text-2xl sm:text-3xl font-bold text-green-600">
-              100+
-            </div>
-            <div className="text-xs sm:text-sm text-gray-500">
-              países cobertos
-            </div>
-          </div>
-          <div className="animate-fadeIn" style={{ animationDelay: "0.4s" }}>
-            <div className="text-2xl sm:text-3xl font-bold text-purple-600">
-              24/7
-            </div>
-            <div className="text-xs sm:text-sm text-gray-500">disponível</div>
-          </div>
-        </div>
-
-        {/* Search Form */}
-        <form
-          onSubmit={handleSearch}
-          className="max-w-2xl mx-auto mb-10 sm:mb-12"
-        >
-          <div className="relative">
-            <div className="flex items-center bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden focus-within:ring-2 focus-within:ring-blue-500 transition-all duration-200">
-              <div className="flex-1 relative">
-                {searchType === "barcode" ? (
-                  <ScanLine className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none" />
-                ) : (
-                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none" />
-                )}
-                <Input
-                  type="text"
-                  placeholder={getPlaceholder()}
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-12 pr-4 py-4 text-lg border-0 bg-transparent focus:ring-0 focus:outline-none focus:border-transparent focus:shadow-none focus-visible:ring-0 placeholder:text-gray-400 w-full"
-                />
+          <div className="relative flex items-center bg-white/90 dark:bg-slate-900/90 backdrop-blur-2xl rounded-[1.8rem] border border-gray-200 dark:border-white/10 p-2 shadow-2xl transition-colors duration-500">
+            <div className="flex-1 relative flex items-center">
+              {/* Ícone de Estado Animado */}
+              <div className="absolute left-6">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={searchType}
+                    initial={{ rotate: -90, opacity: 0, scale: 0.5 }}
+                    animate={{ rotate: 0, opacity: 1, scale: 1 }}
+                    exit={{ rotate: 90, opacity: 0, scale: 0.5 }}
+                    className={cn(
+                      "transition-colors duration-500",
+                      searchType === "barcode" ? "text-blue-600 dark:text-blue-400" : searchType === "name" ? "text-emerald-600 dark:text-emerald-400" : "text-gray-400 dark:text-slate-500"
+                    )}
+                  >
+                    {current.icon}
+                  </motion.div>
+                </AnimatePresence>
               </div>
 
-              <Button
-                type="submit"
-                disabled={loading}
-                className="m-2 px-6 sm:px-8 py-4 bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white font-semibold rounded-xl transition-all duration-200 transform hover:scale-105 disabled:opacity-50 flex-shrink-0"
-              >
-                {loading ? (
-                  <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    Buscando...
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2">
-                    <Search className="w-5 h-5" />
-                    {getSearchButtonText()}
-                  </div>
-                )}
-              </Button>
+              <Input
+                type="text"
+                placeholder={current.placeholder}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-16 pr-4 py-9 text-xl border-0 bg-transparent focus-visible:ring-0 w-full text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-slate-600 font-medium tracking-tight transition-colors duration-500"
+              />
             </div>
+
+            <Button
+              type="submit"
+              disabled={loading}
+              className={cn(
+                "h-14 px-10 rounded-[1.2rem] font-black uppercase tracking-widest text-xs transition-all duration-500 active:scale-95 shadow-xl",
+                searchType === "barcode" ? "bg-blue-600 hover:bg-blue-500 shadow-blue-500/20" : "bg-emerald-600 hover:bg-emerald-500 shadow-emerald-500/20"
+              )}
+            >
+              {loading ? (
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                <div className="flex items-center gap-2">
+                  <span>{current.button}</span>
+                  <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                </div>
+              )}
+            </Button>
           </div>
 
-          {/* Search Type Indicator */}
-          {searchQuery && (
-            <div className="flex items-center justify-center gap-2 mt-3">
-              {searchType === "barcode" && (
-                <div className="flex items-center gap-1 text-sm text-blue-600 dark:text-blue-400">
-                  <ScanLine className="w-4 h-4" />
-                  <span>Busca por código de barras</span>
-                </div>
-              )}
-              {searchType === "name" && (
-                <div className="flex items-center gap-1 text-sm text-green-600 dark:text-green-400">
-                  <Search className="w-4 h-4" />
-                  <span>Busca por nome do produto</span>
-                  {mounted && userCountry && (
-                    <div className="flex items-center gap-1 text-xs text-gray-500">
-                      <Globe className="w-3 h-3" />
-                      <span>Priorizando {userCountry}</span>
-                    </div>
-                  )}
-                </div>
-              )}
+          {/* 5. METADADOS DA OPERAÇÃO */}
+          <div className="flex items-center justify-between px-6 mt-6">
+            <div className={cn(
+              "flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-[0.2em] transition-colors duration-500",
+              searchType === "barcode" ? "text-blue-500" : searchType === "name" ? "text-emerald-500" : "text-slate-600"
+            )}>
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-current opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-current"></span>
+              </span>
+              {current.subtext}
             </div>
-          )}
 
-          {error && (
-            <p className="text-red-500 text-sm mt-3 text-left">{error}</p>
-          )}
+            {isMounted && countryCode && (
+              <div className="flex items-center gap-2 text-gray-600 dark:text-slate-500 bg-gray-100 dark:bg-white/5 px-3 py-1 rounded-full border border-gray-200 dark:border-white/10 transition-colors duration-500">
+                <Globe size={12} />
+                <span className="text-[10px] font-bold uppercase">Region: {countryCode.toUpperCase()}</span>
+              </div>
+            )}
+          </div>
         </form>
-
-        {/* Dica sobre código de barras */}
-        <p className="text-center text-sm text-gray-500 dark:text-gray-400 mb-8">
-          💡 Dica: O código de barras está na parte de trás da embalagem
-        </p>
       </div>
 
-      {/* Scroll Indicator */}
-      <div className="absolute bottom-4 sm:bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce mt-12 sm:mt-16">
-        <div className="w-6 h-10 border-2 border-gray-400 dark:border-gray-500 rounded-full flex justify-center">
-          <div className="w-1 h-3 bg-gray-400 dark:bg-gray-500 rounded-full mt-2 animate-pulse"></div>
+      {/* 6. INDICADOR DE MÉTRICAS (Bottom Shelf) */}
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 w-full max-w-4xl px-6 hidden md:block">
+        <div className="grid grid-cols-3 gap-12 border-t border-gray-200 dark:border-white/5 pt-10 opacity-60 dark:opacity-40 grayscale hover:grayscale-0 transition-all duration-700">
+           <div className="flex flex-col items-center gap-1">
+              <span className="text-2xl font-mono font-bold text-gray-900 dark:text-white tracking-tighter transition-colors duration-500">2M+</span>
+              <span className="text-[9px] uppercase tracking-[0.3em] font-black text-gray-500 dark:text-slate-500 transition-colors duration-500">Dataset Entries</span>
+           </div>
+           <div className="flex flex-col items-center gap-1 border-x border-gray-200 dark:border-white/5">
+              <span className="text-2xl font-mono font-bold text-gray-900 dark:text-white tracking-tighter transition-colors duration-500">100%</span>
+              <span className="text-[9px] uppercase tracking-[0.3em] font-black text-gray-500 dark:text-slate-500 transition-colors duration-500">Open Source</span>
+           </div>
+           <div className="flex flex-col items-center gap-1">
+              <span className="text-2xl font-mono font-bold text-gray-900 dark:text-white tracking-tighter transition-colors duration-500">&lt; 10s</span>
+              <span className="text-[9px] uppercase tracking-[0.3em] font-black text-gray-500 dark:text-slate-500 transition-colors duration-500">Analysis Speed</span>
+           </div>
         </div>
       </div>
     </section>
+  );
+}
+
+// Sub-componente auxiliar para ícone
+function ArrowRight({ size, className }: { size: number, className?: string }) {
+  return (
+    <svg 
+      width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className={className}
+    >
+      <path d="M5 12h14m-7-7 7 7-7 7"/>
+    </svg>
   );
 }

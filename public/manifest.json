@@ -10,7 +10,7 @@
   "lang": "pt-BR",
   "icons": [
     {
-      "src": "/favicon.ico",
+      "src": "/icon.png",
       "sizes": "any",
       "type": "image/x-icon"
     },
