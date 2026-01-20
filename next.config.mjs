@@ -25,6 +25,32 @@ const nextConfig = {
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
 
+  // Proxy reverso para bypass de adblockers (Rybbit Analytics)
+  // Inclui suporte para session replay e error tracking
+  async rewrites() {
+    const rybbitHost = process.env.NEXT_PUBLIC_RYBBIT_HOST || "https://analytics.evandro.dev.br/api";
+    
+    return [
+      {
+        source: "/analytics/:match*",
+        destination: `${rybbitHost}/:match*`,
+      },
+      // Endpoints específicos para garantir funcionamento de replay e error tracking
+      {
+        source: "/analytics/v1/replay",
+        destination: `${rybbitHost}/v1/replay`,
+      },
+      {
+        source: "/analytics/v1/vitals",
+        destination: `${rybbitHost}/v1/vitals`,
+      },
+      {
+        source: "/analytics/v1/errors",
+        destination: `${rybbitHost}/v1/errors`,
+      },
+    ];
+  },
+
   // Headers de segurança e performance
   async headers() {
     return [

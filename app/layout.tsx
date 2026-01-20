@@ -1,7 +1,10 @@
 import "./globals.css";
 import { Metadata } from "next";
 import { Inter } from "next/font/google";
+import Script from "next/script";
 import { ThemeProvider } from "@/app/providers";
+import { ErrorBoundary } from "@/app/components/ErrorBoundary";
+import { ErrorTracking } from "@/app/components/ErrorTracking";
 
 // Use Inter como fallback já que é uma fonte similar à Geist
 const inter = Inter({ subsets: ["latin"] });
@@ -79,7 +82,19 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" suppressHydrationWarning className={inter.className}>
       <body className="min-h-screen bg-background antialiased">
-        <ThemeProvider>{children}</ThemeProvider>
+        <ErrorBoundary>
+          <ThemeProvider>
+            {children}
+            <ErrorTracking />
+          </ThemeProvider>
+        </ErrorBoundary>
+        <Script
+          src="/analytics/script.js"
+          data-site-id="undefined"
+          data-replay="true"
+          data-error-tracking="true"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );

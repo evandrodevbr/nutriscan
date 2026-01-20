@@ -173,7 +173,7 @@ export default function ProdutoPage() {
                   <div className="w-2 h-6 bg-blue-600 rounded-full" />
                   Composição Nutricional <span className="text-slate-400 font-mono text-xs font-normal">/ 100g</span>
                 </h3>
-                <NutritionGrid nutritionData={formatNutritionData(product)} />
+                <NutritionGrid nutritionData={formatNutritionData(product) || {}} />
               </div>
             </motion.div>
 
