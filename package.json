@@ -5,12 +5,12 @@
   "scripts": {
     "dev": "next dev",
     "lint": "next lint",
-    "postinstall": "./node_modules/.bin/prisma generate",
-    "build": "./node_modules/.bin/prisma generate && ./node_modules/.bin/prisma migrate deploy && next build",
+    "postinstall": "prisma generate",
+    "build": "prisma generate && prisma migrate deploy && next build",
     "start": "next start",
-    "db:push": "./node_modules/.bin/prisma db push",
-    "db:generate": "./node_modules/.bin/prisma generate",
-    "db:migrate": "./node_modules/.bin/prisma migrate deploy"
+    "db:push": "prisma db push",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate deploy"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
