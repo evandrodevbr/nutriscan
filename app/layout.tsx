@@ -90,7 +90,7 @@ export default function RootLayout({
         </ErrorBoundary>
         <Script
           src="/analytics/script.js"
-          data-site-id="undefined"
+          data-site-id="2"
           data-replay="true"
           data-error-tracking="true"
           strategy="afterInteractive"
