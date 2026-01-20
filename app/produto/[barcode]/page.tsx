@@ -3,22 +3,22 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  ArrowLeft, AlertCircle, AlertTriangle, 
-  Database, Globe, ShieldCheck, Beaker, ClipboardList 
+import {
+  ArrowLeft,
+  AlertCircle,
+  AlertTriangle,
+  Database,
+  Globe,
+  ShieldCheck,
+  Beaker,
+  ClipboardList,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import {
-  searchByBarcode,
-  Product,
-  formatNutritionData,
-} from "@/lib/openFoodFactsApi";
-import Link from "next/link";
+import { searchByBarcode, Product, formatNutritionData } from "@/lib/openFoodFactsApi";
 import { NutriScoreBadge, NovaBadge } from "@/app/components/NutriScoreBadge";
 import { NutritionGrid } from "@/app/components/NutritionBar";
 import { ProductSkeleton } from "@/app/components/ProductSkeleton";
-import { cn } from "@/lib/utils";
 
 export default function ProdutoPage() {
   const params = useParams();
@@ -36,7 +36,7 @@ export default function ProdutoPage() {
       const result = await searchByBarcode(barcode);
       if (result) setProduct(result);
       else setError("Produto não catalogado na base ODbL.");
-    } catch (err) {
+    } catch {
       setError("Falha crítica na sincronização de dados.");
     } finally {
       setLoading(false);

@@ -17,7 +17,7 @@ export interface Product {
     sugars_100g?: number;
     fiber_100g?: number;
     sodium_100g?: number;
-    [key: string]: any; // Flexibilidade para outros nutrientes
+    [key: string]: number | undefined; // Flexibilidade para outros nutrientes mantendo tipagem segura
   };
   nutrition_grades?: string;
   nova_group?: number;
@@ -240,8 +240,11 @@ export function formatNutritionData(p: Product) {
   const n = p.nutriments;
   if (!n) return null;
 
-  const fmt = (v: any, d: number = 1) => {
-    const num = parseFloat(v);
+  const fmt = (v: unknown, d: number = 1) => {
+    const num =
+      typeof v === "number"
+        ? v
+        : parseFloat(typeof v === "string" ? v : String(v));
     return isNaN(num) ? "N/A" : num.toFixed(d);
   };
 
@@ -253,4 +256,17 @@ export function formatNutritionData(p: Product) {
     sugars: n.sugars_100g ? `${fmt(n.sugars_100g)}g` : "N/A",
     sodium: n.sodium_100g ? `${fmt(n.sodium_100g, 2)}g` : "N/A",
   };
+}
+
+/**
+ * Utilitários de detecção e validação de busca
+ */
+export function detectSearchType(input: string): "barcode" | "name" {
+  const cleaned = input.replace(/\D/g, "");
+  return cleaned.length >= 8 && cleaned.length <= 13 ? "barcode" : "name";
+}
+
+export function isValidBarcode(barcode: string): boolean {
+  const cleaned = barcode.replace(/\D/g, "");
+  return cleaned.length >= 8 && cleaned.length <= 13 && /^\d+$/.test(cleaned);
 }
