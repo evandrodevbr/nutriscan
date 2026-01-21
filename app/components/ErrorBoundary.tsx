@@ -27,12 +27,12 @@ export class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // Enviar erro ao Rybbit se disponível
-    if (typeof window !== "undefined" && (window as any).rybbit) {
+    if (typeof window !== "undefined" && window.rybbit) {
       try {
-        (window as any).rybbit.track("error", {
+        window.rybbit.track("error", {
           message: error.message,
-          stack: error.stack,
-          componentStack: errorInfo.componentStack,
+          stack: error.stack || undefined,
+          componentStack: errorInfo.componentStack || undefined,
           errorName: error.name,
           timestamp: new Date().toISOString(),
         });

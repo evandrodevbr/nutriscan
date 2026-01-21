@@ -1,6 +1,7 @@
 "use client";
 
 import { ChevronDown } from "lucide-react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 
 export function HeroSection() {
@@ -17,10 +18,13 @@ export function HeroSection() {
       <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         {/* Logo */}
         <div className="mb-8">
-          <img
+          <Image
             src="/apple-touch-icon.png"
             alt="NutriScan Logo"
-            className="w-24 h-24 mx-auto rounded-2xl shadow-xl"
+            width={96}
+            height={96}
+            className="mx-auto rounded-2xl shadow-xl"
+            priority
           />
         </div>
 
