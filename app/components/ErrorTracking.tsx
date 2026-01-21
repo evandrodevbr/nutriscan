@@ -10,9 +10,9 @@ export function ErrorTracking() {
   useEffect(() => {
     // Handler para erros JavaScript não capturados
     const handleError = (event: ErrorEvent) => {
-      if (typeof window !== "undefined" && (window as any).rybbit) {
+      if (typeof window !== "undefined" && window.rybbit) {
         try {
-          (window as any).rybbit.track("error", {
+          window.rybbit.track("error", {
             message: event.message,
             filename: event.filename,
             lineno: event.lineno,
@@ -30,11 +30,11 @@ export function ErrorTracking() {
 
     // Handler para Promise rejections não tratadas
     const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
-      if (typeof window !== "undefined" && (window as any).rybbit) {
+      if (typeof window !== "undefined" && window.rybbit) {
         try {
           const error = event.reason instanceof Error ? event.reason : new Error(String(event.reason));
           
-          (window as any).rybbit.track("error", {
+          window.rybbit.track("error", {
             message: error.message || String(event.reason),
             stack: error.stack,
             errorName: error.name || "UnhandledPromiseRejection",
