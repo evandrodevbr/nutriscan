@@ -42,7 +42,6 @@ export function DeleteButton({ produtoId, produtoNome, listaId }: DeleteButtonPr
                 <Button
                     variant="destructive"
                     size="icon"
-                    className="text-white hover:bg-red-600"
                 >
                     <Trash2 className="h-4 w-4" />
                 </Button>
@@ -59,7 +58,7 @@ export function DeleteButton({ produtoId, produtoNome, listaId }: DeleteButtonPr
                     <AlertDialogCancel>Cancelar</AlertDialogCancel>
                     <AlertDialogAction
                         onClick={handleDelete}
-                        className="bg-red-600 hover:bg-red-700"
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                         disabled={isDeleting}
                     >
                         {isDeleting ? 'Excluindo...' : 'Excluir'}

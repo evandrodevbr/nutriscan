@@ -2,32 +2,29 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Search } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Search, ScanLine } from "lucide-react";
 import { detectSearchType, isValidBarcode } from "@/lib/openFoodFactsApi";
+import { cn } from "@/lib/utils";
 
 interface SearchBarProps {
   initialQuery?: string;
   className?: string;
   placeholder?: string;
-  compact?: boolean; // Modo compacto para mobile
+  compact?: boolean;
 }
 
 export function SearchBar({
   initialQuery = "",
   className = "",
-  placeholder = "Buscar produtos...",
+  placeholder = "Buscar produtos ou código de barras…",
   compact = false,
 }: SearchBarProps) {
   const [query, setQuery] = useState(initialQuery);
   const [searchType, setSearchType] = useState<"barcode" | "name" | null>(null);
   const router = useRouter();
 
-  // Detectar tipo de busca em tempo real
   useEffect(() => {
-    const cleaned = query.replace(/\D/g, ""); // Remove tudo que não é número
-
+    const cleaned = query.replace(/\D/g, "");
     if (cleaned.length >= 8 && cleaned.length <= 13) {
       setSearchType("barcode");
     } else if (query.trim()) {
@@ -39,97 +36,90 @@ export function SearchBar({
 
   const handleSearch = () => {
     if (!query.trim()) return;
-
     const type = detectSearchType(query);
-
     if (type === "barcode") {
-      // Limpar código de barras (remover espaços/caracteres)
-      const cleanBarcode = query.replace(/\D/g, "");
-
-      if (isValidBarcode(cleanBarcode)) {
-        // Redirecionar para página do produto
-        router.push(`/produto/${cleanBarcode}`);
+      const clean = query.replace(/\D/g, "");
+      if (isValidBarcode(clean)) {
+        router.push(`/produto/${clean}`);
       } else {
-        // Mostrar erro de código inválido
-        alert("Código de barras inválido. Deve ter entre 8 e 13 dígitos.");
+        router.push(`/resultados?q=${encodeURIComponent(query.trim())}`);
       }
     } else {
-      // Busca normal por nome
       router.push(`/resultados?q=${encodeURIComponent(query.trim())}`);
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      handleSearch();
-    }
+  const handleKey = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") handleSearch();
   };
 
   if (compact) {
     return (
-      <div className={`flex items-center gap-2 ${className}`}>
+      <div className={cn("flex items-center gap-2", className)}>
         <div className="relative flex-1">
-          <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <Input
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[var(--fg-faint)]" strokeWidth={1.5} />
+          <input
             type="text"
             placeholder={placeholder}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            onKeyPress={handleKeyPress}
-            className="pl-8 pr-2 h-9 text-sm"
+            onKeyDown={handleKey}
+            className={cn(
+              "w-full pl-9 pr-3 h-9 text-sm rounded border border-[var(--border-subtle)]",
+              "bg-[var(--bg-elevated)] text-[var(--fg-primary)] placeholder-[var(--fg-faint)]",
+              "focus:outline-none focus:border-[var(--accent)] transition-colors duration-200"
+            )}
           />
-
-          {/* Indicador visual do tipo de busca - mais compacto */}
-          {searchType && (
-            <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
-              <span className="text-xs text-gray-500 bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded text-[10px]">
-                {searchType === "barcode" ? "Código" : "Nome"}
-              </span>
-            </div>
-          )}
         </div>
-        <Button
+        <button
           onClick={handleSearch}
           disabled={!query.trim()}
-          size="sm"
-          className="h-9 px-3"
+          className="btn-accent h-9 px-3 py-0 text-xs disabled:opacity-40"
         >
-          <Search className="h-4 w-4" />
-        </Button>
+          <Search className="w-3.5 h-3.5" strokeWidth={1.5} />
+        </button>
       </div>
     );
   }
 
   return (
-    <div className={`flex items-center gap-2 ${className}`}>
+    <div className={cn("flex items-center gap-2", className)}>
       <div className="relative flex-1 max-w-md">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-        <Input
+        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--fg-muted)]">
+          {searchType === "barcode" ? (
+            <ScanLine className="w-4 h-4" strokeWidth={1.5} />
+          ) : (
+            <Search className="w-4 h-4" strokeWidth={1.5} />
+          )}
+        </div>
+        <input
           type="text"
           placeholder={placeholder}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          onKeyPress={handleKeyPress}
-          className="pl-10 pr-4 h-10"
+          onKeyDown={handleKey}
+          className={cn(
+            "w-full pl-10 pr-4 h-10 text-sm rounded border border-[var(--border-subtle)]",
+            "bg-[var(--bg-elevated)] text-[var(--fg-primary)] placeholder-[var(--fg-faint)]",
+            "focus:outline-none focus:border-[var(--accent)] transition-colors duration-200"
+          )}
         />
-
-        {/* Indicador visual do tipo de busca */}
         {searchType && (
-          <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-            <span className="text-xs text-gray-500 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">
-              {searchType === "barcode" ? "Código de barras" : "Nome"}
+          <div className="absolute right-3 top-1/2 -translate-y-1/2">
+            <span className="label text-[var(--fg-faint)] bg-[var(--bg-surface)] px-2 py-0.5 rounded border border-[var(--border-subtle)]">
+              {searchType === "barcode" ? "Código" : "Nome"}
             </span>
           </div>
         )}
       </div>
-      <Button
+      <button
         onClick={handleSearch}
         disabled={!query.trim()}
-        className="h-10 px-4"
+        className="btn-accent h-10 px-4 text-sm disabled:opacity-40"
       >
-        <Search className="h-4 w-4 mr-2" />
+        <Search className="w-4 h-4" strokeWidth={1.5} />
         Buscar
-      </Button>
+      </button>
     </div>
   );
 }

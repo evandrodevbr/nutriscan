@@ -5,23 +5,24 @@ import {
   Search,
   ArrowLeft,
   Loader2,
-  SlidersHorizontal,
   Database,
-  ArrowUpDown,
+  Leaf,
+  SlidersHorizontal,
+  LayoutGrid,
+  List,
 } from "lucide-react";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   Sheet,
   SheetContent,
-  SheetTrigger,
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { FilterSidebar } from "@/app/components/FilterSidebar";
 import { ProductCard } from "@/app/components/ProductCard";
 import { ProductCardSkeleton } from "@/app/components/ProductCardSkeleton";
 import { DonateCard } from "@/app/components/DonateCard";
-import { FilterSidebar } from "@/app/components/FilterSidebar";
 import { SearchBar } from "@/app/components/SearchBar";
 import { Pagination } from "@/app/components/Pagination";
 import { useProductFilters } from "@/hooks/useProductFilters";
@@ -35,18 +36,24 @@ import { ProductFilters } from "@/lib/types";
 import Link from "next/link";
 import { Product, sortProducts } from "@/lib/openFoodFactsApi";
 
-// Função para converter ProductFilters para FilterRecord
 function convertFiltersToRecord(filters: ProductFilters): FilterRecord {
   const record: FilterRecord = {};
-
   Object.entries(filters).forEach(([key, value]) => {
     if (value !== undefined && value !== null) {
       record[key] = value as FilterRecord[string];
     }
   });
-
   return record;
 }
+
+/* ── Grade filter badge ──────────────────────────────────────────────────── */
+const GRADE_COLORS: Record<string, { bg: string; ink: string }> = {
+  a: { bg: "#038141", ink: "#fff" },
+  b: { bg: "#85bb2f", ink: "#fff" },
+  c: { bg: "#fecb02", ink: "#3a2a00" },
+  d: { bg: "#ee8100", ink: "#fff" },
+  e: { bg: "#e63e11", ink: "#fff" },
+};
 
 function ResultadosContent() {
   const searchParams = useSearchParams();
@@ -54,24 +61,23 @@ function ResultadosContent() {
   const query = searchParams.get("q") || "";
   const countryParam = searchParams.get("country") || "";
 
-  // Estados principais
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [detectedCountry, setDetectedCountry] = useState<string>("");
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [forceRefresh, setForceRefresh] = useState(false);
+  const [gradeFilter, setGradeFilter] = useState<string | null>(null);
+  const [allergenFree, setAllergenFree] = useState(false);
 
-  // Estados de paginação
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(20);
 
-  // Estados para modais mobile
-  const [showFilters, setShowFilters] = useState(false);
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+
   const [showSort, setShowSort] = useState(false);
   const [showCacheInfo, setShowCacheInfo] = useState(false);
+  const [showFilterSheet, setShowFilterSheet] = useState(false);
 
-  // Hook de cache
   const {
     state: cacheState,
     getCachedSearch,
@@ -81,7 +87,6 @@ function ResultadosContent() {
     setLoading: setCacheLoading,
   } = useSearchCache();
 
-  // Hook de filtros
   const {
     filters,
     updateFilters,
@@ -91,14 +96,11 @@ function ResultadosContent() {
     setIsLoading,
   } = useProductFilters();
 
-  // Hook de monitoramento de storage
   const { stats: storageStats, refreshStats: refreshStorageStats } =
     useStorageMonitor();
 
-  // Hook de modo cache-only
   const { cacheOnly } = useCacheOnlyMode();
 
-  // Detectar país do usuário
   useEffect(() => {
     const detectCountry = async () => {
       try {
@@ -108,7 +110,6 @@ function ResultadosContent() {
         setDetectedCountry("br");
       }
     };
-
     detectCountry();
   }, []);
 
@@ -122,7 +123,6 @@ function ResultadosContent() {
 
         const countryToUse = detectedCountry || countryParam || "br";
 
-        // Verificar cache primeiro (se não for refresh forçado)
         if (!forceRefresh) {
           const cached = getCachedSearch(
             query,
@@ -130,7 +130,6 @@ function ResultadosContent() {
             convertFiltersToRecord(filters)
           );
           if (cached) {
-            console.log("Usando dados do cache");
             setAllProducts(cached.products);
             setTotalResults(cached.totalCount);
             setLoading(false);
@@ -140,21 +139,15 @@ function ResultadosContent() {
           }
         }
 
-        console.log("Fazendo busca completa na API");
-
-        // Construir parâmetros da API
         const params = new URLSearchParams({
           q: query,
           country: countryToUse,
           page: "1",
-          page_size: "1000", // Buscar até 1000 produtos por página
+          page_size: "1000",
         });
 
-        if (cacheOnly) {
-          params.append("cache_only", "true");
-        }
+        if (cacheOnly) params.append("cache_only", "true");
 
-        // Fazer busca na API
         const response = await fetch(`/api/search?${params.toString()}`);
         const data = await response.json();
 
@@ -168,19 +161,17 @@ function ResultadosContent() {
           actualPages: 1,
         };
 
-        // Salvar no cache
-        const searchId = saveSearch(
+        saveSearch(
           query,
           countryToUse,
           result.products,
           result.totalCount,
           convertFiltersToRecord(filters)
         );
-        console.log(`Busca salva no cache com ID: ${searchId}`);
 
         setAllProducts(result.products);
         setTotalResults(result.totalCount);
-        setCurrentPage(1); // Voltar para primeira página
+        setCurrentPage(1);
       } catch (err) {
         const errorMessage =
           err instanceof Error ? err.message : "Erro ao buscar produtos";
@@ -214,10 +205,8 @@ function ResultadosContent() {
     }
   }, [query, countryParam, detectedCountry, loadProducts, forceRefresh]);
 
-  // Sincronizar produtos com cache do servidor
   useEffect(() => {
     if (allProducts.length > 0) {
-      // Enviar produtos para cache em background
       fetch("/api/cache/sync", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -226,38 +215,36 @@ function ResultadosContent() {
     }
   }, [allProducts]);
 
-  // Produtos filtrados e ordenados para exibição
   const filteredAndSortedProducts = useMemo(() => {
     let filtered = [...allProducts];
 
-    // Aplicar filtros aqui (implementar conforme necessário)
-    // Por enquanto, apenas ordenação
-    if (filters.sortBy) {
-      filtered = sortProducts(
-        filtered,
-        filters.sortBy,
-        filters.sortOrder || "asc"
+    if (gradeFilter) {
+      filtered = filtered.filter(
+        (p) => p.nutrition_grades?.toLowerCase() === gradeFilter
+      );
+    }
+    if (allergenFree) {
+      filtered = filtered.filter(
+        (p) => !p.allergens_tags || p.allergens_tags.length === 0
       );
     }
 
-    return filtered;
-  }, [allProducts, filters.sortBy, filters.sortOrder]);
+    const activeSortBy = filters.sortBy || "relevance";
+    const activeSortOrder = filters.sortOrder || "asc";
+    filtered = sortProducts(filtered, activeSortBy, activeSortOrder);
 
-  // Produtos da página atual
+    return filtered;
+  }, [allProducts, filters.sortBy, filters.sortOrder, gradeFilter, allergenFree]);
+
   const currentPageProducts = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    return filteredAndSortedProducts.slice(startIndex, endIndex);
+    return filteredAndSortedProducts.slice(startIndex, startIndex + itemsPerPage);
   }, [filteredAndSortedProducts, currentPage, itemsPerPage]);
 
-  // Cálculos de paginação
   const totalPages = Math.ceil(filteredAndSortedProducts.length / itemsPerPage);
   const totalItems = filteredAndSortedProducts.length;
 
-  const handleRefresh = useCallback(() => {
-    setForceRefresh(true);
-  }, []);
-
+  const handleRefresh = useCallback(() => setForceRefresh(true), []);
   const handleClearCache = useCallback(() => {
     clearCache(
       query,
@@ -266,10 +253,6 @@ function ResultadosContent() {
     );
     setForceRefresh(true);
   }, [clearCache, query, detectedCountry, countryParam, filters]);
-
-  const handleRefreshStorageStats = useCallback(() => {
-    refreshStorageStats();
-  }, [refreshStorageStats]);
 
   const handleSortChange = useCallback(
     (sortBy: string) => {
@@ -294,318 +277,606 @@ function ResultadosContent() {
 
   if (!query) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-4">
-        <div className="text-center">
-          <Search className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+      <div
+        style={{
+          minHeight: "100vh",
+          background: "var(--bg-base)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: 24,
+        }}
+      >
+        <div style={{ textAlign: "center" }}>
+          <Search
+            style={{ width: 48, height: 48, color: "var(--fg-muted)", margin: "0 auto 20px" }}
+            strokeWidth={1.5}
+          />
+          <h1
+            style={{
+              fontFamily: "'Instrument Serif', Georgia, serif",
+              fontSize: 32,
+              color: "var(--fg-primary)",
+              marginBottom: 12,
+            }}
+          >
             Nenhuma busca realizada
           </h1>
-          <p className="text-gray-600 dark:text-gray-300 mb-6">
-            Digite um termo de busca para encontrar produtos
+          <p style={{ color: "var(--fg-muted)", fontSize: 15, marginBottom: 24 }}>
+            Digite um termo para encontrar produtos.
           </p>
-          <Button onClick={() => router.push("/")}>Voltar para o início</Button>
+          <button
+            onClick={() => router.push("/")}
+            style={{
+              padding: "12px 20px",
+              background: "var(--accent)",
+              color: "#fff",
+              border: "none",
+              borderRadius: 10,
+              fontSize: 14,
+              fontWeight: 500,
+              cursor: "pointer",
+            }}
+          >
+            Voltar ao início
+          </button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Header Mobile Otimizado */}
-      <div className="lg:hidden sticky top-0 z-40 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-3 py-2">
-        <div className="flex items-center gap-2 mb-2">
-          <Link
-            href="/"
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5" />
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "var(--bg-base)",
+        color: "var(--fg-primary)",
+      }}
+    >
+      {/* ── Mobile top bar ──────────────────────────────────────────────── */}
+      <div
+        className="lg:hidden"
+        style={{
+          position: "sticky",
+          top: 0,
+          zIndex: 40,
+          background: "var(--bg-base)",
+          borderBottom: "1px solid var(--border-subtle)",
+          padding: "10px 16px",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <Link href="/" style={{ display: "flex", padding: 8, color: "var(--fg-secondary)" }}>
+            <ArrowLeft style={{ width: 18, height: 18 }} strokeWidth={1.75} />
           </Link>
-
-          <div className="flex-1">
+          <div style={{ flex: 1 }}>
             <SearchBar compact />
           </div>
-        </div>
-
-        {/* Botões de ação - apenas filtros e ordenar */}
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setShowFilters(true)}
-            className="flex-1 text-xs h-8"
-          >
-            <SlidersHorizontal className="w-4 h-4 mr-1" />
-            Filtros
-            {hasActiveFilters && (
-              <Badge variant="destructive" className="ml-1 px-1 text-[10px]">
-                {Object.keys(filters).length}
-              </Badge>
-            )}
-          </Button>
-
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setShowSort(true)}
-            className="flex-1 text-xs h-8"
-          >
-            <ArrowUpDown className="w-4 h-4 mr-1" />
-            Ordenar
-          </Button>
+          <ThemeToggle />
         </div>
       </div>
 
-      {/* Header Desktop (mantido) */}
-      <div className="hidden sm:block max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <div className="flex items-center gap-4">
-          <Link href="/">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="flex items-center gap-2"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Voltar
-            </Button>
-          </Link>
-
-          <div className="flex-1">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              Resultados para &quot;{query}&quot;
-            </h1>
-            {!loading && totalItems > 0 && (
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                {totalItems} produto{totalItems !== 1 ? "s" : ""} encontrado
-                {totalItems !== 1 ? "s" : ""}
-                {detectedCountry && ` em ${detectedCountry}`}
-                {cacheState.isCached && (
-                  <span className="ml-2 inline-flex items-center gap-1 text-blue-600 dark:text-blue-400">
-                    <Database className="w-3 h-3" />
-                    Cache Local
-                  </span>
-                )}
-                {storageStats && (
-                  <span className="ml-2 text-xs text-gray-400">
-                    • Storage: {storageStats?.storageSizeMB || 0} MB (
-                    {storageStats?.totalProducts || 0} produtos)
-                  </span>
-                )}
-              </p>
-            )}
-          </div>
-
-          {/* Switch Cache-Only em produção */}
-          <CacheOnlySwitch />
-
-          {/* Barra de Pesquisa - Desktop */}
-          <div className="hidden lg:flex items-center">
-            <SearchBar
-              initialQuery={query}
-              className="w-full max-w-md"
-              placeholder="Buscar outros produtos..."
-            />
-          </div>
-
-          {/* Mobile Controls */}
-          <div className="lg:hidden flex items-center gap-2">
-            <SearchBar
-              initialQuery={query}
-              className="flex-1"
-              placeholder="Buscar..."
-            />
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="outline" size="sm">
-                  <SlidersHorizontal className="w-4 h-4 mr-2" />
-                  Filtros
-                  {hasActiveFilters && (
-                    <div className="w-2 h-2 bg-primary rounded-full ml-2" />
-                  )}
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="left" className="w-80">
-                <FilterSidebar
-                  filters={filters}
-                  onFiltersChange={updateFilters}
-                  onClearFilters={clearFilters}
-                  isLoading={loading}
-                  totalResults={totalItems}
-                  sortBy={filters.sortBy || "relevance"}
-                  onSortChange={handleSortChange}
-                  viewMode={viewMode}
-                  onViewModeChange={setViewMode}
-                  onRefresh={handleRefresh}
-                  onClearCache={handleClearCache}
-                  isCached={cacheState.isCached}
-                  onRemoveFilter={(key, value) => {
-                    if (value) {
-                      const currentArray =
-                        (filters[key as keyof typeof filters] as string[]) ||
-                        [];
-                      updateFilters({
-                        [key]: currentArray.filter((item) => item !== value),
-                      });
-                    } else {
-                      updateFilters({ [key]: undefined });
-                    }
-                  }}
-                />
-              </SheetContent>
-            </Sheet>
-          </div>
-        </div>
-      </div>
-
-      {/* Layout principal */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex gap-8">
-          {/* Sidebar de filtros - Desktop */}
-          <div className="hidden lg:block w-80 flex-shrink-0">
-            <div className="sticky top-24">
-              <FilterSidebar
-                filters={filters}
-                onFiltersChange={updateFilters}
-                onClearFilters={clearFilters}
-                isLoading={loading}
-                totalResults={totalItems}
-                sortBy={filters.sortBy || "relevance"}
-                onSortChange={handleSortChange}
-                viewMode={viewMode}
-                onViewModeChange={setViewMode}
-                onRefresh={handleRefresh}
-                onClearCache={handleClearCache}
-                isCached={cacheState.isCached}
-                onRemoveFilter={(key, value) => {
-                  if (value) {
-                    const currentArray =
-                      (filters[key as keyof typeof filters] as string[]) || [];
-                    updateFilters({
-                      [key]: currentArray.filter((item) => item !== value),
-                    });
-                  } else {
-                    updateFilters({ [key]: undefined });
-                  }
+      {/* ── Desktop header ───────────────────────────────────────────────── */}
+      <div
+        className="hidden lg:flex"
+        style={{
+          padding: "18px 40px",
+          borderBottom: "1px solid var(--border-subtle)",
+          alignItems: "center",
+          gap: 20,
+        }}
+      >
+        <Link
+          href="/"
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 8,
+            fontSize: 13,
+            color: "var(--fg-secondary)",
+            textDecoration: "none",
+          }}
+        >
+          <ArrowLeft style={{ width: 16, height: 16 }} strokeWidth={1.75} />
+          Voltar
+        </Link>
+        <div style={{ flex: 1 }}>
+          <div
+            style={{
+              fontFamily: "ui-monospace, monospace",
+              fontSize: 11,
+              letterSpacing: "0.12em",
+              textTransform: "uppercase",
+              color: "var(--fg-muted)",
+              marginBottom: 4,
+            }}
+          >
+            {!loading && totalItems > 0 ? `${totalItems} resultado${totalItems !== 1 ? "s" : ""}` : "Buscando…"}
+            {!loading && detectedCountry && ` · ${detectedCountry.toUpperCase()}`}
+            {!loading && cacheState.isCached && (
+              <span
+                style={{
+                  marginLeft: 10,
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 4,
+                  color: "var(--accent)",
                 }}
-              />
-            </div>
+              >
+                <Database style={{ width: 10, height: 10 }} />
+                Cache
+              </span>
+            )}
           </div>
+          <h1
+            style={{
+              fontFamily: "'Instrument Serif', Georgia, serif",
+              fontSize: 34,
+              letterSpacing: "-0.01em",
+              color: "var(--fg-primary)",
+              lineHeight: 1.05,
+            }}
+          >
+            {query ? (
+              <>
+                Para{" "}
+                <em style={{ fontStyle: "italic", color: "var(--accent)" }}>
+                  &ldquo;{query}&rdquo;
+                </em>
+              </>
+            ) : (
+              "Todos os produtos"
+            )}
+          </h1>
+        </div>
 
-          {/* Conteúdo principal */}
-          <div className="flex-1 min-w-0">
-            {/* Loading Inicial */}
-            {loading && (
-              <div className="space-y-4">
-                {/* Indicador de progresso do cache */}
-                {cacheState.progress && (
-                  <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-                    <div className="flex items-center gap-3">
-                      <Loader2 className="w-5 h-5 animate-spin text-blue-600" />
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-blue-900 dark:text-blue-100">
-                          Carregando todos os resultados...
-                        </p>
-                        <p className="text-xs text-blue-700 dark:text-blue-300">
-                          Página {cacheState.progress?.currentPage || 0} de{" "}
-                          {cacheState.progress?.totalPages || 0} •
-                          {cacheState.progress?.loadedProducts || 0} produtos
-                          carregados
-                        </p>
-                        <div className="w-full bg-blue-200 dark:bg-blue-800 rounded-full h-2 mt-2">
-                          <div
-                            className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                            style={{
-                              width: `${
-                                ((cacheState.progress?.currentPage || 0) /
-                                  (cacheState.progress?.totalPages || 1)) *
-                                100
-                              }%`,
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+        <CacheOnlySwitch />
+
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <SearchBar
+            initialQuery={query}
+            className="w-full max-w-md"
+            placeholder="Buscar outros produtos…"
+          />
+          <ThemeToggle />
+        </div>
+
+      </div>
+
+      {/* ── Full-width content container ─────────────────────────────────── */}
+      <div
+        style={{
+          maxWidth: 1400,
+          margin: "0 auto",
+          padding: "0 clamp(16px, 4vw, 40px)",
+        }}
+      >
+        <div style={{ paddingTop: 32, paddingBottom: 60 }}>
+
+          {/* ── Inline filter strip ────────────────────────────────────────── */}
+          {!loading && totalItems > 0 && (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 16,
+                padding: "14px 0",
+                borderTop: "1px solid var(--border-subtle)",
+                borderBottom: "1px solid var(--border-subtle)",
+                marginBottom: 28,
+                flexWrap: "wrap",
+              }}
+            >
+              <span
+                style={{
+                  fontFamily: "ui-monospace, monospace",
+                  fontSize: 10,
+                  letterSpacing: "0.14em",
+                  textTransform: "uppercase",
+                  color: "var(--fg-muted)",
+                  fontWeight: 500,
+                }}
+              >
+                Filtrar
+              </span>
+
+              {/* Grade pills A–E */}
+              <div style={{ display: "flex", gap: 6 }}>
+                {["a", "b", "c", "d", "e"].map((g) => {
+                  const active = gradeFilter === g;
+                  const col = GRADE_COLORS[g];
+                  return (
+                    <button
+                      key={g}
+                      onClick={() => {
+                        setGradeFilter((prev) => (prev === g ? null : g));
+                        setCurrentPage(1);
+                      }}
+                      style={{
+                        width: 28,
+                        height: 28,
+                        borderRadius: 999,
+                        fontFamily: "Inter, sans-serif",
+                        fontSize: 11,
+                        fontWeight: 700,
+                        background: active ? col.bg : "var(--bg-surface)",
+                        color: active ? col.ink : "var(--fg-secondary)",
+                        border: active
+                          ? "none"
+                          : "1px solid var(--border-subtle)",
+                        cursor: "pointer",
+                        transition: "all 0.15s",
+                      }}
+                    >
+                      {g.toUpperCase()}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Allergen-free chip */}
+              <button
+                onClick={() => {
+                  setAllergenFree((prev) => !prev);
+                  setCurrentPage(1);
+                }}
+                className="rd-chip"
+                style={{
+                  background: allergenFree
+                    ? "var(--accent-muted)"
+                    : "var(--bg-surface)",
+                  color: allergenFree
+                    ? "var(--accent)"
+                    : "var(--fg-secondary)",
+                  borderColor: allergenFree
+                    ? "var(--accent)"
+                    : "var(--border-subtle)",
+                  cursor: "pointer",
+                }}
+              >
+                <Leaf style={{ width: 13, height: 13 }} strokeWidth={2} />
+                Sem alérgenos comuns
+              </button>
+
+              {/* ── Mais Filtros button ─────────────────────────────────── */}
+              <button
+                onClick={() => setShowFilterSheet(true)}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 6,
+                  padding: "5px 12px",
+                  border: hasActiveFilters
+                    ? "1px solid var(--accent)"
+                    : "1px solid var(--border-subtle)",
+                  borderRadius: 8,
+                  background: hasActiveFilters
+                    ? "var(--accent-muted)"
+                    : "var(--bg-base)",
+                  color: hasActiveFilters
+                    ? "var(--accent)"
+                    : "var(--fg-secondary)",
+                  fontSize: 12,
+                  fontFamily: "inherit",
+                  fontWeight: hasActiveFilters ? 500 : 400,
+                  cursor: "pointer",
+                  transition: "all 0.15s",
+                  position: "relative",
+                }}
+              >
+                <SlidersHorizontal style={{ width: 13, height: 13 }} strokeWidth={1.75} />
+                Mais filtros
+                {hasActiveFilters && (
+                  <span
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: 16,
+                      height: 16,
+                      borderRadius: "50%",
+                      background: "var(--accent)",
+                      color: "#fff",
+                      fontSize: 9,
+                      fontWeight: 700,
+                      marginLeft: 2,
+                    }}
+                  >
+                    ●
+                  </span>
                 )}
+              </button>
 
-                {/* Skeleton dos produtos */}
-                <div
-                  className={`grid gap-6 ${
-                    viewMode === "grid"
-                      ? "grid-cols-1 sm:grid-cols-2 xl:grid-cols-3"
-                      : "grid-cols-1"
-                  }`}
+              {/* Sort + View toggle — pushed to the right */}
+              <div
+                style={{
+                  marginLeft: "auto",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 10,
+                  flexWrap: "wrap",
+                }}
+              >
+                <span
+                  style={{
+                    fontFamily: "ui-monospace, monospace",
+                    fontSize: 10,
+                    letterSpacing: "0.14em",
+                    textTransform: "uppercase",
+                    color: "var(--fg-muted)",
+                    fontWeight: 500,
+                  }}
                 >
-                  {[...Array(8)].map((_, i) => (
-                    <ProductCardSkeleton key={i} />
+                  Ordenar
+                </span>
+                <select
+                  value={filters.sortBy || "relevance"}
+                  onChange={(e) => handleSortChange(e.target.value)}
+                  style={{
+                    border: "1px solid var(--border-subtle)",
+                    borderRadius: 8,
+                    padding: "6px 28px 6px 10px",
+                    background: "var(--bg-base)",
+                    color: "var(--fg-primary)",
+                    fontSize: 13,
+                    fontFamily: "inherit",
+                    appearance: "none",
+                    backgroundImage: `url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237a7269' fill='none' stroke-linecap='round'/%3E%3C/svg%3E")`,
+                    backgroundRepeat: "no-repeat",
+                    backgroundPosition: "right 10px center",
+                    cursor: "pointer",
+                  }}
+                >
+                  <option value="relevance">Relevância</option>
+                  <option value="nutrition_grade">Nutri‑Score</option>
+                  <option value="name">Nome (A–Z)</option>
+                  <option value="energy">Energia</option>
+                  <option value="with_images">Com imagens</option>
+                </select>
+
+                {/* ── View mode toggle (inline, all breakpoints) ─────────── */}
+                <div
+                  style={{
+                    display: "inline-flex",
+                    padding: 3,
+                    background: "var(--bg-surface)",
+                    border: "1px solid var(--border-subtle)",
+                    borderRadius: 10,
+                    marginLeft: 6,
+                  }}
+                >
+                  {(
+                    [
+                      { id: "grid" as const, Icon: LayoutGrid, label: "Cards" },
+                      { id: "list" as const, Icon: List, label: "Lista" },
+                    ] as const
+                  ).map(({ id, Icon, label }) => (
+                    <button
+                      key={id}
+                      onClick={() => setViewMode(id)}
+                      title={label}
+                      aria-label={label}
+                      aria-pressed={viewMode === id}
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: 5,
+                        padding: "6px 10px",
+                        borderRadius: 7,
+                        fontSize: 12,
+                        fontWeight: 500,
+                        fontFamily: "inherit",
+                        border: "none",
+                        cursor: "pointer",
+                        background:
+                          viewMode === id
+                            ? "var(--bg-elevated)"
+                            : "transparent",
+                        color:
+                          viewMode === id
+                            ? "var(--fg-primary)"
+                            : "var(--fg-muted)",
+                        boxShadow:
+                          viewMode === id
+                            ? "0 1px 2px rgba(0,0,0,0.07)"
+                            : "none",
+                        transition: "all 0.15s",
+                      }}
+                    >
+                      <Icon
+                        style={{ width: 13, height: 13 }}
+                        strokeWidth={1.75}
+                      />
+                      <span className="hidden sm:inline">{label}</span>
+                    </button>
                   ))}
                 </div>
               </div>
-            )}
+            </div>
+          )}
 
-            {/* Erro */}
-            {error && !loading && (
-              <div className="text-center py-12">
-                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6 max-w-md mx-auto">
-                  <h2 className="text-xl font-semibold text-red-800 dark:text-red-200 mb-2">
-                    Erro ao buscar produtos
-                  </h2>
-                  <p className="text-red-600 dark:text-red-300 mb-4">{error}</p>
-                  <Button onClick={() => loadProducts(true)} variant="outline">
-                    Tentar novamente
-                  </Button>
-                </div>
+          {/* ── Loading skeletons ──────────────────────────────────────────── */}
+          {loading && (
+            viewMode === "grid" ? (
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
+                  gap: 20,
+                }}
+              >
+                {[...Array(8)].map((_, i) => (
+                  <ProductCardSkeleton key={i} />
+                ))}
               </div>
-            )}
-
-            {/* Sem Resultados */}
-            {!loading && !error && totalItems === 0 && (
-              <div className="text-center py-12">
-                <Search className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                  Nenhum produto encontrado
-                </h2>
-                <p className="text-gray-600 dark:text-gray-300 mb-6">
-                  Tente ajustar os filtros ou buscar com outros termos
-                </p>
-                <div className="flex gap-3 justify-center">
-                  <Button onClick={() => router.push("/")}>Nova Busca</Button>
-                  {hasActiveFilters && (
-                    <Button onClick={clearFilters} variant="outline">
-                      Limpar Filtros
-                    </Button>
-                  )}
-                </div>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                {[...Array(6)].map((_, i) => (
+                  <ProductCardSkeleton key={i} />
+                ))}
               </div>
-            )}
+            )
+          )}
 
-            {/* Grid de Produtos */}
-            {!loading && totalItems > 0 && (
-              <>
-                <div
-                  className={`product-grid grid gap-3 sm:gap-4 md:gap-6 mb-8 px-3 sm:px-0 ${
-                    viewMode === "grid"
-                      ? "grid-cols-1 sm:grid-cols-2 xl:grid-cols-3"
-                      : "grid-cols-1"
-                  }`}
+          {/* ── Error ─────────────────────────────────────────────────────── */}
+          {error && !loading && (
+            <div
+              style={{
+                padding: 40,
+                textAlign: "center",
+                background: "var(--bg-surface)",
+                border: "1px solid var(--border-subtle)",
+                borderRadius: 16,
+              }}
+            >
+              <h2
+                style={{
+                  fontFamily: "'Instrument Serif', Georgia, serif",
+                  fontSize: 26,
+                  color: "var(--nutri-e, #e63e11)",
+                  marginBottom: 8,
+                }}
+              >
+                Erro ao buscar produtos
+              </h2>
+              <p style={{ color: "var(--fg-secondary)", fontSize: 14, marginBottom: 20 }}>
+                {error}
+              </p>
+              <button
+                onClick={() => loadProducts(true)}
+                style={{
+                  padding: "11px 20px",
+                  border: "1px solid var(--border-subtle)",
+                  borderRadius: 10,
+                  background: "transparent",
+                  fontSize: 13,
+                  color: "var(--fg-primary)",
+                  cursor: "pointer",
+                }}
+              >
+                Tentar novamente
+              </button>
+            </div>
+          )}
+
+          {/* ── Empty state ────────────────────────────────────────────────── */}
+          {!loading && !error && totalItems === 0 && (
+            <div
+              style={{
+                padding: 60,
+                textAlign: "center",
+                color: "var(--fg-muted)",
+              }}
+            >
+              <div
+                style={{
+                  fontFamily: "'Instrument Serif', Georgia, serif",
+                  fontSize: 28,
+                  color: "var(--fg-secondary)",
+                  marginBottom: 8,
+                }}
+              >
+                Nada encontrado
+              </div>
+              <div style={{ fontSize: 14, marginBottom: 24 }}>
+                Tente limpar os filtros ou usar outros termos.
+              </div>
+              <div style={{ display: "flex", gap: 10, justifyContent: "center" }}>
+                <button
+                  onClick={() => router.push("/")}
+                  style={{
+                    padding: "11px 20px",
+                    background: "var(--accent)",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: 10,
+                    fontSize: 13,
+                    fontWeight: 500,
+                    cursor: "pointer",
+                  }}
                 >
-                  {/* Card de Doação - sempre primeiro */}
-                  <div
-                    className="animate-in fade-in-0 slide-in-from-bottom-4"
+                  Nova busca
+                </button>
+                {(hasActiveFilters || gradeFilter || allergenFree) && (
+                  <button
+                    onClick={() => {
+                      clearFilters();
+                      setGradeFilter(null);
+                      setAllergenFree(false);
+                    }}
                     style={{
-                      animationDelay: "0ms",
+                      padding: "11px 20px",
+                      border: "1px solid var(--border-subtle)",
+                      borderRadius: 10,
+                      background: "transparent",
+                      fontSize: 13,
+                      color: "var(--fg-primary)",
+                      cursor: "pointer",
+                    }}
+                  >
+                    Limpar filtros
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* ── Product results ─────────────────────────────────────────────── */}
+          {!loading && totalItems > 0 && (
+            <>
+              {viewMode === "grid" ? (
+                /* ── Grid view ──────────────────────────────────────────────── */
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
+                    gap: 20,
+                    marginBottom: 8,
+                  }}
+                >
+                  <div
+                    style={{
+                      animation: "fadeInUp 0.5s ease-out forwards",
                       animationFillMode: "both",
                     }}
                   >
-                    <DonateCard variant="mobile" className="sm:hidden" />
-                    <DonateCard variant="default" className="hidden sm:block" />
+                    <DonateCard variant="default" />
                   </div>
-
                   {currentPageProducts.map((product, index) => (
                     <div
                       key={product.code}
-                      className="animate-in fade-in-0 slide-in-from-bottom-4"
                       style={{
-                        animationDelay: `${Math.min(index * 50, 500)}ms`,
+                        animation: `fadeInUp 0.5s ease-out ${Math.min(index * 40, 400)}ms forwards`,
+                        opacity: 0,
+                        animationFillMode: "both",
+                      }}
+                    >
+                      <ProductCard
+                        product={product}
+                        priority={index}
+                        currentPage={currentPage}
+                        variant="default"
+                      />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                /* ── List view ──────────────────────────────────────────────── */
+                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                  <div
+                    style={{
+                      animationFillMode: "both",
+                      animation: "fadeInUp 0.5s ease-out forwards",
+                    }}
+                  >
+                    <DonateCard variant="mobile" />
+                  </div>
+                  {currentPageProducts.map((product, index) => (
+                    <div
+                      key={product.code}
+                      style={{
+                        animation: `fadeInUp 0.5s ease-out ${Math.min(index * 40, 400)}ms forwards`,
+                        opacity: 0,
                         animationFillMode: "both",
                       }}
                     >
@@ -614,100 +885,113 @@ function ResultadosContent() {
                         priority={index}
                         currentPage={currentPage}
                         variant="mobile"
-                        className="sm:hidden"
-                      />
-                      <ProductCard
-                        product={product}
-                        priority={index}
-                        currentPage={currentPage}
-                        variant="default"
-                        className="hidden sm:block"
                       />
                     </div>
                   ))}
                 </div>
+              )}
 
-                {/* Paginação */}
-                {totalPages > 1 && (
-                  <div className="mt-8">
-                    <Pagination
-                      currentPage={currentPage}
-                      totalPages={totalPages}
-                      totalItems={totalItems}
-                      itemsPerPage={itemsPerPage}
-                      onPageChange={setCurrentPage}
-                      onItemsPerPageChange={setItemsPerPage}
-                      config={{
-                        itemsPerPage: 20,
-                        maxVisiblePages: 5,
-                        showFirstLast: true,
-                        showPrevNext: true,
-                      }}
-                    />
-                  </div>
-                )}
-
-                {/* Informações adicionais */}
-                <div className="text-center mt-6">
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {cacheState.isCached ? (
-                      <>
-                        Dados carregados do cache local •
-                        <button
-                          onClick={handleRefresh}
-                          className="ml-1 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline"
-                        >
-                          Atualizar busca
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        Dados carregados da API externa •
-                        <button
-                          onClick={handleRefresh}
-                          className="ml-1 text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline"
-                        >
-                          Atualizar busca
-                        </button>
-                      </>
-                    )}
-                    {storageStats && (
-                      <>
-                        {" • "}
-                        <button
-                          onClick={handleRefreshStorageStats}
-                          className="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 underline"
-                        >
-                          Storage: {storageStats?.storageSizeMB || 0} MB
-                        </button>
-                      </>
-                    )}
-                  </p>
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div style={{ marginTop: 32 }}>
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    totalItems={totalItems}
+                    itemsPerPage={itemsPerPage}
+                    onPageChange={setCurrentPage}
+                    onItemsPerPageChange={setItemsPerPage}
+                    config={{
+                      itemsPerPage: 20,
+                      maxVisiblePages: 5,
+                      showFirstLast: true,
+                      showPrevNext: true,
+                    }}
+                  />
                 </div>
-              </>
-            )}
-          </div>
+              )}
+
+              {/* Footer note */}
+              <div
+                style={{
+                  marginTop: 24,
+                  textAlign: "center",
+                  fontSize: 12,
+                  color: "var(--fg-muted)",
+                  fontFamily: "ui-monospace, monospace",
+                  letterSpacing: "0.04em",
+                }}
+              >
+                {cacheState.isCached ? "Dados do cache local" : "Dados da API Open Food Facts"} ·{" "}
+                <button
+                  onClick={handleRefresh}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    color: "var(--accent)",
+                    fontSize: "inherit",
+                    fontFamily: "inherit",
+                    textDecoration: "underline",
+                  }}
+                >
+                  Atualizar
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
-      {/* Modais Mobile */}
-      {/* Modal de Filtros */}
-      <Sheet open={showFilters} onOpenChange={setShowFilters}>
-        <SheetContent side="bottom" className="h-[80vh]">
-          <div className="space-y-4">
-            <h2 className="text-lg font-semibold">Filtros</h2>
+      {/* ── Advanced filter sheet (right drawer) ──────────────────────────── */}
+      <Sheet open={showFilterSheet} onOpenChange={setShowFilterSheet}>
+        <SheetContent
+          side="right"
+          className="w-[340px] sm:w-[400px] overflow-y-auto"
+          style={{
+            background: "var(--bg-base)",
+            borderLeft: "1px solid var(--border-subtle)",
+            padding: "28px 24px",
+          }}
+        >
+          <SheetHeader style={{ marginBottom: 4 }}>
+            <SheetTitle
+              style={{
+                fontFamily: "'Instrument Serif', Georgia, serif",
+                fontSize: 22,
+                fontWeight: 400,
+                color: "var(--fg-primary)",
+                letterSpacing: "-0.01em",
+              }}
+            >
+              Filtros <em style={{ fontStyle: "italic", color: "var(--accent)" }}>avançados</em>
+            </SheetTitle>
+          </SheetHeader>
+
+          <div style={{ marginTop: 20 }}>
             <FilterSidebar
               filters={filters}
-              onFiltersChange={updateFilters}
-              onClearFilters={clearFilters}
-              totalResults={totalItems}
+              onFiltersChange={(newFilters) => {
+                updateFilters(newFilters);
+                setCurrentPage(1);
+              }}
+              onClearFilters={() => {
+                clearFilters();
+                setCurrentPage(1);
+              }}
               isLoading={loading}
+              totalResults={totalItems}
+              sortBy={filters.sortBy || "relevance"}
+              onSortChange={handleSortChange}
+              onRefresh={handleRefresh}
+              onClearCache={handleClearCache}
+              isCached={cacheState.isCached}
             />
           </div>
         </SheetContent>
       </Sheet>
 
-      {/* Modal de Ordenação */}
+      {/* ── Mobile sort sheet ──────────────────────────────────────────────── */}
       <Sheet open={showSort} onOpenChange={setShowSort}>
         <SheetContent side="bottom" className="h-[60vh]">
           <div className="space-y-4">
@@ -715,19 +999,14 @@ function ResultadosContent() {
             <div className="space-y-2">
               {[
                 { value: "relevance", label: "Relevância" },
-                {
-                  value: "nutrition_grade",
-                  label: "Classificação Nutricional",
-                },
-                { value: "name", label: "Nome" },
+                { value: "nutrition_grade", label: "Nutri‑Score" },
+                { value: "name", label: "Nome (A–Z)" },
                 { value: "energy", label: "Energia" },
                 { value: "with_images", label: "Com Imagens" },
               ].map((option) => (
                 <Button
                   key={option.value}
-                  variant={
-                    filters.sortBy === option.value ? "default" : "ghost"
-                  }
+                  variant={filters.sortBy === option.value ? "default" : "ghost"}
                   className="w-full justify-start"
                   onClick={() => {
                     handleSortChange(option.value);
@@ -742,7 +1021,7 @@ function ResultadosContent() {
         </SheetContent>
       </Sheet>
 
-      {/* Modal de Informações de Cache */}
+      {/* ── Cache info sheet ───────────────────────────────────────────────── */}
       <Sheet open={showCacheInfo} onOpenChange={setShowCacheInfo}>
         <SheetContent
           side="bottom"
@@ -753,42 +1032,21 @@ function ResultadosContent() {
               Informações do Cache
             </SheetTitle>
           </SheetHeader>
-
           <div className="space-y-4 px-1">
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+            <div
+              style={{
+                background: "var(--bg-surface)",
+                borderRadius: 10,
+                padding: 16,
+              }}
+            >
+              <p style={{ fontSize: 13, color: "var(--fg-muted)", marginBottom: 4 }}>
                 Produtos em cache:
               </p>
-              <p className="text-xl font-bold text-gray-900 dark:text-white">
+              <p style={{ fontSize: 22, fontWeight: 700, color: "var(--fg-primary)" }}>
                 {storageStats?.totalProducts ?? 0}
               </p>
             </div>
-
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
-                Tamanho do storage:
-              </p>
-              <p className="text-xl font-bold text-gray-900 dark:text-white">
-                {storageStats?.storageSizeMB
-                  ? `${storageStats?.storageSizeMB} MB`
-                  : "0 KB"}
-              </p>
-            </div>
-
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
-                Última atualização:
-              </p>
-              <p className="text-lg font-semibold text-gray-900 dark:text-white break-words">
-                {storageStats?.lastUpdated
-                  ? new Date(storageStats?.lastUpdated).toLocaleDateString(
-                      "pt-BR"
-                    )
-                  : "Nunca"}
-              </p>
-            </div>
-
-            {/* Botão de limpar cache */}
             <Button
               onClick={async () => {
                 await clearCache();
@@ -811,8 +1069,23 @@ export default function ResultadosPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        <div
+          style={{
+            minHeight: "100vh",
+            background: "var(--bg-base)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Loader2
+            style={{
+              width: 32,
+              height: 32,
+              color: "var(--accent)",
+            }}
+            className="animate-spin"
+          />
         </div>
       }
     >

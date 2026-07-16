@@ -8,35 +8,39 @@ import { verificarLista } from '@/app/actions';
 import { redirect } from 'next/navigation';
 
 interface ListaPageProps {
-    params: {
+    params: Promise<{
         id: string
-    }
+    }>
 }
 
 export default async function ListaPage({ params }: ListaPageProps) {
-    const { success } = await verificarLista(params.id);
+    const { id } = await params;
+    const { success } = await verificarLista(id);
 
     if (!success) {
         redirect('/');
     }
 
     return (
-        <main className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-            <ListHeader listaId={params.id} />
+        <main className="min-h-screen transition-colors duration-300" style={{ background: 'var(--bg-base)' }}>
+            <ListHeader listaId={id} />
             <ThemeToggle />
-            <div className="container mx-auto px-4 pt-20 pb-8">
+            <div className="mx-auto px-4 pt-20 pb-8" style={{ maxWidth: 1400 }}>
                 <div className="mb-8">
-                    <Main listaId={params.id} />
+                    <Main listaId={id} />
                 </div>
 
                 <Suspense
                     fallback={
                         <div className="flex justify-center items-center p-8">
-                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#1118A7] dark:border-[#212FCC]"></div>
+                            <div
+                                className="animate-spin rounded-full h-8 w-8 border-b-2"
+                                style={{ borderColor: 'var(--accent)' }}
+                            />
                         </div>
                     }
                 >
-                    <CardList listaId={params.id} />
+                    <CardList listaId={id} />
                 </Suspense>
 
                 <Footer />

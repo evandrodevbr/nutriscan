@@ -1,130 +1,147 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Search } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Search, ScanLine, Activity } from "lucide-react";
+import { useSearchLogic } from "@/hooks/use-search-logic";
+import { cn } from "@/lib/utils";
 
 export function PersuasiveCTA() {
-  const [query, setQuery] = useState("");
-  const [searchType, setSearchType] = useState<"barcode" | "name" | null>(null);
   const router = useRouter();
+  const [query, setQuery] = useState("");
+  const { searchType, isValid, loading, setLoading } = useSearchLogic(query);
 
-  // Detectar tipo de busca em tempo real
-  useEffect(() => {
-    const cleaned = query.replace(/\D/g, ""); // Remove tudo que não é número
-
-    if (cleaned.length >= 8 && cleaned.length <= 13) {
-      setSearchType("barcode");
-    } else if (query.trim()) {
-      setSearchType("name");
-    } else {
-      setSearchType(null);
-    }
-  }, [query]);
-
-  const handleSearch = () => {
+  const handleSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (!query.trim()) return;
-
-    const type = detectSearchType(query);
-
-    if (type === "barcode") {
-      // Limpar código de barras (remover espaços/caracteres)
-      const cleanBarcode = query.replace(/\D/g, "");
-
-      if (isValidBarcode(cleanBarcode)) {
-        // Redirecionar para página do produto
-        router.push(`/produto/${cleanBarcode}`);
-      } else {
-        // Mostrar erro de código inválido
-        alert("Código de barras inválido. Deve ter entre 8 e 13 dígitos.");
-      }
-    } else {
-      // Busca normal por nome
-      router.push(`/resultados?q=${encodeURIComponent(query.trim())}`);
-    }
+    setLoading(true);
+    const target =
+      searchType === "barcode" && isValid
+        ? `/produto/${query.trim()}`
+        : `/resultados?q=${encodeURIComponent(query.trim())}`;
+    router.push(target);
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      handleSearch();
-    }
-  };
+  const icon =
+    searchType === "barcode" ? (
+      <ScanLine className="w-4 h-4" />
+    ) : searchType === "name" ? (
+      <Search className="w-4 h-4" />
+    ) : (
+      <Activity className="w-4 h-4" />
+    );
 
-  // Funções auxiliares (copiadas do SearchBar)
-  const detectSearchType = (input: string): "barcode" | "name" => {
-    const cleaned = input.replace(/\D/g, "");
-    return cleaned.length >= 8 && cleaned.length <= 13 ? "barcode" : "name";
-  };
-
-  const isValidBarcode = (barcode: string): boolean => {
-    return barcode.length >= 8 && barcode.length <= 13 && /^\d+$/.test(barcode);
-  };
+  const label =
+    searchType === "barcode"
+      ? "Código de barras detectado"
+      : searchType === "name"
+      ? "Pesquisa por nome"
+      : "Detecção automática";
 
   return (
-    <section className="py-20 bg-gradient-to-br from-blue-600 to-green-600 text-white">
-      <div className="max-w-4xl mx-auto px-4 text-center">
-        <h2 className="text-3xl md:text-5xl font-bold mb-6">
-          Pronto para descobrir a verdade sobre seus alimentos?
-        </h2>
-        <p className="text-xl mb-8 opacity-90">
-          Junte-se a milhares de pessoas que já tomam decisões alimentares mais
-          conscientes com informações transparentes e confiáveis.
-        </p>
+    <section className="bg-[var(--bg-surface)] section-py border-t border-[var(--border-subtle)]">
+      <div className="container-editorial">
 
-        {/* Contador Animado de Usuários */}
-        <div className="mb-8">
-          <div className="text-2xl font-semibold">
-            <span className="animate-pulse">12.847</span> pessoas já buscaram
-            hoje
+        {/* ── Section header ───────────────────────────────────────────── */}
+        <div className="mb-16">
+          <span className="label text-[var(--accent)] block mb-4">
+            Comece Agora
+          </span>
+          <hr className="hairline mb-10" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
+            <h2 className="font-display text-display-lg text-[var(--fg-primary)]">
+              Pronto para descobrir a{" "}
+              <em className="font-display-i text-[var(--accent)]">
+                verdade sobre seus alimentos?
+              </em>
+            </h2>
+            <p className="text-[var(--fg-secondary)] text-lg leading-relaxed max-w-md">
+              Sem cadastro, sem anúncios, sem venda de dados. Resultados
+              nutricionais completos em segundos.
+            </p>
           </div>
         </div>
 
-        {/* Search Bar Destacado */}
-        <div className="max-w-2xl mx-auto bg-white rounded-2xl p-6 shadow-2xl">
-          <div className="flex items-center gap-2">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <Input
-                type="text"
-                placeholder="Digite o código de barras de qualquer produto..."
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                onKeyPress={handleKeyPress}
-                className="pl-10 pr-4 h-12 text-gray-900"
-              />
+        {/* ── Search form ──────────────────────────────────────────────── */}
+        <form onSubmit={handleSearch} className="max-w-2xl">
+          <div className="search-editorial">
+            <div className="text-[var(--fg-muted)] shrink-0">{icon}</div>
 
-              {/* Indicador visual do tipo de busca */}
-              {searchType && (
-                <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                  <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                    {searchType === "barcode" ? "Código de barras" : "Nome"}
-                  </span>
-                </div>
-              )}
-            </div>
-            <Button
-              onClick={handleSearch}
-              disabled={!query.trim()}
-              className="h-12 px-6 bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700"
+            <input
+              type="text"
+              placeholder="Nome do produto ou código de barras…"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              autoComplete="off"
+              spellCheck={false}
+              className="flex-1 bg-transparent border-none outline-none py-[1.125rem] text-[var(--fg-primary)] placeholder-[var(--fg-faint)] text-base font-sans"
+            />
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="btn-accent shrink-0 py-2.5 px-5 text-sm"
             >
-              <Search className="h-4 w-4 mr-2" />
-              Buscar
-            </Button>
+              {loading ? (
+                <span className="flex items-center gap-2">
+                  <span className="w-3.5 h-3.5 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                  Buscando…
+                </span>
+              ) : (
+                <span className="flex items-center gap-1.5">
+                  Buscar
+                  <ArrowRight />
+                </span>
+              )}
+            </button>
           </div>
-          <p className="text-center mt-3 text-sm text-gray-500">
-            💡 Dica: O código de barras está na parte de trás da embalagem
-          </p>
-        </div>
 
-        {/* Trust Indicators */}
-        <div className="mt-8 flex justify-center gap-6 text-sm opacity-75">
-          <span>✓ Sem cadastro necessário</span>
-          <span>✓ Resultados instantâneos</span>
-          <span>✓ 100% gratuito</span>
+          {/* Detection status */}
+          <p className="mt-3 label text-[var(--fg-muted)] flex items-center gap-1.5">
+            <span
+              className={cn(
+                "w-1.5 h-1.5 rounded-full inline-block",
+                searchType !== "auto"
+                  ? "bg-[var(--accent)]"
+                  : "bg-[var(--fg-faint)]"
+              )}
+            />
+            {label}
+          </p>
+        </form>
+
+        {/* ── Trust indicators ─────────────────────────────────────────── */}
+        <div className="mt-12 flex flex-wrap gap-x-10 gap-y-3">
+          {["Sem cadastro necessário", "Resultados instantâneos", "100% gratuito e open source"].map(
+            (item) => (
+              <span
+                key={item}
+                className="label text-[var(--fg-muted)] flex items-center gap-2"
+              >
+                <span className="w-1 h-1 rounded-full bg-[var(--accent)]" />
+                {item}
+              </span>
+            )
+          )}
         </div>
       </div>
     </section>
+  );
+}
+
+function ArrowRight() {
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M5 12h14m-7-7 7 7-7 7" />
+    </svg>
   );
 }

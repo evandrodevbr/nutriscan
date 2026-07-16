@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 160" width="480" height="160">
+  <defs>
+    <!-- Warm neutral background -->
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&amp;family=DM+Sans:wght@400;500&amp;display=swap');
+    </style>
+
+    <!-- Leaf gradient: warm green accent -->
+    <linearGradient id="leafGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3a7d44"/>
+      <stop offset="100%" stop-color="#4d9e5a"/>
+    </linearGradient>
+
+    <!-- Subtle inner shadow filter -->
+    <filter id="softShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#2a5c30" flood-opacity="0.18"/>
+    </filter>
+
+    <!-- Scan line clip -->
+    <clipPath id="iconClip">
+      <rect x="0" y="0" width="140" height="160" rx="0"/>
+    </clipPath>
+  </defs>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!--  ICON MARK  (left side, 140×160 canvas)       -->
+  <!-- ══════════════════════════════════════════════ -->
+
+  <!-- Outer rounded badge — warm cream -->
+  <rect x="12" y="16" width="112" height="128" rx="22" ry="22"
+        fill="#f9f6f0" stroke="#e8e2d9" stroke-width="1.5"/>
+
+  <!-- Inner food-scan arc (half-circle top — green) -->
+  <!-- Represents a stylised leaf / scan arc -->
+  <path d="M 38 88
+             A 30 30 0 0 1 98 88"
+        fill="none"
+        stroke="url(#leafGrad)"
+        stroke-width="4.5"
+        stroke-linecap="round"/>
+
+  <!-- Stem of leaf -->
+  <line x1="68" y1="88" x2="68" y2="108"
+        stroke="#3a7d44" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Left leaf blade -->
+  <path d="M 68 100 Q 52 92 54 78 Q 62 86 68 96"
+        fill="#3a7d44" opacity="0.85"/>
+
+  <!-- Right leaf blade -->
+  <path d="M 68 100 Q 84 92 82 78 Q 74 86 68 96"
+        fill="#4d9e5a" opacity="0.85"/>
+
+  <!-- Nutri-Score bar — 5 blocks A-E -->
+  <!-- Block A (green) -->
+  <rect x="22" y="118" width="16" height="9" rx="2" fill="#3a7d44"/>
+  <!-- Block B (light green) -->
+  <rect x="40" y="118" width="16" height="9" rx="2" fill="#7cb97e"/>
+  <!-- Block C (amber, highlighted = current score) -->
+  <rect x="58" y="115" width="18" height="13" rx="3" fill="#f0a500"
+        filter="url(#softShadow)"/>
+  <!-- Block D (orange) -->
+  <rect x="78" y="118" width="16" height="9" rx="2" fill="#d4956a"/>
+  <!-- Block E (red) -->
+  <rect x="96" y="118" width="16" height="9" rx="2" fill="#c05a3a"/>
+
+  <!-- Score letter on C block -->
+  <text x="67" y="126" text-anchor="middle"
+        font-family="'DM Serif Display', Georgia, serif"
+        font-size="9" font-weight="bold" fill="#fff" letter-spacing="0">C</text>
+
+  <!-- Scan lines (editorial feel) — light horizontal rules -->
+  <line x1="28" y1="48" x2="108" y2="48"
+        stroke="#e0dbd2" stroke-width="1" stroke-dasharray="3 4"/>
+  <line x1="28" y1="56" x2="108" y2="56"
+        stroke="#e0dbd2" stroke-width="1" stroke-dasharray="3 4"/>
+  <line x1="28" y1="64" x2="80"  y2="64"
+        stroke="#e0dbd2" stroke-width="1" stroke-dasharray="3 4"/>
+
+  <!-- Tiny barcode lines (bottom-left of icon, very subtle) -->
+  <g opacity="0.25">
+    <line x1="28" y1="38" x2="28" y2="44" stroke="#5a7a5e" stroke-width="1.5"/>
+    <line x1="31" y1="38" x2="31" y2="44" stroke="#5a7a5e" stroke-width="1"/>
+    <line x1="33" y1="38" x2="33" y2="44" stroke="#5a7a5e" stroke-width="2"/>
+    <line x1="36" y1="38" x2="36" y2="44" stroke="#5a7a5e" stroke-width="1"/>
+    <line x1="38" y1="38" x2="38" y2="44" stroke="#5a7a5e" stroke-width="1.5"/>
+    <line x1="41" y1="38" x2="41" y2="44" stroke="#5a7a5e" stroke-width="1"/>
+  </g>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!--  WORDMARK  (right side)                       -->
+  <!-- ══════════════════════════════════════════════ -->
+
+  <!-- "Nutri" — DM Serif Display, dark charcoal -->
+  <text x="150" y="90"
+        font-family="'DM Serif Display', Georgia, 'Times New Roman', serif"
+        font-size="52" fill="#1e2820" letter-spacing="-1">Nutri</text>
+
+  <!-- "Scan" — DM Serif Display, green accent -->
+  <text x="150" y="90"
+        font-family="'DM Serif Display', Georgia, 'Times New Roman', serif"
+        font-size="52" fill="oklch(52% 0.11 155)" letter-spacing="-1"
+        dx="164">Scan</text>
+
+  <!-- Tagline -->
+  <text x="152" y="112"
+        font-family="'DM Sans', 'Segoe UI', Arial, sans-serif"
+        font-size="13.5" fill="#8a8278" letter-spacing="3.5"
+        font-weight="500">KNOW WHAT YOU EAT</text>
+
+  <!-- Thin divider line between icon and wordmark -->
+  <line x1="140" y1="28" x2="140" y2="134"
+        stroke="#ddd8d0" stroke-width="1"/>
+</svg>

@@ -1,133 +1,97 @@
 "use client";
 
-import React from "react";
-import { motion } from "framer-motion";
-import { Scan, Search, CheckCircle, Zap, Shield, Globe, Clock } from "lucide-react";
-import { cn } from "@/lib/utils";
-
-// Tipagem para escalabilidade
-interface Step {
-  id: number;
-  title: string;
-  description: string;
-  icon: React.ElementType;
-  color: string;
-  features: string[];
-}
-
-const STEPS: Step[] = [
+const STEPS = [
   {
-    id: 1,
+    id: "01",
     title: "Captura de Dados",
-    description: "Input instantâneo via scanner óptico ou entrada manual de protocolo.",
-    icon: Scan,
-    color: "from-blue-500 to-cyan-400",
-    features: ["OCR de alta precisão", "Busca por SKU/EAN", "Detecção automática"],
+    description:
+      "Input instantâneo via scanner óptico ou entrada manual do código de barras do produto.",
+    features: ["OCR de alta precisão", "Busca por código EAN", "Detecção automática"],
   },
   {
-    id: 2,
+    id: "02",
     title: "Análise de Base",
-    description: "Cruzamento com o dataset global Open Food Facts em milissegundos.",
-    icon: Search,
-    color: "from-green-500 to-emerald-400",
-    features: ["Nutri-Score v2.0", "Grau NOVA", "Alertas de Alérgenos"],
+    description:
+      "Cruzamento com o dataset global Open Food Facts em milissegundos. Dados validados por curadoria colaborativa.",
+    features: ["Nutri-Score v2.0", "Grau NOVA", "Alertas de alérgenos"],
   },
   {
-    id: 3,
-    title: "Veredito Técnico",
-    description: "Saída de dados interpretada para uma tomada de decisão consciente.",
-    icon: CheckCircle,
-    color: "from-purple-500 to-pink-500",
-    features: ["Sugestões saudáveis", "Histórico local", "Comparativo de ROI nutricional"],
+    id: "03",
+    title: "Veredito Claro",
+    description:
+      "Saída de dados interpretada para uma tomada de decisão consciente, sem jargões técnicos.",
+    features: ["Sugestões saudáveis", "Histórico local", "Comparativo nutricional"],
   },
 ];
 
 export function HowItWorksSection() {
   return (
-    <section className="relative py-32 bg-white dark:bg-[#030712] overflow-hidden transition-colors duration-500">
-      {/* Background Decor: Engenharia de Luz */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-500/5 via-transparent to-transparent pointer-events-none" />
+    <section className="bg-base section-py">
+      <div className="container-editorial">
 
-      <div className="max-w-7xl mx-auto px-6 relative z-10">
-        <div className="text-center mb-24">
-          <motion.span 
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            className="text-blue-600 font-mono text-sm font-black uppercase tracking-[0.3em]"
-          >
-            Pipeline de Operação
-          </motion.span>
-          <motion.h2 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            className="text-5xl md:text-7xl font-black text-gray-900 dark:text-white mt-4 mb-8 tracking-tighter"
-          >
-            A inteligência por trás do <span className="bg-gradient-to-r from-blue-600 to-green-500 bg-clip-text text-transparent italic">scan</span>.
-          </motion.h2>
+        {/* Section header */}
+        <div className="section-header">
+          <span className="eyebrow">Como Funciona</span>
+          <h2 className="font-display">
+            A inteligência por trás do{" "}
+            <em className="font-display-i italic">scan.</em>
+          </h2>
+          <p>
+            Três etapas simples entre o código de barras e uma escolha informada.
+          </p>
         </div>
 
-        {/* Main Pipeline Flow */}
-        [Image of a modern user interface flow diagram]
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-32 relative">
-          {STEPS.map((step, index) => (
-            <motion.div
+        {/* Step rows — editorial numbered layout */}
+        <div className="divide-y divide-[var(--border-subtle)] border-y border-[var(--border-subtle)] mb-20">
+          {STEPS.map((step) => (
+            <div
               key={step.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.2 }}
-              viewport={{ once: true }}
-              className="group relative p-8 rounded-[2.5rem] bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-800 hover:border-blue-500/30 transition-all duration-500"
+              className="group grid grid-cols-1 lg:grid-cols-[5rem_1fr_1fr] gap-8 py-12 hover-lift cursor-default"
             >
-              {/* Step Badge */}
-              <div className="absolute top-8 right-8 text-4xl font-black opacity-5 dark:opacity-10 group-hover:opacity-20 transition-opacity italic">
-                0{step.id}
+              {/* Step number */}
+              <div className="step-number">{step.id}</div>
+
+              {/* Title + description */}
+              <div>
+                <h3 className="font-display text-display-sm text-[var(--fg-primary)] mb-3">
+                  {step.title}
+                </h3>
+                <p className="text-[var(--fg-secondary)] leading-relaxed">
+                  {step.description}
+                </p>
               </div>
 
-              <div className={cn(
-                "w-16 h-16 rounded-2xl bg-gradient-to-br flex items-center justify-center mb-10 shadow-xl transition-transform group-hover:scale-110 group-hover:rotate-3",
-                step.color
-              )}>
-                <step.icon className="w-8 h-8 text-white" />
-              </div>
-
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 tracking-tight">
-                {step.title}
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-8 leading-relaxed font-medium">
-                {step.description}
-              </p>
-
-              <ul className="space-y-3 border-t border-gray-200 dark:border-gray-800 pt-6">
+              {/* Features list */}
+              <ul className="space-y-3 lg:pt-1">
                 {step.features.map((f) => (
-                  <li key={f} className="flex items-center text-xs font-bold text-gray-500 dark:text-gray-500 uppercase tracking-widest">
-                    <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mr-3 animate-pulse" />
+                  <li
+                    key={f}
+                    className="flex items-center gap-3 text-sm text-[var(--fg-muted)]"
+                  >
+                    <span className="w-1.5 h-px bg-[var(--border-strong)] flex-shrink-0" />
                     {f}
                   </li>
                 ))}
               </ul>
-            </motion.div>
+            </div>
           ))}
         </div>
 
-        {/* Global Stats Footer: O 80/20 do Valor */}
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          className="grid grid-cols-2 lg:grid-cols-4 gap-4"
-        >
+        {/* Bottom stat strip */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-[var(--border-subtle)] border border-[var(--border-subtle)] rounded-lg overflow-hidden">
           {[
-            { icon: Globe, label: "Global", text: "2M+ Alimentos" },
-            { icon: Shield, label: "Seguro", text: "100% Gratuito" },
-            { icon: Clock, label: "Veloz", text: "< 10 Segundos" },
-            { icon: Zap, label: "Offline", text: "Cache Inteligente" },
-          ].map((item, i) => (
-            <div key={i} className="flex flex-col items-center p-6 bg-white dark:bg-gray-900 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm">
-              <item.icon className="w-6 h-6 text-blue-500 mb-3" />
-              <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">{item.label}</span>
-              <span className="text-sm font-bold text-gray-900 dark:text-white">{item.text}</span>
+            { val: "2M+", label: "Alimentos globais" },
+            { val: "100%", label: "Gratuito" },
+            { val: "< 10s", label: "Por consulta" },
+            { val: "Offline", label: "Cache inteligente" },
+          ].map((item) => (
+            <div key={item.label} className="bg-elevated px-8 py-8 stat-cell items-start">
+              <span className="stat-value">{item.val}</span>
+              <span className="stat-label">{item.label}</span>
             </div>
           ))}
-        </motion.div>
+        </div>
+
       </div>
     </section>
   );

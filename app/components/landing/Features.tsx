@@ -1,147 +1,125 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion"; // ESSENCIAL: Evita erros de referência
-import { Shield, Zap, Sparkles, Heart, CheckCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// Definição de Tipos para garantir integridade no TS
 interface Feature {
-  icon: React.ElementType;
+  number: string;
   title: string;
   description: string;
-  color: string;
-  bgColor: string;
-  iconBg: string;
-  benefit: string;
+  detail: string;
 }
 
 const features: Feature[] = [
   {
-    icon: Shield,
-    title: "Dados da Comunidade",
-    description: "Informações fornecidas pela Open Food Facts, a maior base colaborativa global mantida por voluntários.",
-    color: "text-blue-600 dark:text-blue-400",
-    bgColor: "bg-blue-50 dark:bg-blue-900/20",
-    iconBg: "bg-blue-100 dark:bg-blue-900/40",
-    benefit: "Base colaborativa mundial",
+    number: "01",
+    title: "Dados Colaborativos",
+    description:
+      "Informações fornecidas pelo Open Food Facts, a maior base colaborativa global — a Wikipedia dos alimentos, mantida por voluntários em todo o mundo.",
+    detail: "2 M+ produtos",
   },
   {
-    icon: Zap,
-    title: "Atualização Contínua",
-    description: "Novos produtos e fórmulas atualizados a cada minuto pela comunidade. Dados sempre frescos no seu dispositivo.",
-    color: "text-green-600 dark:text-green-400",
-    bgColor: "bg-green-50 dark:bg-green-900/20",
-    iconBg: "bg-green-100 dark:bg-green-900/40",
-    benefit: "Atualizado em tempo real",
+    number: "02",
+    title: "Sempre Atualizado",
+    description:
+      "Novos produtos e reformulações são adicionados a cada minuto pela comunidade. Conectamos você direto à fonte, sem intermediários.",
+    detail: "Atualização em tempo real",
   },
   {
-    icon: Sparkles,
-    title: "Velocidade de Resposta",
-    description: "Interface otimizada para decisões rápidas. Escaneie e obtenha o diagnóstico nutricional em poucos segundos.",
-    color: "text-purple-600 dark:text-purple-400",
-    bgColor: "bg-purple-50 dark:bg-purple-900/20",
-    iconBg: "bg-purple-100 dark:bg-purple-900/40",
-    benefit: "Resultados em <10s",
+    number: "03",
+    title: "Decisão em Segundos",
+    description:
+      "Interface projetada para clareza imediata. Nutri-Score, NOVA e alérgenos visíveis à primeira vista — sem ruído visual.",
+    detail: "Resultados em < 10 s",
   },
   {
-    icon: Heart,
-    title: "Filosofia Open Source",
-    description: "O NutriScan é e sempre será gratuito. Conhecimento sobre saúde deve ser um direito universal.",
-    color: "text-orange-600 dark:text-orange-400",
-    bgColor: "bg-orange-50 dark:bg-orange-900/20",
-    iconBg: "bg-orange-100 dark:bg-orange-900/40",
-    benefit: "Gratuito para sempre",
+    number: "04",
+    title: "Open Source, Sempre",
+    description:
+      "O NutriScan é e sempre será gratuito. Conhecimento sobre saúde deve ser um direito universal, sem anúncios ou venda de dados.",
+    detail: "Licença MIT",
   },
 ];
 
-// Variantes de animação para o container pai (Stagger effect)
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.15 },
-  },
-};
-
-// Variantes para cada card individual
-const cardVariants = {
-  hidden: { y: 20, opacity: 0 },
-  visible: {
-    y: 0,
-    opacity: 1,
-    transition: { type: "spring", stiffness: 100 },
-  },
-};
-
 export function Features() {
   return (
-    <section className="py-24 bg-white dark:bg-[#030712] relative overflow-hidden">
-      {/* Background Decor: Sutil gradiente para profundidade */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-500/5 via-transparent to-transparent pointer-events-none" />
+    <section className="bg-base section-py">
+      <div className="container-editorial">
 
-      <div className="max-w-7xl mx-auto px-6 relative z-10">
-        {/* Header com Motion */}
-        <motion.div 
-          initial={{ opacity: 0, y: -20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-20"
-        >
-          <h2 className="text-4xl md:text-5xl font-black text-gray-900 dark:text-white mb-6 tracking-tighter">
-            Por que confiar no <span className="text-blue-600">NutriScan</span>
-          </h2>
-          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto font-medium">
-            Engenharia de dados a serviço da sua saúde, com transparência total e zero custo.
-          </p>
-        </motion.div>
+        {/* ── Section header ───────────────────────────────────────────── */}
+        <div className="mb-16">
+          <span className="label text-[var(--accent)] block mb-4">Recursos</span>
+          <hr className="hairline mb-10" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
+            <h2 className="font-display text-display-lg text-[var(--fg-primary)]">
+              Por que confiar no{" "}
+              <em className="font-display-i text-[var(--accent)]">NutriScan</em>
+            </h2>
+            <p className="text-[var(--fg-secondary)] text-lg leading-relaxed max-w-md">
+              Engenharia de dados a serviço da sua saúde, com transparência
+              total e zero custo.
+            </p>
+          </div>
+        </div>
 
-        {/* Features Grid com Stagger */}
-        <motion.div 
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-2 gap-8"
-        >
-          {features.map((feature, index) => (
-            <motion.div
-              key={index}
-              variants={cardVariants}
-              whileHover={{ y: -5, transition: { duration: 0.2 } }}
-              className="group relative bg-gray-50 dark:bg-gray-900/50 rounded-3xl p-8 border border-gray-100 dark:border-gray-800 hover:border-blue-500/30 transition-colors"
-            >
-              {/* Icon Container */}
-              <div
-                className={cn(
-                  feature.iconBg,
-                  "w-14 h-14 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300"
-                )}
-              >
-                <feature.icon className={cn("w-7 h-7", feature.color)} />
-              </div>
-
-              {/* Text Content */}
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 tracking-tight">
-                {feature.title}
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-8 leading-relaxed">
-                {feature.description}
-              </p>
-
-              {/* Benefit Badge */}
-              <div className={cn(
-                "inline-flex items-center px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest",
-                feature.bgColor,
-                feature.color
-              )}>
-                <CheckCircle className="w-3.5 h-3.5 mr-2" />
-                <span>{feature.benefit}</span>
-              </div>
-            </motion.div>
+        {/* ── Feature rows ─────────────────────────────────────────────── */}
+        <div className="divide-y divide-[var(--border-subtle)]">
+          {features.map((f, i) => (
+            <FeatureRow key={f.number} feature={f} index={i} />
           ))}
-        </motion.div>
+        </div>
+
+        {/* ── Bottom rule ──────────────────────────────────────────────── */}
+        <hr className="hairline mt-0" />
       </div>
     </section>
+  );
+}
+
+function FeatureRow({
+  feature,
+  index,
+}: {
+  feature: Feature;
+  index: number;
+}) {
+  return (
+    <div
+      className={cn(
+        "group grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-12 py-10 md:py-12",
+        "transition-colors duration-300 hover:bg-[var(--bg-surface)]",
+        "cursor-default -mx-4 px-4 md:-mx-6 md:px-6"
+      )}
+      style={{ animationDelay: `${index * 0.1}s` }}
+    >
+      {/* Step number */}
+      <div className="md:col-span-1 flex items-start">
+        <span className="label text-[var(--fg-faint)] group-hover:text-[var(--accent)] transition-colors duration-300">
+          {feature.number}
+        </span>
+      </div>
+
+      {/* Title */}
+      <div className="md:col-span-3 flex items-start">
+        <h3 className="font-display text-display-sm text-[var(--fg-primary)] leading-tight">
+          {feature.title}
+        </h3>
+      </div>
+
+      {/* Description */}
+      <div className="md:col-span-6 flex items-start">
+        <p className="text-[var(--fg-secondary)] leading-relaxed text-base">
+          {feature.description}
+        </p>
+      </div>
+
+      {/* Detail pill */}
+      <div className="md:col-span-2 flex items-start md:justify-end">
+        <span className="inline-flex items-center gap-1.5 text-[var(--accent)] label">
+          <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] shrink-0" />
+          {feature.detail}
+        </span>
+      </div>
+    </div>
   );
 }

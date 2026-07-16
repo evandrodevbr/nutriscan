@@ -8,7 +8,7 @@ import { TrustBadges } from "./components/landing/TrustBadges";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900">
+    <div className="landing-font min-h-screen bg-base">
       <Header />
       <main>
         <Hero />

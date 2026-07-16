@@ -1,68 +1,102 @@
 "use client";
 
-import { ChevronDown } from "lucide-react";
+import { ArrowDown } from "lucide-react";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
 
 export function HeroSection() {
   const scrollToNext = () => {
-    const nextSection = document.getElementById("problema");
-    nextSection?.scrollIntoView({ behavior: "smooth" });
+    document.getElementById("problema")?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-hidden">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%230055ff%22%20fill-opacity%3D%220.05%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%222%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-40"></div>
+    <section className="relative bg-base overflow-hidden">
+      {/* Subtle warm grain texture overlay */}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.03]"
+        style={{
+          backgroundImage:
+            "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E\")",
+          backgroundSize: "200px 200px",
+        }}
+      />
 
-      <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        {/* Logo */}
-        <div className="mb-8">
-          <Image
-            src="/apple-touch-icon.png"
-            alt="NutriScan Logo"
-            width={96}
-            height={96}
-            className="mx-auto rounded-2xl shadow-xl"
-            priority
-          />
+      {/* Top hairline */}
+      <div className="hairline" />
+
+      <div className="container-editorial">
+        {/* Eyebrow row */}
+        <div className="flex items-center justify-between border-b border-[var(--border-subtle)] py-6">
+          <span className="label text-[var(--fg-muted)]">Sobre o NutriScan</span>
+          <span className="label text-[var(--fg-faint)]">Est. 2024</span>
         </div>
 
-        {/* Hero Title */}
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
-          Saber o que colocamos no{" "}
-          <span className="bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
-            prato
-          </span>
-          <br />é um direito de todos
-        </h1>
+        {/* Main hero content */}
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-16 pt-20 pb-24 lg:pt-28 lg:pb-32">
+          <div className="max-w-3xl">
+            {/* Issue label */}
+            <p className="label text-accent mb-8 tracking-widest">
+              Transparência Alimentar
+            </p>
 
-        {/* Subtitle */}
-        <p className="text-xl sm:text-2xl text-gray-600 dark:text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed">
-          Em um mundo onde rótulos são confusos e ingredientes impossíveis de
-          pronunciar, o NutriScan nasceu para devolver o poder de escolha às
-          suas mãos.
-        </p>
+            {/* Editorial headline — Instrument Serif, weight 400, no gradient */}
+            <h1 className="font-display text-display-xl text-[var(--fg-primary)] mb-8 leading-[0.9]">
+              Saber o que{" "}
+              <em className="font-display-i not-italic italic">colocamos</em>
+              <br />
+              no prato é um direito{" "}
+              <em className="font-display-i not-italic italic">de todos.</em>
+            </h1>
 
-        {/* CTA */}
-        <Button
-          onClick={scrollToNext}
-          variant="outline"
-          size="lg"
-          className="group hover:bg-gradient-to-r hover:from-blue-600 hover:to-green-600 hover:text-white hover:border-transparent transition-all duration-300"
-        >
-          <span className="mr-2">Conheça nossa história</span>
-          <ChevronDown className="w-5 h-5 group-hover:animate-bounce" />
-        </Button>
-      </div>
+            <p className="text-lg text-[var(--fg-secondary)] leading-relaxed max-w-xl mb-12">
+              Em um mundo onde rótulos são confusos e ingredientes impossíveis
+              de pronunciar, o NutriScan nasceu para devolver o poder de escolha
+              às suas mãos.
+            </p>
 
-      {/* Scroll Indicator */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
-        <div className="animate-bounce">
-          <div className="w-6 h-10 border-2 border-gray-400 dark:border-gray-500 rounded-full flex justify-center">
-            <div className="w-1 h-3 bg-gray-400 dark:bg-gray-500 rounded-full mt-2 animate-pulse"></div>
+            <button
+              onClick={scrollToNext}
+              className="btn-ghost group inline-flex items-center gap-3"
+            >
+              Conheça nossa história
+              <ArrowDown
+                size={15}
+                className="transition-transform duration-300 group-hover:translate-y-1"
+              />
+            </button>
+          </div>
+
+          {/* Logo mark — editorial, no shadow */}
+          <div className="hidden lg:flex items-start pt-2">
+            <div className="relative">
+              <div className="w-20 h-20 rounded-xl overflow-hidden border border-[var(--border-subtle)]">
+                <Image
+                  src="/apple-touch-icon.png"
+                  alt="NutriScan"
+                  width={80}
+                  height={80}
+                  className="w-full h-full object-cover"
+                  priority
+                />
+              </div>
+            </div>
           </div>
         </div>
+
+        {/* Stats row — hairline separated */}
+        <div className="hairline" />
+        <div className="grid grid-cols-3 divide-x divide-[var(--border-subtle)] py-10">
+          {[
+            { value: "2M+", label: "Alimentos indexados" },
+            { value: "100+", label: "Países cobertos" },
+            { value: "ODBL", label: "Licença aberta" },
+          ].map((stat) => (
+            <div key={stat.label} className="stat-cell px-8 first:pl-0 last:pr-0">
+              <span className="stat-value">{stat.value}</span>
+              <span className="stat-label">{stat.label}</span>
+            </div>
+          ))}
+        </div>
+        <div className="hairline" />
       </div>
     </section>
   );

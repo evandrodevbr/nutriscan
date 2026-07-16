@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { ImageOff } from "lucide-react";
 
 export interface OptimizedImageProps {
   src: string;
@@ -18,6 +19,7 @@ export interface OptimizedImageProps {
   blurDataURL?: string;
   quality?: number;
   loading?: "lazy" | "eager";
+  unoptimized?: boolean;
   onLoad?: () => void;
   onError?: (error: Error) => void;
 }
@@ -43,12 +45,18 @@ export function OptimizedImage({
   blurDataURL,
   quality,
   loading = "lazy",
+  unoptimized,
   onLoad,
   onError,
   ...props
 }: OptimizedImageProps) {
   const [shouldLoad, setShouldLoad] = useState(false);
   const [hasError, setHasError] = useState(false);
+
+  // Usa unoptimized=true para imagens do Open Food Facts, pois o servidor deles
+  // costuma ser lento e causa erros de timeout no otimizador de imagens do Next.js.
+  const isOffImage = src?.includes("openfoodfacts.org") ?? false;
+  const isUnoptimized = unoptimized !== undefined ? unoptimized : isOffImage;
 
   // Usar priority para debug/logging se necessário
   console.debug(`OptimizedImage: ${src} (priority: ${priority})`);
@@ -113,14 +121,14 @@ export function OptimizedImage({
   const renderError = () => (
     <div
       className={cn(
-        "bg-gray-100 dark:bg-gray-800 flex items-center justify-center",
+        "bg-gray-50 dark:bg-gray-800/50 flex flex-col items-center justify-center gap-2",
         "text-gray-400 dark:text-gray-500",
         className
       )}
     >
-      <div className="text-center">
-        <div className="text-2xl mb-2">📷</div>
-        <div className="text-xs">Erro ao carregar</div>
+      <ImageOff className="w-8 h-8 text-gray-300 dark:text-gray-600" />
+      <div className="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">
+        Imagem Indisponível
       </div>
     </div>
   );
@@ -141,6 +149,7 @@ export function OptimizedImage({
           blurDataURL={blurDataURL}
           quality={quality}
           loading={loading}
+          unoptimized={isUnoptimized}
           className={cn("transition-opacity duration-300", className)}
           onLoad={() => {
             onLoad?.();

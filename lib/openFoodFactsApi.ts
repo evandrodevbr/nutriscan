@@ -217,14 +217,14 @@ export function sortProducts(
 // Funções Auxiliares de Baixo Nível
 function calculateCompletenessScore(p: Product): number {
   let s = 0;
-  if (p.product_name) s += 10;
+  if (p.product_name) s += 20;
   if (p.brands) s += 10;
-  if (p.image_url) s += 15;
-  if (p.nutriments?.energy_100g !== undefined) s += 20;
-  if (p.nutrition_grades) s += 15;
-  if (p.nova_group) s += 10;
-  if (p.ingredients_text) s += 10;
-  if (p.categories) s += 10;
+  if (p.image_url || p.image_front_url || p.image_front_small_url || p.image_small_url) s += 30;
+  if (p.nutriments?.energy_100g !== undefined) s += 15;
+  if (p.nutrition_grades) s += 10;
+  if (p.nova_group) s += 5;
+  if (p.ingredients_text) s += 5;
+  if (p.categories) s += 5;
   return s;
 }
 

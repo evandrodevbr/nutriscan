@@ -1,350 +1,292 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { OptimizedImage } from "@/components/OptimizedImage";
 import { Product } from "@/lib/openFoodFactsApi";
-import { Heart, AlertTriangle, Zap, Plus, Eye } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import { formatNutritionData } from "@/lib/openFoodFactsApi";
+import { cn } from "@/lib/utils";
 
 interface ProductCardProps {
   product: Product;
   className?: string;
-  priority?: number; // Posição na lista (0 = primeiro)
-  currentPage?: number; // Página atual para controle de cancelamento
-  variant?: "default" | "mobile"; // Variante de layout
+  priority?: number;
+  currentPage?: number;
+  variant?: "default" | "mobile";
 }
 
-const NUTRI_SCORE_CONFIG = {
-  a: {
-    label: "A",
-    className: "bg-green-500 text-white border-green-500",
-    description: "Muito bom",
-  },
-  b: {
-    label: "B",
-    className: "bg-green-400 text-white border-green-400",
-    description: "Bom",
-  },
-  c: {
-    label: "C",
-    className: "bg-yellow-500 text-white border-yellow-500",
-    description: "Regular",
-  },
-  d: {
-    label: "D",
-    className: "bg-orange-500 text-white border-orange-500",
-    description: "Ruim",
-  },
-  e: {
-    label: "E",
-    className: "bg-red-500 text-white border-red-500",
-    description: "Muito ruim",
-  },
+const NUTRI_GRADE_CLASS: Record<string, string> = {
+  a: "a", b: "b", c: "c", d: "d", e: "e",
 };
 
-const NOVA_CONFIG = {
-  1: {
-    label: "1",
-    className: "bg-green-500 text-white",
-    description: "Minimamente processado",
-  },
-  2: {
-    label: "2",
-    className: "bg-yellow-500 text-white",
-    description: "Ingrediente culinário",
-  },
-  3: {
-    label: "3",
-    className: "bg-orange-500 text-white",
-    description: "Processado",
-  },
-  4: {
-    label: "4",
-    className: "bg-red-500 text-white",
-    description: "Ultraprocessado",
-  },
-};
+function getVerdict(grade?: string, nova?: number): { label: string; colorClass: string } {
+  if (grade === "a" || grade === "b") return { label: "Recomendado",    colorClass: "text-[var(--nutri-a)]" };
+  if (grade === "c" || nova === 3)    return { label: "Com moderação",  colorClass: "text-[var(--nutri-c)]" };
+  return                                     { label: "Evitar",         colorClass: "text-[var(--nutri-e)]" };
+}
 
-export function ProductCard({
-  product,
-  className = "",
-  priority = 999,
-  currentPage = 1,
-  variant = "default",
-}: ProductCardProps) {
-  const router = useRouter();
+function getVerdictDotBg(grade?: string, nova?: number): string {
+  if (grade === "a" || grade === "b") return "bg-[var(--nutri-a)]";
+  if (grade === "c" || nova === 3)    return "bg-[var(--nutri-c)]";
+  return "bg-[var(--nutri-e)]";
+}
 
-  const getProductImageUrl = (): string => {
-    return (
-      product.image_front_url ||
-      product.image_front_small_url ||
-      product.image_url ||
-      product.image_small_url ||
-      "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect fill='%23f3f4f6' width='400' height='400'/%3E%3Ctext fill='%239ca3af' font-family='sans-serif' font-size='48' x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle'%3ESem Imagem%3C/text%3E%3C/svg%3E"
-    );
-  };
-
-  const getNutritionGrade = () => {
-    if (!product.nutrition_grades) return null;
-    const grade = product.nutrition_grades.toLowerCase();
-    return NUTRI_SCORE_CONFIG[grade as keyof typeof NUTRI_SCORE_CONFIG] || null;
-  };
-
-  const getNovaGroup = () => {
-    if (!product.nova_group) return null;
-    return NOVA_CONFIG[product.nova_group as keyof typeof NOVA_CONFIG] || null;
-  };
-
-  const nutritionGrade = getNutritionGrade();
-  const novaGroup = getNovaGroup();
-  const imageUrl = getProductImageUrl();
-  const nutritionData = formatNutritionData(product);
-
-  // Verificar se tem alérgenos comuns
-  const hasCommonAllergens =
-    product.allergens_tags?.some((allergen) =>
-      ["gluten", "milk", "eggs", "nuts", "peanuts", "soy"].some((common) =>
-        allergen.toLowerCase().includes(common)
-      )
-    ) || false;
-
-  // Layout mobile horizontal
-  if (variant === "mobile") {
-    return (
-      <Card
-        className={`product-card group relative overflow-hidden hover:shadow-lg transition-all duration-200 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 ${className}`}
-      >
-        <div className="flex gap-3 p-3">
-          {/* Imagem - tamanho ajustado */}
-          <div className="w-24 h-24 flex-shrink-0 relative bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 rounded-lg overflow-hidden">
-            <OptimizedImage
-              src={imageUrl}
-              alt={product.product_name || "Produto"}
-              fill
-              priority={priority}
-              onPageChange={currentPage}
-              className="object-contain p-2"
-              sizes="96px"
-              placeholder="empty"
-            />
-
-            {/* Badges - tamanho ajustado */}
-            {nutritionGrade && (
-              <div className="absolute top-1 right-1">
-                <Badge
-                  className={`${nutritionGrade.className} text-[9px] px-1.5 py-0.5 font-bold`}
-                >
-                  {nutritionGrade.label}
-                </Badge>
-              </div>
-            )}
-
-            {hasCommonAllergens && (
-              <div className="absolute bottom-1 right-1">
-                <div className="bg-yellow-500 text-white rounded-full p-0.5">
-                  <AlertTriangle className="w-2 h-2" />
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Conteúdo - melhor espaçamento */}
-          <div className="flex-1 min-w-0 flex flex-col">
-            <div className="flex-1">
-              {/* Nome do produto */}
-              <h3 className="font-semibold text-sm text-gray-900 dark:text-white line-clamp-2 mb-1">
-                {product.product_name || "Produto sem nome"}
-              </h3>
-
-              {/* Marca */}
-              {product.brands && (
-                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                  {product.brands}
-                </p>
-              )}
-
-              {/* Info nutricional compacta */}
-              <div className="flex gap-2 mt-2 text-xs">
-                {product.nutriments?.energy_100g &&
-                  typeof product.nutriments.energy_100g === "number" && (
-                    <span className="text-gray-600 dark:text-gray-400">
-                      {Math.round(product.nutriments.energy_100g)} kcal
-                    </span>
-                  )}
-                {product.nutriments?.fat_100g &&
-                  typeof product.nutriments.fat_100g === "number" && (
-                    <span className="text-gray-600 dark:text-gray-400">
-                      {product.nutriments.fat_100g.toFixed(1)}g gord.
-                    </span>
-                  )}
-              </div>
-            </div>
-
-            {/* Botão Ver - menor */}
-            <Link
-              href={`/produto/${product.code}`}
-              className="mt-2 inline-flex items-center justify-center gap-1 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-md transition-colors"
-            >
-              <Eye className="w-3 h-3" />
-              Ver
-            </Link>
-          </div>
-        </div>
-      </Card>
-    );
-  }
-
-  // Layout desktop padrão
+function getImageUrl(product: Product): string {
   return (
-    <Card
-      className={`product-card group relative overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 ${className}`}
+    product.image_front_url ||
+    product.image_front_small_url ||
+    product.image_url ||
+    product.image_small_url ||
+    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Crect fill='%23f3efe7' width='400' height='400'/%3E%3Ctext fill='%23a39c93' font-family='Georgia,serif' font-size='16' x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle'%3ESem imagem%3C/text%3E%3C/svg%3E"
+  );
+}
+
+/* ── Nutri-Letter hero circle ───────────────────────────────────────────── */
+function NutriLetter({ grade, size = 56 }: { grade: string; size?: number }) {
+  const g = grade?.toLowerCase();
+  if (!g || !NUTRI_GRADE_CLASS[g]) return null;
+  return (
+    <div
+      className={`nutri-letter ${g}`}
+      style={{ width: size, height: size, fontSize: Math.round(size * 0.62), flexShrink: 0 }}
+      aria-label={`Nutri-Score ${g.toUpperCase()}`}
     >
-      {/* Imagem do Produto */}
-      <div className="relative h-56 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 overflow-hidden">
+      {g.toUpperCase()}
+    </div>
+  );
+}
+
+/* ── Verdict dot — pure Tailwind, no inline style ──────────────────────── */
+function VerdictDot({ grade, nova }: { grade?: string; nova?: number }) {
+  const { label, colorClass } = getVerdict(grade, nova);
+  const dotBg = getVerdictDotBg(grade, nova);
+  return (
+    <span className={cn("inline-flex items-center gap-1.5 text-[11px] font-semibold", colorClass)}>
+      <span className={cn("w-1.5 h-1.5 rounded-full shrink-0", dotBg)} />
+      {label}
+    </span>
+  );
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   MOBILE VARIANT — horizontal row
+   All hover/focus states are pure CSS via Tailwind so keyboard + touch work
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+function MobileCard({ product, className, priority, currentPage }: Omit<ProductCardProps, "variant">) {
+  const imageUrl = getImageUrl(product);
+  const grade = product.nutrition_grades?.toLowerCase();
+  const nova = product.nova_group;
+  const allergenCount =
+    product.allergens_tags?.filter((a) =>
+      ["gluten", "milk", "eggs", "nuts", "peanuts", "soy"].some((c) =>
+        a.toLowerCase().includes(c)
+      )
+    ).length ?? 0;
+
+  return (
+    <Link
+      href={`/produto/${product.code}`}
+      className={cn(
+        "product-card group flex gap-3.5 items-center p-3.5",
+        "bg-[var(--ink-0)] border border-[var(--ink-200)] rounded-[14px]",
+        /* Hover — CSS only, works for keyboard focus-visible too */
+        "transition-all duration-200 ease-out",
+        "hover:border-[var(--ink-400)] hover:-translate-y-px hover:shadow-[0_6px_20px_-10px_rgba(0,0,0,0.14)]",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ink-0)]",
+        "active:scale-[0.99] active:shadow-none",
+        className
+      )}
+      aria-label={`${product.product_name || "Produto"} — ver detalhes`}
+    >
+      {/* Thumb */}
+      <div className="relative shrink-0 w-[72px] h-[72px] rounded-[10px] overflow-hidden bg-[var(--ink-100)]">
         <OptimizedImage
           src={imageUrl}
           alt={product.product_name || "Produto"}
           fill
           priority={priority}
           onPageChange={currentPage}
-          className="object-contain p-6 group-hover:scale-110 transition-transform duration-500"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          className="object-contain p-1.5"
+          sizes="72px"
+          placeholder="empty"
         />
+      </div>
 
-        {/* Overlay com badges */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-        {/* Badge Nutri-Score */}
-        {nutritionGrade && (
-          <div className="absolute top-3 right-3">
-            <Badge
-              className={`${nutritionGrade.className} shadow-lg text-xs font-bold px-2 py-1`}
-            >
-              <Zap className="w-3 h-3 mr-1" />
-              {nutritionGrade.label}
-            </Badge>
-          </div>
-        )}
-
-        {/* Badge NOVA */}
-        {novaGroup && (
-          <div className="absolute top-3 left-3">
-            <Badge
-              className={`${novaGroup.className} shadow-lg text-xs font-bold px-2 py-1`}
-            >
-              NOVA {novaGroup.label}
-            </Badge>
-          </div>
-        )}
-
-        {/* Ícone de alérgenos */}
-        {hasCommonAllergens && (
-          <div className="absolute bottom-3 right-3">
-            <div className="bg-yellow-500 text-white rounded-full p-1.5 shadow-lg">
-              <AlertTriangle className="w-3 h-3" />
-            </div>
-          </div>
-        )}
-
-        {/* Botão de favorito */}
-        <div className="absolute bottom-3 left-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <Button
-            size="sm"
-            variant="secondary"
-            className="h-8 w-8 p-0 rounded-full bg-white/90 hover:bg-white shadow-lg"
-          >
-            <Heart className="w-4 h-4" />
-          </Button>
+      {/* Center text */}
+      <div className="flex-1 min-w-0">
+        <div className="eyebrow-mono truncate mb-0.5">
+          {product.brands || "Marca desconhecida"}
+        </div>
+        <div className="text-[15px] font-medium text-[var(--ink-900)] truncate mb-2 tracking-[-0.005em]">
+          {product.product_name || "Produto sem nome"}
+        </div>
+        <div className="flex items-center gap-2 flex-wrap">
+          <VerdictDot grade={grade} nova={nova} />
+          {nova && (
+            <>
+              <span className="text-[var(--ink-300)]">·</span>
+              <span className="eyebrow-mono text-[var(--ink-500)]">NOVA {nova}</span>
+            </>
+          )}
+          {allergenCount > 0 && (
+            <>
+              <span className="text-[var(--ink-300)]">·</span>
+              <span className="inline-flex items-center gap-1 text-[11px] text-[var(--warn)] font-medium">
+                <AlertTriangle className="w-2.5 h-2.5" strokeWidth={2} />
+                {allergenCount} alérgeno{allergenCount > 1 ? "s" : ""}
+              </span>
+            </>
+          )}
         </div>
       </div>
 
-      <CardContent className="p-5 space-y-4">
-        {/* Nome do Produto */}
-        <div className="space-y-2">
-          <h3 className="font-semibold text-lg leading-tight line-clamp-2 min-h-[2.5rem] text-gray-900 dark:text-white group-hover:text-primary transition-colors">
+      {/* Nutri-Score letter */}
+      {grade && NUTRI_GRADE_CLASS[grade] && <NutriLetter grade={grade} size={52} />}
+    </Link>
+  );
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   DEFAULT VARIANT — portrait card, image hero
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+function DefaultCard({ product, className, priority, currentPage }: Omit<ProductCardProps, "variant">) {
+  const imageUrl = getImageUrl(product);
+  const nutritionData = formatNutritionData(product);
+  const grade = product.nutrition_grades?.toLowerCase();
+  const nova = product.nova_group;
+  const allergenCount =
+    product.allergens_tags?.filter((a) =>
+      ["gluten", "milk", "eggs", "nuts", "peanuts", "soy"].some((c) =>
+        a.toLowerCase().includes(c)
+      )
+    ).length ?? 0;
+
+  return (
+    <Link
+      href={`/produto/${product.code}`}
+      className={cn(
+        /* Layout */
+        "product-card group flex flex-col h-full",
+        /* Surface */
+        "bg-[var(--ink-0)] border border-[var(--ink-200)] rounded-2xl overflow-hidden",
+        /* Transitions — one rule governs border + lift + shadow */
+        "transition-all duration-200 ease-out",
+        /* Hover — CSS, no JS */
+        "hover:border-[var(--ink-400)] hover:-translate-y-0.5 hover:shadow-[0_12px_32px_-14px_rgba(0,0,0,0.15)]",
+        /* Keyboard focus ring — WCAG 2.4.7 compliant */
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-base)]",
+        /* Press feedback */
+        "active:scale-[0.99] active:shadow-none",
+        className
+      )}
+      aria-label={`${product.product_name || "Produto"} — ver detalhes`}
+    >
+      {/* ── Hero image area ─────────────────────────────────────────────── */}
+      <div className="relative aspect-[5/4] bg-[var(--ink-50)] border-b border-[var(--ink-200)] overflow-hidden">
+        {/* Image zooms on hover because parent now HAS the `group` class */}
+        <OptimizedImage
+          src={imageUrl}
+          alt={product.product_name || "Produto"}
+          fill
+          priority={priority}
+          onPageChange={currentPage}
+          className="object-contain p-6 transition-transform duration-500 ease-out group-hover:scale-105"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        />
+
+        {/* Nutri-Score — top-right */}
+        {grade && NUTRI_GRADE_CLASS[grade] && (
+          <div className="absolute top-3.5 right-3.5 drop-shadow-md">
+            <NutriLetter grade={grade} size={52} />
+          </div>
+        )}
+
+        {/* Allergen chip — top-left */}
+        {allergenCount > 0 && (
+          <div className="absolute top-3.5 left-3.5">
+            <span className="rd-chip warn" style={{ padding: "4px 9px", fontSize: 11 }}>
+              <AlertTriangle className="w-3 h-3" strokeWidth={2} />
+              {allergenCount}
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* ── Card body ──────────────────────────────────────────────────── */}
+      <div className="flex flex-col gap-3.5 p-[18px] flex-1">
+
+        {/* Brand + product name */}
+        <div>
+          <div className="eyebrow-mono truncate mb-1">
+            {product.brands || "Marca desconhecida"}
+          </div>
+          <h3
+            className="font-display text-[22px] leading-[1.15] tracking-[-0.01em] text-[var(--ink-900)] line-clamp-2 m-0"
+          >
             {product.product_name || "Nome não disponível"}
           </h3>
+        </div>
 
-          {/* Marca */}
-          {product.brands && (
-            <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
-              {product.brands}
-            </p>
+        {/* ── Nutrition mini-bar: 4 columns ─────────────────────────────── */}
+        {nutritionData && (
+          <div className="grid grid-cols-4 border-y border-[var(--ink-200)]">
+            {[
+              { l: "kcal",   v: nutritionData.energy },
+              { l: "Açúcar", v: nutritionData.sugars },
+              { l: "Gord.",  v: nutritionData.fat },
+              { l: "Sódio",  v: nutritionData.sodium },
+            ].map((n, i) =>
+              n.v ? (
+                <div
+                  key={n.l}
+                  className={cn(
+                    "flex flex-col items-center justify-center py-3 px-1.5 min-w-0 text-center",
+                    i < 3 && "border-r border-[var(--ink-200)]"
+                  )}
+                >
+                  <span className="font-display text-base text-[var(--ink-900)] leading-none truncate max-w-full">
+                    {n.v}
+                  </span>
+                  <span className="eyebrow-mono text-[9px] text-[var(--ink-500)] mt-1.5">
+                    {n.l}
+                  </span>
+                </div>
+              ) : null
+            )}
+          </div>
+        )}
+
+        {/* Footer row: verdict + nova badge */}
+        <div className="flex items-center justify-between mt-auto">
+          <VerdictDot grade={grade} nova={nova} />
+          {nova && (
+            <span className="eyebrow-mono text-[var(--ink-500)]">
+              NOVA {nova}
+            </span>
           )}
         </div>
 
-        {/* Informações nutricionais resumidas */}
-        {nutritionData && (
-          <div className="grid grid-cols-2 gap-2 text-xs">
-            <div className="flex justify-between">
-              <span className="text-gray-500">Energia:</span>
-              <span className="font-medium">{nutritionData.energy}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500">Gorduras:</span>
-              <span className="font-medium">{nutritionData.fat}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500">Açúcares:</span>
-              <span className="font-medium">{nutritionData.sugars}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500">Sódio:</span>
-              <span className="font-medium">{nutritionData.sodium}</span>
-            </div>
-          </div>
-        )}
-
-        {/* Categorias */}
-        {product.categories && (
-          <div className="flex flex-wrap gap-1.5">
-            {product.categories
-              .split(",")
-              .slice(0, 2)
-              .map((cat, i) => (
-                <Badge
-                  key={i}
-                  variant="outline"
-                  className="text-xs font-normal bg-gray-50 dark:bg-gray-800 border-gray-100 dark:border-gray-800"
-                >
-                  {cat.trim()}
-                </Badge>
-              ))}
-          </div>
-        )}
-
-        {/* Alérgenos */}
-        {hasCommonAllergens && (
-          <div className="flex items-center gap-1 text-xs text-yellow-600 dark:text-yellow-400">
-            <AlertTriangle className="w-3 h-3" />
-            <span>Contém alérgenos</span>
-          </div>
-        )}
-
-        {/* Botões de ação */}
-        <div className="flex gap-2 pt-2">
-          <Button
-            variant="outline"
-            className="flex-1 group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary transition-all duration-200"
-            onClick={() => router.push(`/produto/${product.code}`)}
-          >
-            <Eye className="w-4 h-4 mr-2" />
-            Ver Detalhes
-          </Button>
-
-          <Button
-            size="sm"
-            variant="secondary"
-            className="px-3 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-200"
-          >
-            <Plus className="w-4 h-4" />
-          </Button>
+        {/* CTA — styled as ghost button, inherits the card's hover context */}
+        <div
+          className={cn(
+            "block text-center py-2.5 text-[13px] font-medium text-[var(--ink-700)] no-underline",
+            "border border-[var(--ink-200)] rounded-[10px]",
+            "transition-colors duration-150",
+            /* Group-hover darkens the CTA border/text for free */
+            "group-hover:border-[var(--ink-400)] group-hover:text-[var(--ink-900)]"
+          )}
+          aria-hidden="true"         /* Link is on the <Link> wrapper above */
+          tabIndex={-1}
+        >
+          Ver detalhes →
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </Link>
   );
+}
+
+/* ── Public export ──────────────────────────────────────────────────────── */
+export function ProductCard({ variant = "default", ...props }: ProductCardProps) {
+  if (variant === "mobile") return <MobileCard {...props} />;
+  return <DefaultCard {...props} />;
 }

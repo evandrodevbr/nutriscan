@@ -5,9 +5,9 @@ const USER_AGENT = "NutriScan/1.0 (https://nutriscan.com.br)";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { barcode: string } }
+  { params }: { params: Promise<{ barcode: string }> }
 ) {
-  const { barcode } = params;
+  const { barcode } = await params;
   const searchParams = request.nextUrl.searchParams;
   const cacheOnly = searchParams.get("cache_only") === "true";
 

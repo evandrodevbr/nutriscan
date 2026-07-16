@@ -1,9 +1,7 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
-import { ScanLine, Search, BarChart3, CheckCircle, Globe, Zap } from "lucide-react";
-import Image from "next/image";
+import { ScanLine, Search, BarChart3, CheckCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Step {
@@ -11,8 +9,6 @@ interface Step {
   icon: React.ElementType;
   title: string;
   description: string;
-  color: string;
-  glow: string;
 }
 
 const steps: Step[] = [
@@ -20,161 +16,145 @@ const steps: Step[] = [
     number: "01",
     icon: ScanLine,
     title: "Digitalize",
-    description: "Reconhecimento instantâneo de códigos em mais de 100 países com tecnologia de baixa latência.",
-    color: "text-blue-500",
-    glow: "shadow-blue-500/20",
+    description:
+      "Insira o código EAN/UPC ou o nome do produto. Detecção automática em mais de 100 países.",
   },
   {
     number: "02",
     icon: Search,
     title: "Consulte",
-    description: "Conexão direta ao Open Food Facts, a base de dados colaborativa global (Wikipedia dos alimentos).",
-    color: "text-green-500",
-    glow: "shadow-green-500/20",
+    description:
+      "Conexão direta ao Open Food Facts — a maior base colaborativa de alimentos do planeta.",
   },
   {
     number: "03",
     icon: BarChart3,
     title: "Analise",
-    description: "Processamento de Nutri-Score, graus de processamento NOVA e alertas de alérgenos críticos.",
-    color: "text-purple-500",
-    glow: "shadow-purple-500/20",
+    description:
+      "Nutri-Score, classificação NOVA, macronutrientes e alertas de alérgenos em uma tela.",
   },
   {
     number: "04",
     icon: CheckCircle,
     title: "Decida",
-    description: "Informação técnica pura e sem vieses comerciais para decisões alinhadas à sua saúde.",
-    color: "text-orange-500",
-    glow: "shadow-orange-500/20",
+    description:
+      "Informação técnica pura, sem vieses comerciais, para escolhas alinhadas à sua saúde.",
   },
 ];
 
 export function HowItWorks() {
   return (
-    <section className="py-24 bg-white dark:bg-[#030712] transition-colors duration-500">
-      <div className="max-w-7xl mx-auto px-6">
-        
-        {/* Header - Foco em Valor Técnico */}
-        <div className="text-center mb-24">
-          <motion.h2 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            className="text-4xl md:text-5xl font-black text-gray-900 dark:text-white mb-6 tracking-tighter"
-          >
-            Pipeline de <span className="text-blue-600">Consciência Alimentar</span>
-          </motion.h2>
-          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto font-medium">
-            Quatro estágios de processamento de dados para transformar um código de barras em inteligência nutricional.
-          </p>
+    <section className="bg-[var(--bg-surface)] section-py">
+      <div className="container-editorial">
+
+        {/* ── Section header ───────────────────────────────────────────── */}
+        <div className="mb-16">
+          <span className="label text-[var(--accent)] block mb-4">
+            Como funciona
+          </span>
+          <hr className="hairline mb-10" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
+            <h2 className="font-display text-display-lg text-[var(--fg-primary)]">
+              Quatro etapas,{" "}
+              <em className="font-display-i text-[var(--accent)]">
+                clareza total.
+              </em>
+            </h2>
+            <p className="text-[var(--fg-secondary)] text-lg leading-relaxed max-w-md">
+              De um simples código de barras à inteligência nutricional
+              completa — em poucos segundos.
+            </p>
+          </div>
         </div>
 
-        {/* Steps Grid - O "Motor" da Seção */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 relative">
-          {steps.map((step, index) => (
-            <motion.div
-              key={step.number}
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.15 }}
-              className="relative group"
-            >
-              {/* Conector Visual (Desktop) */}
-              {index < steps.length - 1 && (
-                <div className="hidden lg:block absolute top-12 -right-8 w-16 h-[2px] bg-gradient-to-r from-gray-200 to-transparent dark:from-gray-800 z-0" />
-              )}
-
-              <div className={cn(
-                "relative z-10 p-8 rounded-3xl bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-800 transition-all duration-500 hover:border-blue-500/30",
-                "group-hover:translate-y-[-8px] group-hover:shadow-2xl",
-                step.glow
-              )}>
-                {/* Badge de Número em Estilo Industrial */}
-                <span className="absolute top-4 right-6 text-sm font-black font-mono text-gray-300 dark:text-gray-700">
-                  STEP_{step.number}
-                </span>
-
-                <div className={cn(
-                  "w-14 h-14 rounded-2xl flex items-center justify-center mb-8 bg-white dark:bg-gray-800 shadow-sm transition-transform duration-500 group-hover:rotate-[10deg]",
-                  step.color
-                )}>
-                  <step.icon className="w-7 h-7" />
-                </div>
-
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 tracking-tight">
-                  {step.title}
-                </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed font-medium">
-                  {step.description}
-                </p>
-              </div>
-            </motion.div>
+        {/* ── Steps grid ───────────────────────────────────────────────── */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-[var(--border-subtle)]">
+          {steps.map((step, i) => (
+            <StepCard key={step.number} step={step} index={i} />
           ))}
         </div>
 
-        {/* Technical Datasheet (O que você vai encontrar) */}
-        <div className="mt-32 mb-12 flex justify-center">
-          <div className="relative w-full max-w-2xl h-64 rounded-2xl overflow-hidden shadow-2xl">
-            <Image
-              src="/images/nut-facts.webp"
-              alt="Lista de ingredientes e informações nutricionais de produto alimentar"
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
-            />
-          </div>
-        </div>
-        <div className="mt-32 p-10 rounded-[2.5rem] bg-slate-900 text-white relative overflow-hidden shadow-3xl">
-          <div className="absolute top-0 right-0 p-10 opacity-10">
-             <BarChart3 size={200} />
+        {/* ── Data spec callout ─────────────────────────────────────────── */}
+        <div className="mt-20 grid grid-cols-1 md:grid-cols-2 gap-px bg-[var(--border-subtle)] rounded-xl overflow-hidden">
+          <div className="bg-[var(--bg-elevated)] p-10">
+            <span className="label text-[var(--accent)] block mb-6">
+              Bio-Markers &amp; Macros
+            </span>
+            <ul className="space-y-4">
+              {[
+                "Calorias (kcal / 100 g)",
+                "Perfil lipídico e glicêmico",
+                "Proteínas e fibras",
+                "Micronutrientes",
+              ].map((item) => (
+                <li
+                  key={item}
+                  className="flex items-center gap-3 text-[var(--fg-secondary)] text-sm"
+                >
+                  <span className="w-1 h-1 rounded-full bg-[var(--accent)] shrink-0" />
+                  {item}
+                </li>
+              ))}
+            </ul>
           </div>
 
-          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-3 gap-12">
-            <div className="lg:col-span-1">
-              <h3 className="text-3xl font-black mb-4 tracking-tighter">Data Specification</h3>
-              <p className="text-slate-400 text-sm leading-relaxed mb-6">
-                Extração de metadados via Open Food Facts API v2. Suporte a protocolos Nutri-Score e classificações NOVA.
-              </p>
-              <div className="flex items-center gap-4 text-xs font-mono text-blue-400 uppercase tracking-widest">
-                <Globe size={14} /> Open Source Database
-              </div>
-            </div>
-
-            <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-8">
-               {/* Lista de Features Refinada */}
-               <div className="space-y-4">
-                  <h4 className="text-blue-500 font-bold text-xs uppercase tracking-widest">Bio-Markers & Macros</h4>
-                  <ul className="space-y-3">
-                    {["Calorias (Kcal/100g)", "Perfil Lipídico e Glicêmico", "Micronutrientes & Fibras"].map(item => (
-                      <li key={item} className="flex items-center gap-3 text-sm text-slate-300">
-                        <Zap size={12} className="text-blue-500" /> {item}
-                      </li>
-                    ))}
-                  </ul>
-               </div>
-               <div className="relative w-full h-48 rounded-xl overflow-hidden">
-                 <Image
-                   src="/images/nutscore.webp"
-                   alt="Sistema de classificação Nutri-Score"
-                   fill
-                   className="object-cover"
-                   sizes="(max-width: 768px) 100vw, 50vw"
-                 />
-               </div>
-               <div className="space-y-4">
-                  <h4 className="text-green-500 font-bold text-xs uppercase tracking-widest">Compliance & Alerta</h4>
-                  <ul className="space-y-3">
-                    {["Identificação de Alérgenos", "Aditivos e Conservantes", "Classificação de Processamento"].map(item => (
-                      <li key={item} className="flex items-center gap-3 text-sm text-slate-300">
-                        <CheckCircle size={12} className="text-green-500" /> {item}
-                      </li>
-                    ))}
-                  </ul>
-               </div>
-            </div>
+          <div className="bg-[var(--bg-elevated)] p-10">
+            <span className="label text-[var(--fg-muted)] block mb-6">
+              Compliance &amp; Alertas
+            </span>
+            <ul className="space-y-4">
+              {[
+                "Identificação de alérgenos",
+                "Aditivos e conservantes",
+                "Classificação NOVA de processamento",
+                "Nutri-Score A–E",
+              ].map((item) => (
+                <li
+                  key={item}
+                  className="flex items-center gap-3 text-[var(--fg-secondary)] text-sm"
+                >
+                  <span className="w-1 h-1 rounded-full bg-[var(--border-strong)] shrink-0" />
+                  {item}
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
+
       </div>
     </section>
+  );
+}
+
+function StepCard({ step, index }: { step: Step; index: number }) {
+  const Icon = step.icon;
+  return (
+    <div
+      className={cn(
+        "bg-[var(--bg-elevated)] p-8 md:p-10 group",
+        "transition-colors duration-300 hover:bg-[var(--bg-base)]"
+      )}
+      style={{ animationDelay: `${index * 0.1}s` }}
+    >
+      {/* Step number — large serif */}
+      <div className="step-number mb-6 group-hover:text-[var(--accent)] transition-colors duration-300">
+        {step.number}
+      </div>
+
+      {/* Monochrome icon */}
+      <div className="mb-6">
+        <Icon
+          className="w-5 h-5 text-[var(--fg-muted)] group-hover:text-[var(--fg-secondary)] transition-colors duration-300"
+          strokeWidth={1.5}
+        />
+      </div>
+
+      <h3 className="font-display text-display-sm text-[var(--fg-primary)] mb-3">
+        {step.title}
+      </h3>
+      <p className="text-[var(--fg-secondary)] text-sm leading-relaxed">
+        {step.description}
+      </p>
+    </div>
   );
 }

@@ -331,16 +331,50 @@ export class JsonCacheManager {
     let saved = 0;
     let failed = 0;
 
-    for (const product of products) {
-      const success = await this.saveProduct(product);
-      if (success) {
-        saved++;
-      } else {
-        failed++;
+    try {
+      await this.loadCache();
+
+      if (!this.cacheData) {
+        this.cacheData = {
+          products: {},
+          lastUpdated: 0,
+          version: "1.0.0",
+        };
       }
+
+      // Adiciona todos os produtos ao objeto em memória primeiro
+      for (const product of products) {
+        try {
+          const code = product.code;
+          const existingProduct = this.cacheData.products[code];
+
+          if (existingProduct) {
+            this.cacheData.products[code] = this.mergeProductData(
+              existingProduct,
+              product
+            );
+            console.log(`[JSON Cache] Produto atualizado na memória: ${code}`);
+          } else {
+            this.cacheData.products[code] = this.convertToCachedProduct(product);
+            console.log(`[JSON Cache] Produto adicionado na memória: ${code}`);
+          }
+          saved++;
+        } catch (err) {
+          failed++;
+        }
+      }
+
+      // Salva no disco uma única vez após processar todo o lote
+      if (saved > 0) {
+        this.cacheData.lastUpdated = Date.now();
+        await this.saveCache();
+        console.log(`[JSON Cache] Lote salvo no disco! Total processado: ${saved} produtos.`);
+      }
+
+    } catch (error) {
+      console.error("[JSON Cache] Erro ao salvar lote de produtos:", error);
     }
 
-    console.log(`[JSON Cache] Salvos: ${saved}, Falharam: ${failed}`);
     return { saved, failed };
   }
 

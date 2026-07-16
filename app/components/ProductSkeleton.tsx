@@ -1,15 +1,13 @@
 "use client";
 import { cn } from "@/lib/utils";
 
-interface SkeletonProps {
-  className?: string;
-}
+interface SkeletonProps { className?: string; }
 
 function Skeleton({ className }: SkeletonProps) {
   return (
     <div
       className={cn(
-        "animate-pulse rounded-md bg-gray-200 dark:bg-gray-700",
+        "animate-pulse rounded bg-[var(--border-subtle)]",
         className
       )}
     />
@@ -18,124 +16,62 @@ function Skeleton({ className }: SkeletonProps) {
 
 export function ProductSkeleton({ className }: SkeletonProps) {
   return (
-    <div className={cn("space-y-4", className)}>
-      {/* Header skeleton */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center gap-4">
-            <Skeleton className="h-8 w-16" />
-            <div className="flex-1">
-              <Skeleton className="h-8 w-64 mb-2" />
-              <Skeleton className="h-4 w-32" />
-            </div>
+    <div className={cn("min-h-screen bg-[var(--bg-base)]", className)}>
+      {/* Sticky header skeleton */}
+      <div className="sticky top-0 z-50 bg-[var(--bg-elevated)] border-b border-[var(--border-subtle)] h-20">
+        <div className="container-editorial h-full flex items-center gap-6">
+          <Skeleton className="w-9 h-9 rounded" />
+          <div className="flex-1 space-y-2">
+            <Skeleton className="h-5 w-64" />
+            <Skeleton className="h-3 w-32" />
           </div>
         </div>
       </div>
 
-      {/* Content skeleton */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Left column - Product image */}
-          <div className="space-y-4">
-            <div className="relative w-full max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg">
-              <div className="aspect-square bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 p-8">
-                <Skeleton className="w-full h-full rounded-lg" />
-              </div>
-            </div>
-
-            {/* Basic info skeleton */}
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
-              <Skeleton className="h-5 w-32 mb-3" />
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <Skeleton className="h-4 w-16" />
-                  <Skeleton className="h-4 w-24" />
-                </div>
-                <div className="flex justify-between">
+      <div className="container-editorial py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+          {/* Left column */}
+          <div className="lg:col-span-5 space-y-6">
+            <Skeleton className="aspect-square w-full rounded-2xl" />
+            <div className="card-warm rounded-xl p-8 space-y-4">
+              <Skeleton className="h-3 w-24" />
+              {[1,2,3].map(i => (
+                <div key={i} className="flex justify-between">
                   <Skeleton className="h-4 w-20" />
                   <Skeleton className="h-4 w-32" />
                 </div>
-                <div className="flex justify-between">
-                  <Skeleton className="h-4 w-16" />
-                  <Skeleton className="h-4 w-20" />
-                </div>
-              </div>
+              ))}
             </div>
           </div>
 
-          {/* Right column - Product details */}
-          <div className="space-y-6">
-            {/* Nutrition grades skeleton */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
-                <Skeleton className="h-5 w-24 mb-3" />
-                <div className="flex items-center gap-3">
-                  <Skeleton className="w-12 h-12 rounded-full" />
-                  <div className="space-y-2">
-                    <Skeleton className="h-4 w-20" />
-                    <Skeleton className="h-3 w-32" />
-                  </div>
+          {/* Right column */}
+          <div className="lg:col-span-7 space-y-6">
+            <div className="grid grid-cols-2 gap-4">
+              {[1,2].map(i => (
+                <div key={i} className="card-warm rounded-xl p-8 space-y-4">
+                  <Skeleton className="h-3 w-24" />
+                  <Skeleton className="h-3 w-40" />
+                  <Skeleton className="w-20 h-20 rounded-full" />
                 </div>
-              </div>
-
-              <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
-                <Skeleton className="h-5 w-16 mb-3" />
-                <div className="flex items-center gap-3">
-                  <Skeleton className="w-12 h-12 rounded-full" />
-                  <div className="space-y-2">
-                    <Skeleton className="h-4 w-16" />
-                    <Skeleton className="h-3 w-28" />
-                  </div>
-                </div>
-              </div>
+              ))}
             </div>
-
-            {/* Nutritional information skeleton */}
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
-              <Skeleton className="h-5 w-48 mb-4" />
+            <div className="card-warm rounded-xl p-8 space-y-4">
+              <Skeleton className="h-5 w-48" />
               <div className="grid grid-cols-2 gap-4">
                 {[...Array(7)].map((_, i) => (
                   <div key={i} className="space-y-2">
                     <div className="flex justify-between">
-                      <Skeleton className="h-4 w-20" />
-                      <Skeleton className="h-4 w-16" />
+                      <Skeleton className="h-3 w-20" />
+                      <Skeleton className="h-3 w-16" />
                     </div>
-                    <Skeleton className="h-2 w-full rounded-full" />
+                    <Skeleton className="h-1.5 w-full rounded-full" />
                   </div>
                 ))}
               </div>
             </div>
-
-            {/* Ingredients skeleton */}
-            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
-              <Skeleton className="h-5 w-24 mb-3" />
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-4/5" />
-                <Skeleton className="h-4 w-3/4" />
-                <Skeleton className="h-4 w-2/3" />
-              </div>
-            </div>
-
-            {/* Allergens skeleton */}
-            <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl p-4">
-              <Skeleton className="h-5 w-20 mb-3" />
-              <div className="flex flex-wrap gap-2">
-                {[...Array(4)].map((_, i) => (
-                  <Skeleton key={i} className="h-6 w-16 rounded-full" />
-                ))}
-              </div>
-            </div>
-
-            {/* Additives skeleton */}
-            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4">
-              <Skeleton className="h-5 w-16 mb-3" />
-              <div className="flex flex-wrap gap-2">
-                {[...Array(6)].map((_, i) => (
-                  <Skeleton key={i} className="h-6 w-12 rounded-full" />
-                ))}
-                <Skeleton className="h-6 w-12 rounded-full" />
-              </div>
+            <div className="card-warm rounded-xl p-8 space-y-3">
+              <Skeleton className="h-5 w-36" />
+              {[1,2,3,4].map(i => <Skeleton key={i} className="h-4 w-full" />)}
             </div>
           </div>
         </div>
@@ -146,26 +82,20 @@ export function ProductSkeleton({ className }: SkeletonProps) {
 
 export function ProductCardSkeleton({ className }: SkeletonProps) {
   return (
-    <div
-      className={cn(
-        "bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden",
-        className
-      )}
-    >
-      <div className="aspect-square bg-gray-100 dark:bg-gray-700 p-4">
-        <Skeleton className="w-full h-full rounded-lg" />
-      </div>
-      <div className="p-4 space-y-3">
+    <div className={cn("card-warm rounded-xl overflow-hidden", className)}>
+      <Skeleton className="aspect-square w-full" />
+      <div className="p-5 space-y-3">
         <Skeleton className="h-5 w-3/4" />
-        <Skeleton className="h-4 w-1/2" />
-        <div className="flex items-center gap-2">
-          <Skeleton className="w-8 h-8 rounded-full" />
-          <Skeleton className="h-4 w-16" />
+        <Skeleton className="h-3 w-1/2" />
+        <div className="pt-3 border-t border-[var(--border-subtle)] space-y-2">
+          {[1,2,3,4].map(i => (
+            <div key={i} className="flex justify-between">
+              <Skeleton className="h-3 w-16" />
+              <Skeleton className="h-3 w-12" />
+            </div>
+          ))}
         </div>
-        <div className="flex justify-between items-center">
-          <Skeleton className="h-4 w-20" />
-          <Skeleton className="h-6 w-16 rounded-full" />
-        </div>
+        <Skeleton className="h-9 w-full rounded" />
       </div>
     </div>
   );
@@ -174,23 +104,21 @@ export function ProductCardSkeleton({ className }: SkeletonProps) {
 export function NutritionBarSkeleton({ className }: SkeletonProps) {
   return (
     <div className={cn("space-y-2", className)}>
-      <div className="flex items-center justify-between">
-        <Skeleton className="h-4 w-20" />
-        <Skeleton className="h-4 w-16" />
+      <div className="flex justify-between">
+        <Skeleton className="h-3 w-20" />
+        <Skeleton className="h-3 w-12" />
       </div>
-      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-        <Skeleton className="h-2 w-3/4 rounded-full" />
-      </div>
+      <Skeleton className="h-1.5 w-full rounded-full" />
     </div>
   );
 }
 
 export function BadgeSkeleton({ className }: SkeletonProps) {
   return (
-    <div className={cn("flex items-center gap-2", className)}>
-      <Skeleton className="w-12 h-12 rounded-full" />
-      <div className="space-y-1">
-        <Skeleton className="h-4 w-16" />
+    <div className={cn("flex items-center gap-3", className)}>
+      <Skeleton className="w-14 h-14 rounded-full" />
+      <div className="space-y-1.5">
+        <Skeleton className="h-3 w-16" />
         <Skeleton className="h-3 w-24" />
       </div>
     </div>

@@ -47,7 +47,8 @@ export function Main({ listaId }: MainProps) {
         <Input
           required
           name="produtoNome"
-          className="flex-1 min-w-[200px] text-base px-4 py-2 border-[#383838] focus:border-[#1118A7]"
+          className="flex-1 min-w-[200px] text-base px-4 py-2"
+          style={{ borderColor: 'var(--border-strong)', ['--tw-ring-color' as string]: 'var(--accent)' }}
           placeholder="Nome do produto"
         />
         <Input
@@ -56,11 +57,15 @@ export function Main({ listaId }: MainProps) {
           min="0"
           step="0.01"
           name="produtoQuantidade"
-          className="w-32 text-base px-4 py-2 border-[#383838] focus:border-[#1118A7]"
+          className="w-32 text-base px-4 py-2"
+          style={{ borderColor: 'var(--border-strong)' }}
           placeholder="Quantidade"
         />
         <Select name="produtoTipo" required>
-          <SelectTrigger className="w-32 text-base border-[#383838] focus:border-[#1118A7]">
+          <SelectTrigger
+            className="w-32 text-base"
+            style={{ borderColor: 'var(--border-strong)' }}
+          >
             <SelectValue placeholder="Tipo" />
           </SelectTrigger>
           <SelectContent>
@@ -74,16 +79,16 @@ export function Main({ listaId }: MainProps) {
             </SelectGroup>
           </SelectContent>
         </Select>
-        <Button
-          className="bg-[#1118A7] hover:bg-[#080C94] text-white min-w-[100px]"
+        <button
+          className="btn-accent min-w-[100px]"
           type="submit"
           disabled={isPending}
         >
           {isPending ? 'Salvando...' : 'Adicionar'}
-        </Button>
+        </button>
       </div>
       {error && (
-        <p className="text-[#CC2121] text-sm">{error}</p>
+        <p className="text-sm" style={{ color: 'var(--nutri-e)' }}>{error}</p>
       )}
     </form>
   );

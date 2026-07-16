@@ -35,21 +35,20 @@ export function ListaProductCard({ produto, listaId }: ListaProductCardProps) {
 
   return (
     <Card
-      className={`group relative overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1 ${
-        produto.comprado
-          ? "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
-          : "bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700"
-      }`}
+      className="group relative overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+      style={{
+        background: produto.comprado ? 'var(--accent-muted)' : 'var(--bg-elevated)',
+        borderColor: produto.comprado ? 'var(--accent-light)' : 'var(--border-subtle)',
+      }}
     >
       <CardContent className="p-4">
         <div className="flex items-start justify-between mb-3">
           <div className="flex-1">
             <h3
-              className={`font-semibold text-lg leading-tight ${
-                produto.comprado
-                  ? "text-green-700 dark:text-green-300 line-through"
-                  : "text-gray-900 dark:text-white"
-              }`}
+              className={`font-semibold text-lg leading-tight${produto.comprado ? ' line-through' : ''}`}
+              style={{
+                color: produto.comprado ? 'var(--accent)' : 'var(--fg-primary)',
+              }}
             >
               {produto.nome}
             </h3>
@@ -57,7 +56,12 @@ export function ListaProductCard({ produto, listaId }: ListaProductCardProps) {
             <div className="flex items-center gap-2 mt-1">
               <Badge
                 variant="outline"
-                className="text-xs bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-700"
+                className="text-xs"
+                style={{
+                  background: 'var(--bg-surface)',
+                  color: 'var(--fg-secondary)',
+                  borderColor: 'var(--border-subtle)',
+                }}
               >
                 {produto.qtd} {produto.tipoUN}
               </Badge>
@@ -65,7 +69,12 @@ export function ListaProductCard({ produto, listaId }: ListaProductCardProps) {
               {produto.comprado && (
                 <Badge
                   variant="outline"
-                  className="text-xs bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 border-green-200 dark:border-green-700"
+                  className="text-xs"
+                  style={{
+                    background: 'var(--accent-muted)',
+                    color: 'var(--accent-dark)',
+                    borderColor: 'var(--accent-light)',
+                  }}
                 >
                   Comprado
                 </Badge>
@@ -79,11 +88,7 @@ export function ListaProductCard({ produto, listaId }: ListaProductCardProps) {
             onClick={handleToggleComprado}
             variant={produto.comprado ? "outline" : "default"}
             size="sm"
-            className={`flex-1 ${
-              produto.comprado
-                ? "hover:bg-red-50 hover:text-red-700 hover:border-red-300"
-                : "hover:bg-green-50 hover:text-green-700"
-            }`}
+            className="flex-1"
           >
             {produto.comprado ? (
               <>
@@ -101,7 +106,8 @@ export function ListaProductCard({ produto, listaId }: ListaProductCardProps) {
           <Button
             variant="outline"
             size="sm"
-            className="px-3 hover:bg-gray-50 dark:hover:bg-gray-800"
+            className="px-3"
+            style={{ ['--hover-bg' as string]: 'var(--bg-surface)' }}
           >
             <Edit className="w-4 h-4" />
           </Button>
@@ -109,7 +115,7 @@ export function ListaProductCard({ produto, listaId }: ListaProductCardProps) {
           <Button
             variant="outline"
             size="sm"
-            className="px-3 hover:bg-red-50 hover:text-red-700 hover:border-red-300"
+            className="px-3"
           >
             <Trash2 className="w-4 h-4" />
           </Button>

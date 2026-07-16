@@ -120,106 +120,37 @@ export function FilterSidebar({
   });
 
   return (
-    <div className={`w-full max-w-sm space-y-6 ${className}`}>
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Filter className="h-5 w-5 text-primary" />
-          <h3 className="text-lg font-semibold">Filtros</h3>
+    <div className={`w-full space-y-5 ${className}`}>
+
+      {/* ── Header ────────────────────────────────────────────────────────── */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingBottom: 12, borderBottom: "1px solid var(--border-subtle, #e8e0d0)" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <Filter style={{ width: 15, height: 15, color: "var(--accent, oklch(52% 0.11 155))" }} strokeWidth={1.75} />
+          <span style={{ fontFamily: "ui-monospace, monospace", fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--fg-muted, #9a8870)", fontWeight: 600 }}>
+            Filtros avançados
+          </span>
         </div>
         {hasActiveFilters && (
-          <Button
-            variant="ghost"
-            size="sm"
+          <button
             onClick={onClearFilters}
-            className="text-xs text-muted-foreground hover:text-foreground"
+            style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: 11, color: "var(--accent, oklch(52% 0.11 155))", background: "none", border: "none", cursor: "pointer", fontFamily: "inherit", letterSpacing: "0.03em" }}
           >
-            <X className="h-4 w-4 mr-1" />
-            Limpar
-          </Button>
+            <X style={{ width: 12, height: 12 }} strokeWidth={2} />
+            Limpar tudo
+          </button>
         )}
       </div>
 
-      {/* Resultados */}
+      {/* ── Result count ──────────────────────────────────────────────────── */}
       {totalResults > 0 && (
-        <div className="text-sm text-muted-foreground">
-          {totalResults.toLocaleString()} produto{totalResults !== 1 ? "s" : ""}{" "}
-          encontrado{totalResults !== 1 ? "s" : ""}
+        <div style={{ fontFamily: "ui-monospace, monospace", fontSize: 11, color: "var(--fg-muted, #9a8870)", letterSpacing: "0.04em" }}>
+          {totalResults.toLocaleString()} produto{totalResults !== 1 ? "s" : ""} encontrado{totalResults !== 1 ? "s" : ""}
         </div>
       )}
 
-      {/* Controles de Visualização e Cache */}
-      <div className="space-y-4">
-        {/* Modo de Visualização */}
-        {onViewModeChange && (
-          <div className="space-y-2">
-            <div className="text-sm font-medium">Modo de visualização</div>
-            <div className="flex items-center border border-gray-100 dark:border-gray-800 rounded-lg">
-              <Button
-                variant={viewMode === "grid" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => onViewModeChange("grid")}
-                className="rounded-r-none flex-1"
-              >
-                <Grid className="w-4 h-4 mr-2" />
-                Grade
-              </Button>
-              <Button
-                variant={viewMode === "list" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => onViewModeChange("list")}
-                className="rounded-l-none flex-1"
-              >
-                <List className="w-4 h-4 mr-2" />
-                Lista
-              </Button>
-            </div>
-          </div>
-        )}
-
-        {/* Controles de Cache */}
-        {(onRefresh || onClearCache) && (
-          <div className="space-y-2">
-            <div className="text-sm font-medium">Controles</div>
-            <div className="flex gap-2">
-              {onRefresh && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={onRefresh}
-                  disabled={isLoading}
-                  className="flex-1"
-                  title="Atualizar busca"
-                >
-                  <RefreshCw
-                    className={`w-4 h-4 mr-2 ${
-                      isLoading ? "animate-spin" : ""
-                    }`}
-                  />
-                  Atualizar
-                </Button>
-              )}
-              {onClearCache && isCached && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={onClearCache}
-                  className="flex-1"
-                  title="Limpar cache e refazer busca"
-                >
-                  <X className="w-4 h-4 mr-2" />
-                  Limpar Cache
-                </Button>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Filtros Ativos */}
+      {/* ── Active filter badges ───────────────────────────────────────────── */}
       {onRemoveFilter && hasActiveFilters && (
-        <div className="space-y-2">
-          <div className="text-sm font-medium">Filtros ativos</div>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
           <FilterBadges
             filters={filters}
             onRemoveFilter={onRemoveFilter}
@@ -228,183 +159,155 @@ export function FilterSidebar({
         </div>
       )}
 
-      <Accordion
-        type="multiple"
-        defaultValue={["sorting"]}
-        className="space-y-4"
-      >
-        {/* Ordenação */}
-        <AccordionItem
-          value="sorting"
-          className="border border-gray-100 dark:border-gray-800 rounded-lg"
-        >
-          <AccordionTrigger className="px-4 py-3 hover:no-underline">
-            <div className="flex items-center gap-2">
-              <ArrowUpDown className="h-4 w-4 text-indigo-500" />
-              <span className="font-medium">Ordenação</span>
-            </div>
-          </AccordionTrigger>
-          <AccordionContent className="px-4 pb-4">
-            <div className="space-y-3">
-              <div className="text-sm font-medium mb-3">Ordenar por</div>
-              {onSortChange && (
-                <SortDropdown
-                  value={sortBy}
-                  onValueChange={onSortChange}
-                  className="w-full"
-                />
-              )}
-            </div>
-          </AccordionContent>
-        </AccordionItem>
+      {/* ── Cache / Refresh controls ──────────────────────────────────────── */}
+      {(onRefresh || onClearCache) && (
+        <div style={{ display: "flex", gap: 8 }}>
+          {onRefresh && (
+            <button
+              onClick={onRefresh}
+              disabled={isLoading}
+              style={{ flex: 1, display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "7px 0", border: "1px solid var(--border-subtle, #e8e0d0)", borderRadius: 8, background: "transparent", fontSize: 12, color: "var(--fg-secondary, #5e4e3c)", fontFamily: "inherit", cursor: isLoading ? "not-allowed" : "pointer", opacity: isLoading ? 0.5 : 1 }}
+            >
+              <RefreshCw style={{ width: 12, height: 12 }} className={isLoading ? "animate-spin" : ""} />
+              Atualizar
+            </button>
+          )}
+          {onClearCache && isCached && (
+            <button
+              onClick={onClearCache}
+              style={{ flex: 1, display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "7px 0", border: "1px solid var(--border-subtle, #e8e0d0)", borderRadius: 8, background: "transparent", fontSize: 12, color: "var(--fg-secondary, #5e4e3c)", fontFamily: "inherit", cursor: "pointer" }}
+            >
+              <X style={{ width: 12, height: 12 }} />
+              Limpar cache
+            </button>
+          )}
+        </div>
+      )}
 
-        {/* Nutri-Score */}
-        <AccordionItem
-          value="nutrition"
-          className="border border-gray-100 dark:border-gray-800 rounded-lg"
-        >
-          <AccordionTrigger className="px-4 py-3 hover:no-underline">
-            <div className="flex items-center gap-2">
-              <Zap className="h-4 w-4 text-green-500" />
-              <span className="font-medium">Classificação Nutricional</span>
-            </div>
-          </AccordionTrigger>
-          <AccordionContent className="px-4 pb-4">
-            <div className="space-y-3">
-              <div className="text-sm font-medium mb-3">Nutri-Score</div>
-              <div className="space-y-2">
-                {NUTRITION_GRADES.map((grade) => (
-                  <div
-                    key={grade.grade}
-                    className="flex items-center space-x-3"
-                  >
-                    <Checkbox
-                      id={`nutrition-${grade.grade}`}
-                      checked={
-                        filters.nutritionGrades?.includes(grade.grade) || false
-                      }
-                      onCheckedChange={(checked) =>
-                        updateArrayFilter(
-                          "nutritionGrades",
-                          grade.grade,
-                          checked as boolean
-                        )
-                      }
-                    />
-                    <label
-                      htmlFor={`nutrition-${grade.grade}`}
-                      className="flex items-center gap-2 text-sm cursor-pointer"
-                    >
-                      <Badge className={`${grade.color} text-white text-xs`}>
-                        {grade.label}
-                      </Badge>
-                      <span className="text-muted-foreground">
-                        {grade.description}
-                      </span>
-                    </label>
-                  </div>
-                ))}
-              </div>
-
-              <Separator className="my-4" />
-
-              <div className="text-sm font-medium mb-3">
-                NOVA (Processamento)
-              </div>
-              <RadioGroup
-                value={filters.novaGroups?.[0]?.toString() || ""}
-                onValueChange={(value) =>
-                  updateFilter(
-                    "novaGroups",
-                    value ? [parseInt(value) as 1 | 2 | 3 | 4] : []
-                  )
-                }
-                className="space-y-2"
+      {/* ── View mode ─────────────────────────────────────────────────────── */}
+      {onViewModeChange && (
+        <div>
+          <div style={{ fontFamily: "ui-monospace, monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--fg-muted, #9a8870)", marginBottom: 8 }}>Visualização</div>
+          <div style={{ display: "flex", border: "1px solid var(--border-subtle, #e8e0d0)", borderRadius: 8, overflow: "hidden" }}>
+            {(["grid", "list"] as const).map((mode) => (
+              <button
+                key={mode}
+                onClick={() => onViewModeChange(mode)}
+                style={{ flex: 1, display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "7px 0", background: viewMode === mode ? "var(--accent-muted, oklch(92% 0.04 155))" : "transparent", color: viewMode === mode ? "var(--accent, oklch(52% 0.11 155))" : "var(--fg-muted, #9a8870)", border: "none", fontSize: 12, cursor: "pointer", fontFamily: "inherit", fontWeight: viewMode === mode ? 500 : 400 }}
               >
-                {NOVA_GROUPS.map((group) => (
-                  <div
-                    key={group.group}
-                    className="flex items-center space-x-3"
-                  >
-                    <RadioGroupItem
-                      value={group.group.toString()}
-                      id={`nova-${group.group}`}
-                    />
-                    <label
-                      htmlFor={`nova-${group.group}`}
-                      className="flex items-center gap-2 text-sm cursor-pointer flex-1"
-                    >
-                      <Badge className={`${group.color} text-white text-xs`}>
-                        {group.label}
-                      </Badge>
-                      <span className="text-muted-foreground text-xs">
-                        {group.description}
-                      </span>
-                    </label>
-                  </div>
-                ))}
-              </RadioGroup>
+                {mode === "grid" ? <Grid style={{ width: 13, height: 13 }} /> : <List style={{ width: 13, height: 13 }} />}
+                {mode === "grid" ? "Grade" : "Lista"}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ── Accordion sections ────────────────────────────────────────────── */}
+      <Accordion type="multiple" defaultValue={["nutrition"]} className="space-y-1">
+
+        {/* Ordenação */}
+        {onSortChange && (
+          <AccordionItem value="sorting" style={{ border: "1px solid var(--border-subtle, #e8e0d0)", borderRadius: 10, overflow: "hidden" }}>
+            <AccordionTrigger className="px-4 py-3 hover:no-underline" style={{ background: "transparent" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <ArrowUpDown style={{ width: 14, height: 14, color: "var(--accent, oklch(52% 0.11 155))" }} strokeWidth={1.75} />
+                <span style={{ fontSize: 13, fontWeight: 500, color: "var(--fg-primary, #1e1810)" }}>Ordenação</span>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="px-4 pb-4" style={{ borderTop: "1px solid var(--border-subtle, #e8e0d0)" }}>
+              <div style={{ paddingTop: 12 }}>
+                <SortDropdown value={sortBy} onValueChange={onSortChange} className="w-full" />
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        )}
+
+        {/* Nutri-Score & NOVA */}
+        <AccordionItem value="nutrition" style={{ border: "1px solid var(--border-subtle, #e8e0d0)", borderRadius: 10, overflow: "hidden" }}>
+          <AccordionTrigger className="px-4 py-3 hover:no-underline">
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <Zap style={{ width: 14, height: 14, color: "var(--accent, oklch(52% 0.11 155))" }} strokeWidth={1.75} />
+              <span style={{ fontSize: 13, fontWeight: 500, color: "var(--fg-primary, #1e1810)" }}>Classificação Nutricional</span>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent className="px-4 pb-4" style={{ borderTop: "1px solid var(--border-subtle, #e8e0d0)" }}>
+            <div style={{ paddingTop: 12, display: "flex", flexDirection: "column", gap: 14 }}>
+              <div>
+                <div style={{ fontFamily: "ui-monospace, monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--fg-muted, #9a8870)", marginBottom: 10 }}>Nutri-Score</div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  {NUTRITION_GRADES.map((grade) => (
+                    <div key={grade.grade} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                      <Checkbox
+                        id={`nutrition-${grade.grade}`}
+                        checked={filters.nutritionGrades?.includes(grade.grade) || false}
+                        onCheckedChange={(checked) => updateArrayFilter("nutritionGrades", grade.grade, checked as boolean)}
+                      />
+                      <label htmlFor={`nutrition-${grade.grade}`} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, cursor: "pointer", flex: 1 }}>
+                        <Badge className={`${grade.color} text-white text-xs`}>{grade.label}</Badge>
+                        <span style={{ color: "var(--fg-secondary, #5e4e3c)", fontSize: 12 }}>{grade.description}</span>
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{ height: 1, background: "var(--border-subtle, #e8e0d0)" }} />
+
+              <div>
+                <div style={{ fontFamily: "ui-monospace, monospace", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--fg-muted, #9a8870)", marginBottom: 10 }}>NOVA — Nível de processamento</div>
+                <RadioGroup
+                  value={filters.novaGroups?.[0]?.toString() || ""}
+                  onValueChange={(value) => updateFilter("novaGroups", value ? [parseInt(value) as 1 | 2 | 3 | 4] : [])}
+                  className="space-y-2"
+                >
+                  {NOVA_GROUPS.map((group) => (
+                    <div key={group.group} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                      <RadioGroupItem value={group.group.toString()} id={`nova-${group.group}`} />
+                      <label htmlFor={`nova-${group.group}`} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, cursor: "pointer", flex: 1 }}>
+                        <Badge className={`${group.color} text-white text-xs`}>{group.label}</Badge>
+                        <span style={{ color: "var(--fg-secondary, #5e4e3c)", fontSize: 11 }}>{group.description}</span>
+                      </label>
+                    </div>
+                  ))}
+                </RadioGroup>
+              </div>
             </div>
           </AccordionContent>
         </AccordionItem>
 
         {/* Categorias */}
-        <AccordionItem
-          value="categories"
-          className="border border-gray-100 dark:border-gray-800 rounded-lg"
-        >
+        <AccordionItem value="categories" style={{ border: "1px solid var(--border-subtle, #e8e0d0)", borderRadius: 10, overflow: "hidden" }}>
           <AccordionTrigger className="px-4 py-3 hover:no-underline">
-            <div className="flex items-center gap-2">
-              <LayoutGrid className="h-4 w-4 text-blue-500" />
-              <span className="font-medium">Categorias</span>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <LayoutGrid style={{ width: 14, height: 14, color: "var(--accent, oklch(52% 0.11 155))" }} strokeWidth={1.75} />
+              <span style={{ fontSize: 13, fontWeight: 500, color: "var(--fg-primary, #1e1810)" }}>Categorias</span>
             </div>
           </AccordionTrigger>
-          <AccordionContent className="px-4 pb-4">
-            <div className="space-y-3">
+          <AccordionContent className="px-4 pb-4" style={{ borderTop: "1px solid var(--border-subtle, #e8e0d0)" }}>
+            <div style={{ paddingTop: 12, display: "flex", flexDirection: "column", gap: 10 }}>
               <Input
-                placeholder="Buscar categorias..."
+                placeholder="Buscar categorias…"
                 value={searchCategories}
                 onChange={(e) => setSearchCategories(e.target.value)}
-                className="h-8"
+                style={{ height: 34, fontSize: 13, borderColor: "var(--border-subtle, #e8e0d0)", background: "var(--bg-base, #f9f6f0)" }}
               />
-              <div className="space-y-2 max-h-48 overflow-y-auto">
+              <div style={{ display: "flex", flexDirection: "column", gap: 8, maxHeight: 192, overflowY: "auto" }}>
                 {POPULAR_CATEGORIES_WITH_ICONS.filter(
                   (cat) =>
-                    cat.label
-                      .toLowerCase()
-                      .includes(searchCategories.toLowerCase()) ||
-                    cat.value
-                      .toLowerCase()
-                      .includes(searchCategories.toLowerCase())
+                    cat.label.toLowerCase().includes(searchCategories.toLowerCase()) ||
+                    cat.value.toLowerCase().includes(searchCategories.toLowerCase())
                 ).map((category) => {
-                  const IconComponent = LucideIcons[
-                    category.icon as keyof typeof LucideIcons
-                  ] as React.ComponentType<{ className?: string }> | undefined;
+                  const IconComponent = LucideIcons[category.icon as keyof typeof LucideIcons] as React.ComponentType<{ style?: React.CSSProperties }> | undefined;
                   return (
-                    <div
-                      key={category.value}
-                      className="flex items-center space-x-3"
-                    >
+                    <div key={category.value} style={{ display: "flex", alignItems: "center", gap: 10 }}>
                       <Checkbox
                         id={`category-${category.value}`}
-                        checked={
-                          filters.categories?.includes(category.value) || false
-                        }
-                        onCheckedChange={(checked) =>
-                          updateArrayFilter(
-                            "categories",
-                            category.value,
-                            checked as boolean
-                          )
-                        }
+                        checked={filters.categories?.includes(category.value) || false}
+                        onCheckedChange={(checked) => updateArrayFilter("categories", category.value, checked as boolean)}
                       />
-                      <label
-                        htmlFor={`category-${category.value}`}
-                        className="text-sm cursor-pointer flex items-center gap-2"
-                      >
-                        {IconComponent && (
-                          <IconComponent className="w-4 h-4 text-gray-500" />
-                        )}
+                      <label htmlFor={`category-${category.value}`} style={{ display: "flex", alignItems: "center", gap: 7, fontSize: 13, cursor: "pointer", color: "var(--fg-secondary, #5e4e3c)" }}>
+                        {IconComponent && <IconComponent style={{ width: 13, height: 13, color: "var(--fg-muted, #9a8870)" } as React.CSSProperties} />}
                         {category.label}
                       </label>
                     </div>
@@ -416,70 +319,53 @@ export function FilterSidebar({
         </AccordionItem>
 
         {/* Marcas */}
-        <AccordionItem
-          value="brands"
-          className="border border-gray-100 dark:border-gray-800 rounded-lg"
-        >
+        <AccordionItem value="brands" style={{ border: "1px solid var(--border-subtle, #e8e0d0)", borderRadius: 10, overflow: "hidden" }}>
           <AccordionTrigger className="px-4 py-3 hover:no-underline">
-            <div className="flex items-center gap-2">
-              <Tag className="h-4 w-4 text-purple-500" />
-              <span className="font-medium">Marcas</span>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <Tag style={{ width: 14, height: 14, color: "var(--accent, oklch(52% 0.11 155))" }} strokeWidth={1.75} />
+              <span style={{ fontSize: 13, fontWeight: 500, color: "var(--fg-primary, #1e1810)" }}>Marcas</span>
             </div>
           </AccordionTrigger>
-          <AccordionContent className="px-4 pb-4">
-            <div className="space-y-3">
+          <AccordionContent className="px-4 pb-4" style={{ borderTop: "1px solid var(--border-subtle, #e8e0d0)" }}>
+            <div style={{ paddingTop: 12, display: "flex", flexDirection: "column", gap: 8 }}>
               <Input
-                placeholder="Buscar marcas..."
+                placeholder="Nome da marca…"
                 value={searchBrands}
                 onChange={(e) => setSearchBrands(e.target.value)}
-                className="h-8"
+                style={{ height: 34, fontSize: 13, borderColor: "var(--border-subtle, #e8e0d0)", background: "var(--bg-base, #f9f6f0)" }}
               />
-              <div className="text-xs text-muted-foreground">
-                Digite o nome da marca para buscar
-              </div>
+              <div style={{ fontSize: 11, color: "var(--fg-muted, #9a8870)", letterSpacing: "0.02em" }}>Digite para filtrar por marca</div>
             </div>
           </AccordionContent>
         </AccordionItem>
 
         {/* Alérgenos */}
-        <AccordionItem
-          value="allergens"
-          className="border border-gray-100 dark:border-gray-800 rounded-lg"
-        >
+        <AccordionItem value="allergens" style={{ border: "1px solid var(--border-subtle, #e8e0d0)", borderRadius: 10, overflow: "hidden" }}>
           <AccordionTrigger className="px-4 py-3 hover:no-underline">
-            <div className="flex items-center gap-2">
-              <AlertTriangle className="h-4 w-4 text-yellow-500" />
-              <span className="font-medium">Alérgenos</span>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <AlertTriangle style={{ width: 14, height: 14, color: "var(--accent, oklch(52% 0.11 155))" }} strokeWidth={1.75} />
+              <span style={{ fontSize: 13, fontWeight: 500, color: "var(--fg-primary, #1e1810)" }}>Alérgenos</span>
             </div>
           </AccordionTrigger>
-          <AccordionContent className="px-4 pb-4">
-            <div className="space-y-3">
+          <AccordionContent className="px-4 pb-4" style={{ borderTop: "1px solid var(--border-subtle, #e8e0d0)" }}>
+            <div style={{ paddingTop: 12, display: "flex", flexDirection: "column", gap: 10 }}>
               <Input
-                placeholder="Buscar alérgenos..."
+                placeholder="Buscar alérgenos…"
                 value={searchAllergens}
                 onChange={(e) => setSearchAllergens(e.target.value)}
-                className="h-8"
+                style={{ height: 34, fontSize: 13, borderColor: "var(--border-subtle, #e8e0d0)", background: "var(--bg-base, #f9f6f0)" }}
               />
-              <div className="space-y-2 max-h-48 overflow-y-auto">
+              <div style={{ display: "flex", flexDirection: "column", gap: 8, maxHeight: 192, overflowY: "auto" }}>
                 {COMMON_ALLERGENS.filter((allergen) =>
                   allergen.toLowerCase().includes(searchAllergens.toLowerCase())
                 ).map((allergen) => (
-                  <div key={allergen} className="flex items-center space-x-3">
+                  <div key={allergen} style={{ display: "flex", alignItems: "center", gap: 10 }}>
                     <Checkbox
                       id={`allergen-${allergen}`}
                       checked={filters.allergens?.includes(allergen) || false}
-                      onCheckedChange={(checked) =>
-                        updateArrayFilter(
-                          "allergens",
-                          allergen,
-                          checked as boolean
-                        )
-                      }
+                      onCheckedChange={(checked) => updateArrayFilter("allergens", allergen, checked as boolean)}
                     />
-                    <label
-                      htmlFor={`allergen-${allergen}`}
-                      className="text-sm cursor-pointer capitalize"
-                    >
+                    <label htmlFor={`allergen-${allergen}`} style={{ fontSize: 13, cursor: "pointer", textTransform: "capitalize", color: "var(--fg-secondary, #5e4e3c)" }}>
                       {allergen}
                     </label>
                   </div>
@@ -490,32 +376,26 @@ export function FilterSidebar({
         </AccordionItem>
 
         {/* Aditivos */}
-        <AccordionItem
-          value="additives"
-          className="border border-gray-100 dark:border-gray-800 rounded-lg"
-        >
+        <AccordionItem value="additives" style={{ border: "1px solid var(--border-subtle, #e8e0d0)", borderRadius: 10, overflow: "hidden" }}>
           <AccordionTrigger className="px-4 py-3 hover:no-underline">
-            <div className="flex items-center gap-2">
-              <Beaker className="h-4 w-4 text-orange-500" />
-              <span className="font-medium">Aditivos</span>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <Beaker style={{ width: 14, height: 14, color: "var(--accent, oklch(52% 0.11 155))" }} strokeWidth={1.75} />
+              <span style={{ fontSize: 13, fontWeight: 500, color: "var(--fg-primary, #1e1810)" }}>Aditivos</span>
             </div>
           </AccordionTrigger>
-          <AccordionContent className="px-4 pb-4">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <label htmlFor="no-additives" className="text-sm font-medium">
+          <AccordionContent className="px-4 pb-4" style={{ borderTop: "1px solid var(--border-subtle, #e8e0d0)" }}>
+            <div style={{ paddingTop: 12, display: "flex", flexDirection: "column", gap: 8 }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <label htmlFor="no-additives" style={{ fontSize: 13, fontWeight: 500, color: "var(--fg-secondary, #5e4e3c)", cursor: "pointer" }}>
                   Sem aditivos
                 </label>
                 <Switch
                   id="no-additives"
                   checked={filters.noAdditives || false}
-                  onCheckedChange={(checked) =>
-                    updateFilter("noAdditives", checked)
-                  }
+                  onCheckedChange={(checked) => updateFilter("noAdditives", checked)}
                 />
               </div>
-
-              <div className="text-xs text-muted-foreground">
+              <div style={{ fontSize: 11, color: "var(--fg-muted, #9a8870)" }}>
                 Mostrar apenas produtos sem aditivos
               </div>
             </div>
@@ -523,119 +403,62 @@ export function FilterSidebar({
         </AccordionItem>
 
         {/* Valores Nutricionais */}
-        <AccordionItem
-          value="nutrition-values"
-          className="border border-gray-100 dark:border-gray-800 rounded-lg"
-        >
+        <AccordionItem value="nutrition-values" style={{ border: "1px solid var(--border-subtle, #e8e0d0)", borderRadius: 10, overflow: "hidden" }}>
           <AccordionTrigger className="px-4 py-3 hover:no-underline">
-            <div className="flex items-center gap-2">
-              <BarChart3 className="h-4 w-4 text-green-500" />
-              <span className="font-medium">Valores Nutricionais</span>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <BarChart3 style={{ width: 14, height: 14, color: "var(--accent, oklch(52% 0.11 155))" }} strokeWidth={1.75} />
+              <span style={{ fontSize: 13, fontWeight: 500, color: "var(--fg-primary, #1e1810)" }}>Valores Nutricionais</span>
             </div>
           </AccordionTrigger>
-          <AccordionContent className="px-4 pb-4">
-            <div className="space-y-4">
-              {/* Energia */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  Energia (kcal/100g)
-                </label>
-                <div className="px-3">
-                  <Slider
-                    value={[
-                      filters.nutritionRanges?.energy?.min || 0,
-                      filters.nutritionRanges?.energy?.max || 500,
-                    ]}
-                    onValueChange={([min, max]) => {
-                      updateNutritionRange("energy", "min", min);
-                      updateNutritionRange("energy", "max", max);
-                    }}
-                    max={500}
-                    step={10}
-                    className="w-full"
-                  />
-                  <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                    <span>
-                      {filters.nutritionRanges?.energy?.min || 0} kcal
-                    </span>
-                    <span>
-                      {filters.nutritionRanges?.energy?.max || 500} kcal
-                    </span>
+          <AccordionContent className="px-4 pb-4" style={{ borderTop: "1px solid var(--border-subtle, #e8e0d0)" }}>
+            <div style={{ paddingTop: 12, display: "flex", flexDirection: "column", gap: 18 }}>
+              {[
+                { key: "energy", label: "Energia", unit: "kcal", max: 500, step: 10 },
+                { key: "sugars", label: "Açúcares", unit: "g/100g", max: 50, step: 1 },
+                { key: "sodium", label: "Sódio", unit: "g/100g", max: 3, step: 0.1 },
+              ].map(({ key, label, unit, max, step }) => (
+                <div key={key} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                  <label style={{ fontSize: 12, fontWeight: 500, color: "var(--fg-secondary, #5e4e3c)" }}>{label} <span style={{ color: "var(--fg-muted)", fontWeight: 400 }}>({unit})</span></label>
+                  <div style={{ paddingLeft: 4, paddingRight: 4 }}>
+                    <Slider
+                      value={[
+                        (filters.nutritionRanges as Record<string, { min?: number; max?: number }>)?.[key]?.min || 0,
+                        (filters.nutritionRanges as Record<string, { min?: number; max?: number }>)?.[key]?.max || max,
+                      ]}
+                      onValueChange={([min, maxVal]) => {
+                        updateNutritionRange(key, "min", min);
+                        updateNutritionRange(key, "max", maxVal);
+                      }}
+                      max={max}
+                      step={step}
+                      className="w-full"
+                    />
+                    <div style={{ display: "flex", justifyContent: "space-between", marginTop: 4 }}>
+                      <span style={{ fontSize: 11, color: "var(--fg-muted, #9a8870)" }}>
+                        {(filters.nutritionRanges as Record<string, { min?: number; max?: number }>)?.[key]?.min || 0}{key === "energy" ? " kcal" : "g"}
+                      </span>
+                      <span style={{ fontSize: 11, color: "var(--fg-muted, #9a8870)" }}>
+                        {(filters.nutritionRanges as Record<string, { min?: number; max?: number }>)?.[key]?.max || max}{key === "energy" ? " kcal" : "g"}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-
-              {/* Açúcares */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Açúcares (g/100g)</label>
-                <div className="px-3">
-                  <Slider
-                    value={[
-                      filters.nutritionRanges?.sugars?.min || 0,
-                      filters.nutritionRanges?.sugars?.max || 50,
-                    ]}
-                    onValueChange={([min, max]) => {
-                      updateNutritionRange("sugars", "min", min);
-                      updateNutritionRange("sugars", "max", max);
-                    }}
-                    max={50}
-                    step={1}
-                    className="w-full"
-                  />
-                  <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                    <span>{filters.nutritionRanges?.sugars?.min || 0}g</span>
-                    <span>{filters.nutritionRanges?.sugars?.max || 50}g</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Sódio */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Sódio (g/100g)</label>
-                <div className="px-3">
-                  <Slider
-                    value={[
-                      filters.nutritionRanges?.sodium?.min || 0,
-                      filters.nutritionRanges?.sodium?.max || 3,
-                    ]}
-                    onValueChange={([min, max]) => {
-                      updateNutritionRange("sodium", "min", min);
-                      updateNutritionRange("sodium", "max", max);
-                    }}
-                    max={3}
-                    step={0.1}
-                    className="w-full"
-                  />
-                  <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                    <span>{filters.nutritionRanges?.sodium?.min || 0}g</span>
-                    <span>{filters.nutritionRanges?.sodium?.max || 3}g</span>
-                  </div>
-                </div>
-              </div>
+              ))}
             </div>
           </AccordionContent>
         </AccordionItem>
+
       </Accordion>
 
-      {/* Botões de ação */}
-      <div className="flex gap-2 pt-4 border-t border-gray-100 dark:border-gray-800">
-        <Button
+      {/* ── Footer action ─────────────────────────────────────────────────── */}
+      <div style={{ paddingTop: 16, borderTop: "1px solid var(--border-subtle, #e8e0d0)" }}>
+        <button
           onClick={onClearFilters}
-          variant="outline"
-          className="flex-1"
           disabled={!hasActiveFilters}
+          style={{ width: "100%", padding: "10px 0", border: "1px solid var(--border-subtle, #e8e0d0)", borderRadius: 10, background: "transparent", fontSize: 13, color: hasActiveFilters ? "var(--fg-secondary, #5e4e3c)" : "var(--fg-muted, #9a8870)", fontFamily: "inherit", cursor: hasActiveFilters ? "pointer" : "not-allowed", transition: "all 0.15s" }}
         >
-          Limpar Filtros
-        </Button>
-        <Button
-          onClick={() => {
-            /* Aplicar filtros é automático */
-          }}
-          className="flex-1"
-          disabled={isLoading}
-        >
-          {isLoading ? "Aplicando..." : "Aplicar"}
-        </Button>
+          Limpar todos os filtros
+        </button>
       </div>
     </div>
   );

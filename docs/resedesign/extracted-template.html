@@ -1,0 +1,2549 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NutriScan · Redesign</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <style>/* latin-ext */
+@font-face {
+  font-family: 'Instrument Serif';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("60fa588b-1760-4d48-b4cc-04aa12eb709f") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Instrument Serif';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("aaf27971-679d-4cf1-8dc2-75768121d40c") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Instrument Serif';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("129d834f-f5f8-4f19-af81-0920e9288457") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Instrument Serif';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("72b67702-a356-405e-8772-6f0a2a9b136f") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("66e75bcd-2938-4e43-b87c-4720c7ceb8df") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("64671880-b4e5-4ebc-8150-30f9a3eae5fa") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("cb114583-31ec-4a43-8c57-9946423fdd16") format('woff2');
+  unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("125ff4dd-646d-4f13-816d-177869568bce") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("28bdc14b-6ceb-424a-be18-8bebc3e41446") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("2fa653f7-680d-43f8-9aea-adfaac230e8f") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("17662fa0-bb4d-46cc-b4f5-e2727b1192a7") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("66e75bcd-2938-4e43-b87c-4720c7ceb8df") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("64671880-b4e5-4ebc-8150-30f9a3eae5fa") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("cb114583-31ec-4a43-8c57-9946423fdd16") format('woff2');
+  unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("125ff4dd-646d-4f13-816d-177869568bce") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("28bdc14b-6ceb-424a-be18-8bebc3e41446") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("2fa653f7-680d-43f8-9aea-adfaac230e8f") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("17662fa0-bb4d-46cc-b4f5-e2727b1192a7") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("66e75bcd-2938-4e43-b87c-4720c7ceb8df") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("64671880-b4e5-4ebc-8150-30f9a3eae5fa") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("cb114583-31ec-4a43-8c57-9946423fdd16") format('woff2');
+  unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("125ff4dd-646d-4f13-816d-177869568bce") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("28bdc14b-6ceb-424a-be18-8bebc3e41446") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("2fa653f7-680d-43f8-9aea-adfaac230e8f") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("17662fa0-bb4d-46cc-b4f5-e2727b1192a7") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("66e75bcd-2938-4e43-b87c-4720c7ceb8df") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("64671880-b4e5-4ebc-8150-30f9a3eae5fa") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("cb114583-31ec-4a43-8c57-9946423fdd16") format('woff2');
+  unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("125ff4dd-646d-4f13-816d-177869568bce") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("28bdc14b-6ceb-424a-be18-8bebc3e41446") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("2fa653f7-680d-43f8-9aea-adfaac230e8f") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("17662fa0-bb4d-46cc-b4f5-e2727b1192a7") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("66e75bcd-2938-4e43-b87c-4720c7ceb8df") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("64671880-b4e5-4ebc-8150-30f9a3eae5fa") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("cb114583-31ec-4a43-8c57-9946423fdd16") format('woff2');
+  unicode-range: U+1F00-1FFF;
+}
+/* greek */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("125ff4dd-646d-4f13-816d-177869568bce") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("28bdc14b-6ceb-424a-be18-8bebc3e41446") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("2fa653f7-680d-43f8-9aea-adfaac230e8f") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("17662fa0-bb4d-46cc-b4f5-e2727b1192a7") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("f9f4dc7f-2701-42e0-86dc-7bcf245a2604") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("29794d15-84b2-434f-9f1a-55cc15fe1b52") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("ffb59275-de9f-4fde-aef2-62a6cdd8975c") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("95819523-59ca-457b-9908-17bb06391b07") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("430de5df-e28e-4105-bd9c-76245f0b6278") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("aee23ff6-7c42-40e3-8aea-b66717c9b112") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("f9f4dc7f-2701-42e0-86dc-7bcf245a2604") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("29794d15-84b2-434f-9f1a-55cc15fe1b52") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("ffb59275-de9f-4fde-aef2-62a6cdd8975c") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("95819523-59ca-457b-9908-17bb06391b07") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("430de5df-e28e-4105-bd9c-76245f0b6278") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("aee23ff6-7c42-40e3-8aea-b66717c9b112") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("f9f4dc7f-2701-42e0-86dc-7bcf245a2604") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("29794d15-84b2-434f-9f1a-55cc15fe1b52") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("ffb59275-de9f-4fde-aef2-62a6cdd8975c") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("95819523-59ca-457b-9908-17bb06391b07") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("430de5df-e28e-4105-bd9c-76245f0b6278") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("aee23ff6-7c42-40e3-8aea-b66717c9b112") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* devanagari */
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("7d3f970d-0898-4a35-8b8b-81a4d9589287") format('woff2');
+  unicode-range: U+0900-097F, U+1CD0-1CF9, U+200C-200D, U+20A8, U+20B9, U+20F0, U+25CC, U+A830-A839, U+A8E0-A8FF, U+11B00-11B09;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("c87d3501-6491-4b94-a25f-db6af8b3a4e2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("39d0704e-6c5f-4384-9782-44a1cac440fb") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* devanagari */
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("3599d94e-9ff5-4e03-ada0-1499f576e5f9") format('woff2');
+  unicode-range: U+0900-097F, U+1CD0-1CF9, U+200C-200D, U+20A8, U+20B9, U+20F0, U+25CC, U+A830-A839, U+A8E0-A8FF, U+11B00-11B09;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("cef94c28-202f-47fe-b176-88776060c772") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("e1a9a3d5-8c5c-4d49-89a4-64e72d166ed6") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* devanagari */
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("f7669cdb-bd09-4abe-8ded-d8900a26abff") format('woff2');
+  unicode-range: U+0900-097F, U+1CD0-1CF9, U+200C-200D, U+20A8, U+20B9, U+20F0, U+25CC, U+A830-A839, U+A8E0-A8FF, U+11B00-11B09;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("b76d5710-f204-493b-9f5a-fae88b0e473d") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("fcc0ac01-6cbe-4b59-a833-887efa041aad") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* devanagari */
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("9f79dfe8-e074-40ca-9c4e-6075fdd7e839") format('woff2');
+  unicode-range: U+0900-097F, U+1CD0-1CF9, U+200C-200D, U+20A8, U+20B9, U+20F0, U+25CC, U+A830-A839, U+A8E0-A8FF, U+11B00-11B09;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("ad19fdb0-2a18-49a1-b04d-d8b4c39ca9a2") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("3af5f93f-660a-478d-abd2-98c71b5b0352") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* devanagari */
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("b80336d1-7601-4186-9cdb-cf36c1b094e3") format('woff2');
+  unicode-range: U+0900-097F, U+1CD0-1CF9, U+200C-200D, U+20A8, U+20B9, U+20F0, U+25CC, U+A830-A839, U+A8E0-A8FF, U+11B00-11B09;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("012fc321-5b5a-4bce-b667-406f8852137c") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("3db8eda8-1f87-43b5-91fa-6a0cbee3fa7a") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* devanagari */
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url("2b8b3dd1-7692-40c5-845b-3db6b6105a31") format('woff2');
+  unicode-range: U+0900-097F, U+1CD0-1CF9, U+200C-200D, U+20A8, U+20B9, U+20F0, U+25CC, U+A830-A839, U+A8E0-A8FF, U+11B00-11B09;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url("3ceac7e6-54ab-4a00-b1e1-4b085759f1a1") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url("4a4421f6-2d21-4902-bee8-7e5e6974a8c3") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+</style>
+
+
+
+  <style>
+/* ============================================================
+   NutriScan — Revamped Design System
+   Editorial, trustworthy, health-focused
+   ============================================================ */
+
+/* Tokens */
+:root {
+  /* Warm neutrals — stone-tinted */
+  --ink-900: #141312;
+  --ink-800: #26231f;
+  --ink-700: #3d3934;
+  --ink-600: #595149;
+  --ink-500: #7a7269;
+  --ink-400: #a39c93;
+  --ink-300: #c9c3ba;
+  --ink-200: #e4dfd7;
+  --ink-150: #ece7de;
+  --ink-100: #f3efe7;
+  --ink-50:  #f9f6f0;
+  --ink-0:   #fdfbf5;
+
+  /* Accent — clinical green (health, trustworthy, muted) */
+  --accent:         oklch(52% 0.11 155);
+  --accent-hover:   oklch(46% 0.11 155);
+  --accent-soft:    oklch(94% 0.04 155);
+  --accent-ink:     oklch(28% 0.06 155);
+
+  /* Nutri-Score — keep official palette (regulated meaning) */
+  --nutri-a: #038141;
+  --nutri-b: #85bb2f;
+  --nutri-c: #fecb02;
+  --nutri-d: #ee8100;
+  --nutri-e: #e63e11;
+
+  /* Semantic */
+  --warn:   #b45309;
+  --warn-soft: #fef3c7;
+  --danger: #b91c1c;
+
+  /* Radii */
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 16px;
+  --r-xl: 24px;
+
+  /* Type */
+  --font-serif: 'Instrument Serif', 'Iowan Old Style', Georgia, serif;
+  --font-sans:  'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono:  'JetBrains Mono', ui-monospace, Menlo, monospace;
+}
+
+.theme-dark {
+  --ink-900: #f3efe7;
+  --ink-800: #e4dfd7;
+  --ink-700: #c9c3ba;
+  --ink-600: #a39c93;
+  --ink-500: #7a7269;
+  --ink-400: #595149;
+  --ink-300: #3d3934;
+  --ink-200: #2a2622;
+  --ink-150: #22201d;
+  --ink-100: #1c1a17;
+  --ink-50:  #161412;
+  --ink-0:   #0f0e0c;
+
+  --accent:      oklch(68% 0.12 155);
+  --accent-hover: oklch(74% 0.12 155);
+  --accent-soft: oklch(28% 0.05 155);
+  --accent-ink:  oklch(88% 0.06 155);
+}
+
+/* Reset-ish */
+* { box-sizing: border-box; }
+body, h1, h2, h3, h4, h5, p, ul, ol, figure, blockquote {
+  margin: 0;
+}
+ul, ol { padding-left: 0; list-style: none; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+img, svg { display: block; }
+a { color: inherit; text-decoration: none; }
+
+body {
+  font-family: var(--font-sans);
+  font-feature-settings: 'ss01', 'cv11';
+  color: var(--ink-900);
+  background: var(--ink-0);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  line-height: 1.5;
+}
+
+/* ============================================================
+   Type scale — editorial
+   ============================================================ */
+.display {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  line-height: 1.02;
+  font-size: clamp(44px, 7vw, 96px);
+}
+.display-sm {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.04;
+  font-size: clamp(32px, 4vw, 52px);
+}
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-500);
+  font-weight: 500;
+}
+.label-sm {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-500);
+  font-weight: 500;
+}
+
+/* ============================================================
+   Nutri-Score scale badge — official style, simplified
+   ============================================================ */
+.nutri-badge {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-sans);
+  font-weight: 800;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--ink-100);
+  padding: 3px;
+  gap: 2px;
+}
+.nutri-badge .seg {
+  width: 26px; height: 26px;
+  border-radius: 999px;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff;
+  font-size: 12px;
+  letter-spacing: -0.02em;
+  transition: transform 0.25s;
+  opacity: 0.35;
+  filter: saturate(0.3);
+}
+.nutri-badge .seg.active {
+  opacity: 1; filter: none;
+  transform: scale(1.15);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.nutri-badge .seg.a { background: var(--nutri-a); }
+.nutri-badge .seg.b { background: var(--nutri-b); }
+.nutri-badge .seg.c { background: var(--nutri-c); color: #3a2a00; }
+.nutri-badge .seg.d { background: var(--nutri-d); }
+.nutri-badge .seg.e { background: var(--nutri-e); }
+
+.nutri-badge.lg .seg { width: 40px; height: 40px; font-size: 17px; }
+.nutri-badge.sm .seg { width: 18px; height: 18px; font-size: 9px; }
+
+/* Single big letter style — for hero metric */
+.nutri-letter {
+  width: 88px; height: 88px;
+  border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: var(--font-serif);
+  font-size: 58px;
+  color: #fff;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  position: relative;
+  box-shadow: inset 0 -3px 0 rgba(0,0,0,0.15), 0 8px 24px -8px rgba(0,0,0,0.2);
+}
+.nutri-letter.a { background: var(--nutri-a); }
+.nutri-letter.b { background: var(--nutri-b); }
+.nutri-letter.c { background: var(--nutri-c); color: #3a2a00; }
+.nutri-letter.d { background: var(--nutri-d); }
+.nutri-letter.e { background: var(--nutri-e); }
+
+/* ============================================================
+   Button system
+   ============================================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1;
+  padding: 12px 18px;
+  border-radius: var(--r-md);
+  transition: all 0.2s;
+  cursor: pointer;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+.btn-primary {
+  background: var(--ink-900);
+  color: var(--ink-0);
+}
+.btn-primary:hover { background: var(--ink-800); transform: translateY(-1px); }
+.btn-accent {
+  background: var(--accent);
+  color: #fff;
+}
+.btn-accent:hover { background: var(--accent-hover); }
+.btn-ghost {
+  background: transparent;
+  color: var(--ink-900);
+  border: 1px solid var(--ink-200);
+}
+.btn-ghost:hover { border-color: var(--ink-400); background: var(--ink-50); }
+.btn-sm { padding: 8px 12px; font-size: 13px; }
+.btn-lg { padding: 16px 24px; font-size: 15px; }
+
+/* ============================================================
+   Chip / tag
+   ============================================================ */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  background: var(--ink-100);
+  color: var(--ink-700);
+  border: 1px solid var(--ink-200);
+}
+.chip.warn {
+  background: var(--warn-soft);
+  color: var(--warn);
+  border-color: #fcd34d;
+}
+.chip.accent {
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  border-color: transparent;
+}
+
+/* ============================================================
+   Input
+   ============================================================ */
+.input {
+  width: 100%;
+  padding: 14px 18px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--ink-200);
+  background: var(--ink-0);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  color: var(--ink-900);
+  transition: all 0.15s;
+}
+.input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-soft);
+}
+.input::placeholder { color: var(--ink-400); }
+
+/* ============================================================
+   Utilities
+   ============================================================ */
+.hairline { border-bottom: 1px solid var(--ink-200); }
+.hairline-t { border-top: 1px solid var(--ink-200); }
+.container { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+
+/* Custom scrollbar — thin, warm */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--ink-200); border-radius: 10px; border: 2px solid var(--ink-0); }
+::-webkit-scrollbar-thumb:hover { background: var(--ink-300); }
+
+/* Comparison frame */
+.compare-frame {
+  border-radius: 20px;
+  overflow: hidden;
+  background: var(--ink-0);
+  box-shadow: 0 1px 3px rgba(20,19,18,0.04), 0 20px 60px -20px rgba(20,19,18,0.12);
+  border: 1px solid var(--ink-200);
+}
+.compare-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--ink-500);
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--ink-200);
+  background: var(--ink-50);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+}
+.compare-label::before {
+  content: "";
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--ink-400);
+}
+.compare-label.new::before { background: var(--accent); }
+
+/* Fade in on scroll */
+.fade-in {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.fade-in.visible { opacity: 1; transform: none; }
+
+/* Icon size helpers */
+.i-14 { width: 14px; height: 14px; }
+.i-16 { width: 16px; height: 16px; }
+.i-18 { width: 18px; height: 18px; }
+.i-20 { width: 20px; height: 20px; }
+.i-24 { width: 24px; height: 24px; }
+
+</style>
+
+  <style>
+    /* Shell chrome */
+    .shell {
+      min-height: 100vh;
+      background: var(--ink-50);
+      padding: 28px 40px 60px;
+    }
+    .shell-head {
+      max-width: 1400px;
+      margin: 0 auto 40px;
+      display: flex; align-items: flex-end; justify-content: space-between; gap: 24px;
+      flex-wrap: wrap;
+    }
+    .shell-title {
+      font-family: var(--font-serif);
+      font-size: 40px;
+      letter-spacing: -0.015em;
+      color: var(--ink-900);
+      line-height: 1;
+    }
+    .shell-subtitle {
+      font-size: 14px; color: var(--ink-500); margin-top: 10px; max-width: 560px;
+    }
+    .tabs {
+      display: inline-flex;
+      background: var(--ink-0);
+      border: 1px solid var(--ink-200);
+      border-radius: 12px;
+      padding: 4px;
+    }
+    .tabs button {
+      padding: 9px 16px;
+      border-radius: 8px;
+      font-size: 13px; font-weight: 500;
+      color: var(--ink-500);
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .tabs button.active {
+      background: var(--ink-900);
+      color: var(--ink-0);
+    }
+    .theme-switch {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 14px; border-radius: 10px;
+      border: 1px solid var(--ink-200); background: var(--ink-0);
+      font-size: 13px; color: var(--ink-700);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .grid-2 > * { min-width: 0; }
+    .full {
+      max-width: 1400px; margin: 0 auto;
+    }
+
+    .frame-body {
+      height: 780px;
+      overflow: auto;
+    }
+    .frame-body.tall { height: 920px; }
+
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: 28px;
+      letter-spacing: -0.01em;
+      color: var(--ink-900);
+      max-width: 1400px;
+      margin: 64px auto 20px;
+      display: flex; align-items: baseline; gap: 14px;
+    }
+    .section-title small {
+      font-family: var(--font-mono);
+      font-size: 11px; color: var(--ink-500);
+      text-transform: uppercase; letter-spacing: 0.14em; font-weight: 500;
+    }
+    .rationale {
+      max-width: 1400px;
+      margin: 0 auto 24px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      padding: 24px;
+      background: var(--ink-0);
+      border: 1px solid var(--ink-200);
+      border-radius: 16px;
+    }
+    .rationale h4 {
+      font-size: 13px; font-weight: 600; color: var(--ink-900); margin-bottom: 6px;
+    }
+    .rationale p {
+      font-size: 13px; color: var(--ink-600); line-height: 1.55;
+    }
+    .rationale .tag {
+      font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 10px; font-weight: 500;
+      display: block;
+    }
+
+    /* Hide scrollbars inside frames for clean capture */
+    .frame-body::-webkit-scrollbar { width: 6px; }
+    .frame-body::-webkit-scrollbar-thumb { background: var(--ink-300); }
+  </style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script src="e785f210-fa4d-4569-be2d-fe96636d2fb3" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="121cfed4-9dff-4d43-9e68-291a11c0c74b" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="0c059592-051e-441b-a711-b2447cf9d955" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel">
+// Sample product data — mimics Open Food Facts shape for NutriScan
+const SAMPLE_PRODUCTS = [
+  {
+    code: "7622210449283",
+    product_name: "Oreo Original",
+    brands: "Mondelez",
+    image: "oreo",
+    nutrition_grade: "e",
+    nova_group: 4,
+    categories: "Biscoitos, Bolachas recheadas",
+    allergens: ["gluten", "soy", "milk"],
+    nutriments: { energy: 480, fat: 20.5, sat_fat: 9.2, sugars: 38, salt: 0.7, fiber: 2.1, proteins: 5.2 },
+    verdict: "avoid",
+  },
+  {
+    code: "3017620422003",
+    product_name: "Nutella",
+    brands: "Ferrero",
+    image: "nutella",
+    nutrition_grade: "e",
+    nova_group: 4,
+    categories: "Pastas doces, Creme de avelã",
+    allergens: ["milk", "soy", "nuts"],
+    nutriments: { energy: 539, fat: 30.9, sat_fat: 10.6, sugars: 56.3, salt: 0.107, fiber: 0, proteins: 6.3 },
+    verdict: "avoid",
+  },
+  {
+    code: "7891000100103",
+    product_name: "Leite Integral Ninho",
+    brands: "Nestlé",
+    image: "milk",
+    nutrition_grade: "b",
+    nova_group: 1,
+    categories: "Laticínios, Leite em pó",
+    allergens: ["milk"],
+    nutriments: { energy: 61, fat: 3.2, sat_fat: 2.0, sugars: 4.7, salt: 0.1, fiber: 0, proteins: 3.1 },
+    verdict: "moderate",
+  },
+  {
+    code: "7891150010109",
+    product_name: "Aveia em Flocos Finos",
+    brands: "Quaker",
+    image: "oats",
+    nutrition_grade: "a",
+    nova_group: 1,
+    categories: "Cereais, Aveia",
+    allergens: ["gluten"],
+    nutriments: { energy: 371, fat: 6.6, sat_fat: 1.1, sugars: 1.1, salt: 0.005, fiber: 9.1, proteins: 13.9 },
+    verdict: "recommended",
+  },
+  {
+    code: "7894900011517",
+    product_name: "Coca-Cola Original 350ml",
+    brands: "Coca-Cola",
+    image: "coke",
+    nutrition_grade: "e",
+    nova_group: 4,
+    categories: "Bebidas, Refrigerantes",
+    allergens: [],
+    nutriments: { energy: 42, fat: 0, sat_fat: 0, sugars: 10.6, salt: 0.01, fiber: 0, proteins: 0 },
+    verdict: "avoid",
+  },
+  {
+    code: "7891024135006",
+    product_name: "Iogurte Natural Desnatado",
+    brands: "Vigor",
+    image: "yogurt",
+    nutrition_grade: "a",
+    nova_group: 3,
+    categories: "Laticínios, Iogurtes",
+    allergens: ["milk"],
+    nutriments: { energy: 41, fat: 0.1, sat_fat: 0.1, sugars: 4.5, salt: 0.12, fiber: 0, proteins: 4.6 },
+    verdict: "recommended",
+  },
+  {
+    code: "7891234567890",
+    product_name: "Pão de Forma Integral",
+    brands: "Wickbold",
+    image: "bread",
+    nutrition_grade: "c",
+    nova_group: 4,
+    categories: "Pães, Pão integral",
+    allergens: ["gluten", "soy"],
+    nutriments: { energy: 241, fat: 3.1, sat_fat: 0.6, sugars: 3.4, salt: 1.1, fiber: 6.4, proteins: 9.8 },
+    verdict: "moderate",
+  },
+  {
+    code: "7891000315507",
+    product_name: "Barra de Cereal Chocolate",
+    brands: "Nesfit",
+    image: "bar",
+    nutrition_grade: "d",
+    nova_group: 4,
+    categories: "Snacks, Barras de cereal",
+    allergens: ["gluten", "milk", "soy"],
+    nutriments: { energy: 367, fat: 7.5, sat_fat: 3.2, sugars: 22, salt: 0.32, fiber: 4.5, proteins: 5.9 },
+    verdict: "moderate",
+  },
+];
+
+// Mock product image as SVG — shows a stylized "label" with product-name type
+function ProductImage({ product, size = 200 }) {
+  const palettes = {
+    oreo:    { bg: "#0a1220", fg: "#f3f3f3", accent: "#2563eb" },
+    nutella: { bg: "#f5e9d4", fg: "#3a1d0d", accent: "#b23a1e" },
+    milk:    { bg: "#fefbf4", fg: "#1e3a8a", accent: "#d4b88a" },
+    oats:    { bg: "#ede3cf", fg: "#3d2f14", accent: "#9a7a3d" },
+    coke:    { bg: "#c8161d", fg: "#ffffff", accent: "#7a0a10" },
+    yogurt:  { bg: "#f4f9f0", fg: "#2a4d2a", accent: "#6fa65a" },
+    bread:   { bg: "#f0dbb3", fg: "#4a2f1a", accent: "#8a5a2a" },
+    bar:     { bg: "#3a2412", fg: "#f3e6cd", accent: "#c49a5a" },
+  };
+  const p = palettes[product.image] || palettes.oats;
+  const short = (product.product_name || "").split(" ").slice(0, 2).join(" ").toUpperCase();
+  return (
+    <svg viewBox="0 0 200 200" width={size} height={size} xmlns="http://www.w3.org/2000/svg" style={{ display: 'block' }}>
+      <rect width="200" height="200" fill={p.bg} />
+      {/* subtle pattern */}
+      <g opacity="0.08" fill={p.fg}>
+        <circle cx="40" cy="40" r="24" />
+        <circle cx="160" cy="160" r="32" />
+      </g>
+      <rect x="20" y="70" width="160" height="60" fill={p.fg} opacity="0.95" rx="2" />
+      <text x="100" y="105" fontFamily="Inter, sans-serif" fontSize="14" fontWeight="800" textAnchor="middle" fill={p.bg} letterSpacing="0.5">
+        {short}
+      </text>
+      <rect x="20" y="140" width="60" height="6" fill={p.accent} rx="1" />
+      <rect x="20" y="150" width="40" height="4" fill={p.fg} opacity="0.3" rx="1" />
+    </svg>
+  );
+}
+
+window.SAMPLE_PRODUCTS = SAMPLE_PRODUCTS;
+window.ProductImage = ProductImage;
+
+</script>
+<script type="text/babel">
+// Icons — minimal Lucide-style line icons
+const Icon = {
+  Search: (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" {...p}><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>,
+  Scan:   (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M7 8v8M11 8v8M15 8v8"/></svg>,
+  Bar:    (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M3 5v14M7 5v14M11 5v14M15 5v14M19 5v14"/></svg>,
+  Alert:  (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></svg>,
+  Heart:  (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>,
+  Plus:   (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M5 12h14M12 5v14"/></svg>,
+  ArrowRight: (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M5 12h14m-6-6 6 6-6 6"/></svg>,
+  Check:  (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M20 6 9 17l-5-5"/></svg>,
+  X:      (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M18 6 6 18M6 6l12 12"/></svg>,
+  Leaf:   (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19.2 2.5c1 1.5.5 7.7-2.3 11.5-2 3-5.1 4.5-6.3 4.5Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6"/></svg>,
+  Shield: (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/></svg>,
+  Globe:  (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" {...p}><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10Z"/></svg>,
+  Book:   (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2Z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7Z"/></svg>,
+  Spark:  (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg>,
+  Sun:    (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" {...p}><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>,
+  Moon:   (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>,
+  Filter: (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M22 3H2l8 9.46V19l4 2v-8.54Z"/></svg>,
+  Grid:   (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" {...p}><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>,
+  List:   (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>,
+  Chev:   (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="m9 18 6-6-6-6"/></svg>,
+  Back:   (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="m19 12H5m6-7-7 7 7 7"/></svg>,
+  Share:  (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>,
+  Coffee: (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M17 8h1a4 4 0 0 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><path d="M6 2v3M10 2v3M14 2v3"/></svg>,
+  Code:   (p) => <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="m16 18 6-6-6-6M8 6l-6 6 6 6"/></svg>,
+};
+
+// Nutri-Score scale badge — all 5 letters with active one highlighted
+function NutriScale({ active, size = "md" }) {
+  const cls = `nutri-badge ${size === "sm" ? "sm" : size === "lg" ? "lg" : ""}`;
+  return (
+    <div className={cls}>
+      {["a","b","c","d","e"].map(l => (
+        <div key={l} className={`seg ${l} ${active === l ? "active" : ""}`}>{l.toUpperCase()}</div>
+      ))}
+    </div>
+  );
+}
+
+// Single big Nutri-Score letter — hero metric
+function NutriLetter({ grade, size = 88 }) {
+  return (
+    <div
+      className={`nutri-letter ${grade}`}
+      style={{ width: size, height: size, fontSize: Math.round(size * 0.66) }}
+    >
+      {grade.toUpperCase()}
+    </div>
+  );
+}
+
+// NOVA group pill
+function NovaPill({ group }) {
+  const labels = { 1: "Não processado", 2: "Ingrediente culinário", 3: "Processado", 4: "Ultraprocessado" };
+  const colors = { 1: "var(--nutri-a)", 2: "var(--nutri-c)", 3: "var(--nutri-d)", 4: "var(--nutri-e)" };
+  return (
+    <div style={{
+      display: "inline-flex", alignItems: "center", gap: 8,
+      padding: "4px 10px 4px 4px",
+      borderRadius: 999,
+      background: "var(--ink-100)",
+      border: "1px solid var(--ink-200)",
+      fontSize: 12,
+      color: "var(--ink-700)",
+    }}>
+      <span style={{
+        width: 22, height: 22, borderRadius: 999,
+        background: colors[group],
+        color: group === 2 ? "#3a2a00" : "#fff",
+        display: "grid", placeItems: "center",
+        fontFamily: "var(--font-mono)", fontWeight: 700, fontSize: 11,
+      }}>{group}</span>
+      NOVA · {labels[group]}
+    </div>
+  );
+}
+
+// Verdict dot
+function VerdictTag({ verdict }) {
+  const map = {
+    recommended: { label: "Recomendado", color: "var(--nutri-a)" },
+    moderate:    { label: "Com moderação", color: "var(--nutri-c)", ink: "#3a2a00" },
+    avoid:       { label: "Evitar", color: "var(--nutri-e)" },
+  };
+  const v = map[verdict];
+  return (
+    <span style={{
+      display: "inline-flex", alignItems: "center", gap: 6,
+      fontSize: 11, fontWeight: 600,
+      color: v.ink || v.color,
+    }}>
+      <span style={{ width: 8, height: 8, borderRadius: 999, background: v.color }} />
+      {v.label}
+    </span>
+  );
+}
+
+Object.assign(window, { Icon, NutriScale, NutriLetter, NovaPill, VerdictTag });
+
+</script>
+<script type="text/babel">
+// BEFORE — reproduces current NutriScan design for side-by-side comparison
+// Cyberpunk-engineering style, Poppins, blue+green, heavy font weights, tech copy
+
+function BeforeHero() {
+  return (
+    <section style={{
+      position: 'relative', padding: '80px 40px 100px',
+      background: 'var(--before-bg, #fff)', color: 'var(--before-ink, #111827)',
+      overflow: 'hidden', fontFamily: 'Poppins, sans-serif',
+    }}>
+      <div style={{
+        position: 'absolute', inset: 0,
+        backgroundImage: 'linear-gradient(to right, rgba(0,0,0,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.06) 1px, transparent 1px)',
+        backgroundSize: '4rem 4rem',
+        maskImage: 'radial-gradient(ellipse 60% 50% at 50% 50%, #000 70%, transparent 100%)',
+        opacity: 0.5,
+      }} />
+      <div style={{
+        position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
+        width: 700, height: 400, borderRadius: '50%',
+        background: '#0055FF', filter: 'blur(120px)', opacity: 0.06,
+      }} />
+      <div style={{ position: 'relative', zIndex: 1, maxWidth: 1000, margin: '0 auto', textAlign: 'center' }}>
+        <div style={{
+          display: 'inline-flex', alignItems: 'center', gap: 10, padding: '6px 14px',
+          borderRadius: 999, background: 'rgba(0,0,0,0.04)', border: '1px solid rgba(0,0,0,0.08)',
+          fontSize: 10, fontWeight: 900, letterSpacing: '0.2em', textTransform: 'uppercase',
+          color: '#6b7280', marginBottom: 28,
+        }}>
+          <span style={{ display: 'flex' }}>
+            <span style={{ width: 18, height: 18, borderRadius: 999, background: '#3b82f6', border: '2px solid #fff', marginRight: -6 }}/>
+            <span style={{ width: 18, height: 18, borderRadius: 999, background: '#10b981', border: '2px solid #fff' }}/>
+          </span>
+          NutriScan Protocol <span style={{ color: '#2563eb' }}>v2.1</span> · BR
+        </div>
+        <h1 style={{
+          fontSize: 'clamp(40px, 6vw, 78px)', fontWeight: 900, letterSpacing: '-0.04em',
+          lineHeight: 0.88, marginBottom: 24,
+        }}>
+          A verdade sobre <br/>
+          <span style={{
+            background: 'linear-gradient(90deg,#2563eb,#06b6d4,#60a5fa)',
+            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+          }}>seus alimentos.</span>
+        </h1>
+        <p style={{
+          color: '#4b5563', fontSize: 17, fontWeight: 500, maxWidth: 560, margin: '0 auto 40px', lineHeight: 1.55,
+        }}>
+          Engenharia de dados aplicada à transparência nutricional.
+          Descriptografamos rótulos para que você tome decisões soberanas.
+        </p>
+        <div style={{
+          display: 'flex', alignItems: 'center', maxWidth: 640, margin: '0 auto',
+          background: 'rgba(255,255,255,0.8)', backdropFilter: 'blur(10px)',
+          border: '1px solid rgba(0,0,0,0.08)', borderRadius: 24, padding: 8,
+          boxShadow: '0 8px 30px rgba(0,0,0,0.04)',
+        }}>
+          <div style={{ padding: '0 18px', color: '#9ca3af' }}>
+            <Icon.Scan className="i-20" />
+          </div>
+          <input placeholder="Insira o código EAN/UPC (ex: 789...)" style={{
+            flex: 1, border: 0, background: 'transparent', padding: '18px 8px',
+            fontSize: 17, fontWeight: 500, outline: 'none', color: 'inherit',
+            fontFamily: 'inherit',
+          }}/>
+          <button style={{
+            padding: '14px 24px', background: '#2563eb', color: '#fff',
+            border: 0, borderRadius: 14, fontSize: 11, fontWeight: 900,
+            letterSpacing: '0.18em', textTransform: 'uppercase', cursor: 'pointer',
+            fontFamily: 'inherit',
+          }}>Analisar Produto →</button>
+        </div>
+        <div style={{
+          display: 'flex', justifyContent: 'space-between', padding: '22px 14px 0', fontSize: 9,
+          fontFamily: 'ui-monospace, monospace', fontWeight: 700,
+          letterSpacing: '0.2em', textTransform: 'uppercase', color: '#3b82f6',
+          maxWidth: 640, margin: '0 auto',
+        }}>
+          <span>● Protocolo: Detecção de Código de Barras</span>
+          <span style={{ color: '#9ca3af' }}>⌘ Region: BR</span>
+        </div>
+      </div>
+      <div style={{
+        maxWidth: 900, margin: '80px auto 0', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr',
+        gap: 48, borderTop: '1px solid rgba(0,0,0,0.08)', paddingTop: 36, opacity: 0.5,
+      }}>
+        {[{n:'2M+',l:'Dataset Entries'},{n:'100%',l:'Open Source'},{n:'< 10s',l:'Analysis Speed'}].map(x => (
+          <div key={x.l} style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: 22, fontFamily: 'ui-monospace, monospace', fontWeight: 700, letterSpacing: '-0.02em' }}>{x.n}</div>
+            <div style={{ fontSize: 9, fontWeight: 900, letterSpacing: '0.3em', textTransform: 'uppercase', color: '#6b7280', marginTop: 4 }}>{x.l}</div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function BeforeFeatures() {
+  const items = [
+    { bg:'#dbeafe', ink:'#2563eb', title:'Dados da Comunidade', desc:'Informações fornecidas pela Open Food Facts.', benefit: 'Base colaborativa mundial' },
+    { bg:'#dcfce7', ink:'#16a34a', title:'Atualização Contínua', desc:'Novos produtos atualizados a cada minuto.', benefit: 'Tempo real' },
+    { bg:'#ede9fe', ink:'#7c3aed', title:'Velocidade de Resposta', desc:'Diagnóstico nutricional em segundos.', benefit: '< 10s' },
+    { bg:'#ffedd5', ink:'#ea580c', title:'Open Source', desc:'Gratuito para sempre.', benefit: 'Gratuito' },
+  ];
+  return (
+    <section style={{ padding: '64px 40px', background: 'var(--before-bg, #fff)', fontFamily: 'Poppins, sans-serif' }}>
+      <div style={{ textAlign: 'center', marginBottom: 48 }}>
+        <h2 style={{ fontSize: 38, fontWeight: 900, letterSpacing: '-0.03em' }}>
+          Por que confiar no <span style={{ color: '#2563eb' }}>NutriScan</span>
+        </h2>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 24, maxWidth: 900, margin: '0 auto' }}>
+        {items.map((f,i) => (
+          <div key={i} style={{
+            background: '#f9fafb', border: '1px solid #f3f4f6',
+            borderRadius: 24, padding: 28,
+          }}>
+            <div style={{ width: 48, height: 48, borderRadius: 14, background: f.bg, display: 'grid', placeItems: 'center', marginBottom: 18 }}>
+              <Icon.Spark className="i-20" style={{ color: f.ink }}/>
+            </div>
+            <div style={{ fontSize: 20, fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 8 }}>{f.title}</div>
+            <div style={{ color: '#6b7280', fontSize: 14, marginBottom: 16 }}>{f.desc}</div>
+            <div style={{
+              display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 999,
+              background: f.bg, color: f.ink, fontSize: 11, fontWeight: 900, letterSpacing: '0.14em', textTransform: 'uppercase',
+            }}>✓ {f.benefit}</div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function BeforeProductCard({ product }) {
+  const gradeColors = { a: '#22c55e', b: '#4ade80', c: '#eab308', d: '#f97316', e: '#ef4444' };
+  const novaColors = { 1: '#22c55e', 2: '#eab308', 3: '#f97316', 4: '#ef4444' };
+  return (
+    <div style={{
+      background: '#fff', borderRadius: 12, border: '1px solid #f3f4f6',
+      overflow: 'hidden', display: 'flex', flexDirection: 'column',
+      boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
+      fontFamily: 'Poppins, sans-serif',
+    }}>
+      <div style={{ position: 'relative', height: 200, background: 'linear-gradient(135deg, #f9fafb, #f3f4f6)' }}>
+        <div style={{ padding: 16, width: '100%', height: '100%', display: 'grid', placeItems: 'center' }}>
+          <ProductImage product={product} size={150}/>
+        </div>
+        <div style={{ position: 'absolute', top: 10, right: 10, background: gradeColors[product.nutrition_grade], color: '#fff', borderRadius: 6, padding: '4px 8px', fontSize: 11, fontWeight: 800, boxShadow: '0 2px 6px rgba(0,0,0,0.15)' }}>
+          ⚡ {product.nutrition_grade.toUpperCase()}
+        </div>
+        <div style={{ position: 'absolute', top: 10, left: 10, background: novaColors[product.nova_group], color: '#fff', borderRadius: 6, padding: '4px 8px', fontSize: 11, fontWeight: 800, boxShadow: '0 2px 6px rgba(0,0,0,0.15)' }}>
+          NOVA {product.nova_group}
+        </div>
+        {product.allergens.length > 0 && (
+          <div style={{ position: 'absolute', bottom: 10, right: 10, background: '#eab308', color: '#fff', borderRadius: 999, padding: 6 }}>
+            <Icon.Alert className="i-14"/>
+          </div>
+        )}
+      </div>
+      <div style={{ padding: 18, display: 'flex', flexDirection: 'column', gap: 12, flex: 1 }}>
+        <div>
+          <div style={{ fontSize: 16, fontWeight: 600, lineHeight: 1.3, color: '#111827' }}>
+            {product.product_name}
+          </div>
+          <div style={{ fontSize: 13, color: '#6b7280', marginTop: 2 }}>{product.brands}</div>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, fontSize: 11 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: '#9ca3af' }}>Energia:</span><span style={{ fontWeight: 600 }}>{product.nutriments.energy} kcal</span></div>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: '#9ca3af' }}>Gorduras:</span><span style={{ fontWeight: 600 }}>{product.nutriments.fat}g</span></div>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: '#9ca3af' }}>Açúcares:</span><span style={{ fontWeight: 600 }}>{product.nutriments.sugars}g</span></div>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: '#9ca3af' }}>Sódio:</span><span style={{ fontWeight: 600 }}>{product.nutriments.salt}g</span></div>
+        </div>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+          {product.categories.split(',').slice(0,2).map(c => (
+            <span key={c} style={{ fontSize: 10, padding: '3px 8px', background: '#f9fafb', border: '1px solid #f3f4f6', borderRadius: 6, color: '#6b7280' }}>{c.trim()}</span>
+          ))}
+        </div>
+        {product.allergens.length > 0 && (
+          <div style={{ fontSize: 11, color: '#ca8a04', display: 'flex', alignItems: 'center', gap: 4 }}>
+            <Icon.Alert className="i-14"/> Contém alérgenos
+          </div>
+        )}
+        <div style={{ display: 'flex', gap: 6, marginTop: 'auto', paddingTop: 6 }}>
+          <button style={{ flex: 1, padding: '10px', background: '#fff', border: '1px solid #e5e7eb', borderRadius: 8, fontSize: 13, fontWeight: 500, fontFamily: 'inherit', cursor: 'pointer' }}>
+            👁 Ver Detalhes
+          </button>
+          <button style={{ padding: '10px 12px', background: '#f3f4f6', border: '1px solid #e5e7eb', borderRadius: 8, fontSize: 14, fontFamily: 'inherit', cursor: 'pointer' }}>+</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function BeforeProductDetail({ product }) {
+  const gradeColors = { a: '#22c55e', b: '#4ade80', c: '#eab308', d: '#f97316', e: '#ef4444' };
+  return (
+    <div style={{ background: '#fff', fontFamily: 'Poppins, sans-serif', padding: 40, minHeight: '100%' }}>
+      <div style={{ fontSize: 11, color: '#6b7280', marginBottom: 18, fontFamily: 'ui-monospace, monospace', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase' }}>
+        ← Produto · {product.code}
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40, marginBottom: 32 }}>
+        <div style={{ background: 'linear-gradient(135deg,#f9fafb,#f3f4f6)', borderRadius: 24, padding: 40, display: 'grid', placeItems: 'center', aspectRatio: '1/1' }}>
+          <ProductImage product={product} size={260}/>
+        </div>
+        <div>
+          <div style={{ fontSize: 11, color: '#2563eb', fontWeight: 900, letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 10 }}>{product.brands}</div>
+          <h1 style={{ fontSize: 38, fontWeight: 900, letterSpacing: '-0.03em', lineHeight: 1.05, marginBottom: 20 }}>{product.product_name}</h1>
+          <div style={{ display: 'flex', gap: 14, marginBottom: 22 }}>
+            <div style={{ padding: '12px 18px', borderRadius: 14, background: gradeColors[product.nutrition_grade], color: '#fff', textAlign: 'center' }}>
+              <div style={{ fontSize: 10, fontWeight: 900, letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.9 }}>Nutri-Score</div>
+              <div style={{ fontSize: 34, fontWeight: 900, lineHeight: 1 }}>{product.nutrition_grade.toUpperCase()}</div>
+            </div>
+            <div style={{ padding: '12px 18px', borderRadius: 14, background: '#111827', color: '#fff', textAlign: 'center' }}>
+              <div style={{ fontSize: 10, fontWeight: 900, letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.8 }}>NOVA</div>
+              <div style={{ fontSize: 34, fontWeight: 900, lineHeight: 1 }}>{product.nova_group}</div>
+            </div>
+          </div>
+          <div style={{ padding: 20, background: '#f9fafb', borderRadius: 16, marginBottom: 18 }}>
+            <div style={{ fontSize: 11, color: '#6b7280', fontWeight: 900, letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 12 }}>Composição / 100g</div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, fontSize: 13 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: '#6b7280' }}>Energia</span><span style={{ fontWeight: 700 }}>{product.nutriments.energy} kcal</span></div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: '#6b7280' }}>Gorduras</span><span style={{ fontWeight: 700 }}>{product.nutriments.fat}g</span></div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: '#6b7280' }}>Açúcares</span><span style={{ fontWeight: 700 }}>{product.nutriments.sugars}g</span></div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: '#6b7280' }}>Sódio</span><span style={{ fontWeight: 700 }}>{product.nutriments.salt}g</span></div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: '#6b7280' }}>Proteínas</span><span style={{ fontWeight: 700 }}>{product.nutriments.proteins}g</span></div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}><span style={{ color: '#6b7280' }}>Fibras</span><span style={{ fontWeight: 700 }}>{product.nutriments.fiber}g</span></div>
+            </div>
+          </div>
+          {product.allergens.length > 0 && (
+            <div style={{ padding: 14, background: '#fef3c7', border: '1px solid #fde68a', borderRadius: 12, fontSize: 13, color: '#92400e', display: 'flex', alignItems: 'center', gap: 8 }}>
+              <Icon.Alert className="i-16"/> Contém: {product.allergens.join(', ')}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+Object.assign(window, { BeforeHero, BeforeFeatures, BeforeProductCard, BeforeProductDetail });
+
+</script>
+<script type="text/babel">
+// AFTER — Revamped NutriScan landing
+// Editorial, trustworthy, health-focused
+
+function AfterHero({ onSearch }) {
+  const [q, setQ] = React.useState("");
+  return (
+    <section style={{ position: 'relative', padding: '96px 40px 80px', background: 'var(--ink-0)', overflow: 'hidden' }}>
+      {/* Subtle concentric arcs — organic, not grid */}
+      <svg aria-hidden style={{ position: 'absolute', right: '-200px', top: '40px', opacity: 0.35, pointerEvents: 'none' }} width="560" height="560" viewBox="0 0 560 560">
+        <defs>
+          <radialGradient id="fade" cx="50%" cy="50%">
+            <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.25"/>
+            <stop offset="100%" stopColor="var(--accent)" stopOpacity="0"/>
+          </radialGradient>
+        </defs>
+        <circle cx="280" cy="280" r="260" fill="none" stroke="var(--ink-200)" strokeWidth="1"/>
+        <circle cx="280" cy="280" r="200" fill="none" stroke="var(--ink-200)" strokeWidth="1"/>
+        <circle cx="280" cy="280" r="140" fill="none" stroke="var(--ink-200)" strokeWidth="1"/>
+        <circle cx="280" cy="280" r="260" fill="url(#fade)"/>
+      </svg>
+
+      <div style={{ position: 'relative', maxWidth: 1000, margin: '0 auto' }}>
+        {/* Eyebrow */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 32 }}>
+          <span style={{ width: 8, height: 8, borderRadius: 999, background: 'var(--accent)' }}/>
+          <span className="eyebrow">Open Food Facts · 2M+ produtos</span>
+        </div>
+
+        {/* Headline — serif display, gentle italic for accent */}
+        <h1 className="display" style={{ color: 'var(--ink-900)', maxWidth: 900, marginBottom: 24 }}>
+          Entenda o que
+          <br/>
+          há dentro dos seus alimentos, <em style={{ color: 'var(--accent)', fontStyle: 'italic' }}>de verdade.</em>
+        </h1>
+
+        <p style={{
+          fontSize: 19, color: 'var(--ink-600)', maxWidth: 560, marginBottom: 44, lineHeight: 1.55,
+        }}>
+          Busque por nome ou código de barras e veja Nutri‑Score, grau de processamento
+          e alérgenos — sem rodeios, sem ads, de uma base colaborativa global.
+        </p>
+
+        {/* Search */}
+        <div style={{ maxWidth: 640 }}>
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 8,
+            background: 'var(--ink-0)', border: '1px solid var(--ink-200)',
+            borderRadius: 14, padding: 6,
+            boxShadow: '0 1px 2px rgba(0,0,0,0.03), 0 8px 24px -12px rgba(0,0,0,0.1)',
+          }}>
+            <div style={{ padding: '0 12px 0 14px', color: 'var(--ink-500)' }}>
+              <Icon.Search className="i-18"/>
+            </div>
+            <input
+              value={q}
+              onChange={e => setQ(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && onSearch?.(q)}
+              placeholder="Ex: Nutella, 7622210449283, aveia…"
+              style={{
+                flex: 1, border: 0, background: 'transparent',
+                padding: '14px 4px', fontSize: 16, color: 'var(--ink-900)', outline: 'none',
+                fontFamily: 'inherit',
+              }}
+            />
+            <button className="btn btn-accent" onClick={() => onSearch?.(q)} style={{ padding: '12px 20px' }}>
+              Buscar
+              <Icon.ArrowRight className="i-16"/>
+            </button>
+          </div>
+          <div style={{ display: 'flex', gap: 16, marginTop: 14, fontSize: 13, color: 'var(--ink-500)', alignItems: 'center', flexWrap: 'wrap' }}>
+            <span className="label-sm">Tente:</span>
+            {['Oreo', 'Coca-Cola', 'Aveia Quaker'].map(s => (
+              <button key={s} onClick={() => { setQ(s); onSearch?.(s); }}
+                style={{ fontSize: 13, color: 'var(--ink-700)', borderBottom: '1px dashed var(--ink-300)', padding: '2px 0' }}>
+                {s}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Stats strip */}
+        <div style={{
+          marginTop: 72, paddingTop: 28, borderTop: '1px solid var(--ink-200)',
+          display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 32,
+          maxWidth: 720,
+        }}>
+          {[
+            { n: '2M+',  l: 'produtos catalogados' },
+            { n: '100+', l: 'países cobertos' },
+            { n: '100%', l: 'gratuito e open source' },
+          ].map(s => (
+            <div key={s.l}>
+              <div style={{ fontFamily: 'var(--font-serif)', fontSize: 40, letterSpacing: '-0.02em', color: 'var(--ink-900)', lineHeight: 1 }}>{s.n}</div>
+              <div style={{ fontSize: 13, color: 'var(--ink-500)', marginTop: 6 }}>{s.l}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function AfterFeatures() {
+  const items = [
+    { icon: Icon.Globe,  title: 'Base colaborativa mundial', desc: 'Dados vivos do Open Food Facts, atualizados pela comunidade a cada minuto.' },
+    { icon: Icon.Leaf,   title: 'Sem interesses comerciais', desc: 'Sem anúncios, sem venda de dados. O que você vê é o que o rótulo diz.' },
+    { icon: Icon.Shield, title: 'Alertas de alérgenos',     desc: 'Identifica glúten, lactose, soja, amendoim e outros 12 grupos automaticamente.' },
+    { icon: Icon.Book,   title: 'Metodologia aberta',       desc: 'Nutri‑Score e NOVA explicados em cada produto — sem caixa-preta.' },
+  ];
+  return (
+    <section style={{ padding: '96px 40px', background: 'var(--ink-50)' }}>
+      <div style={{ maxWidth: 1000, margin: '0 auto' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 80, alignItems: 'start', marginBottom: 64 }}>
+          <div>
+            <div className="eyebrow" style={{ marginBottom: 16 }}>Princípios</div>
+            <h2 className="display-sm" style={{ color: 'var(--ink-900)' }}>
+              Um app de saúde merece <em style={{ fontStyle: 'italic', color: 'var(--accent)' }}>padrões de saúde.</em>
+            </h2>
+          </div>
+          <p style={{ fontSize: 16, color: 'var(--ink-600)', lineHeight: 1.6, paddingTop: 12 }}>
+            Cada decisão do NutriScan começa por uma pergunta simples:
+            isto torna a escolha alimentar mais clara? Se não torna, não entra.
+          </p>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 1, background: 'var(--ink-200)', borderRadius: 18, overflow: 'hidden', border: '1px solid var(--ink-200)' }}>
+          {items.map((f, i) => {
+            const I = f.icon;
+            return (
+              <div key={i} style={{ padding: 36, background: 'var(--ink-0)' }}>
+                <div style={{
+                  width: 44, height: 44, borderRadius: 12,
+                  background: 'var(--accent-soft)', color: 'var(--accent-ink)',
+                  display: 'grid', placeItems: 'center', marginBottom: 20,
+                }}>
+                  <I className="i-20"/>
+                </div>
+                <div style={{ fontFamily: 'var(--font-serif)', fontSize: 26, letterSpacing: '-0.01em', color: 'var(--ink-900)', marginBottom: 8 }}>
+                  {f.title}
+                </div>
+                <div style={{ color: 'var(--ink-600)', fontSize: 14, lineHeight: 1.6 }}>{f.desc}</div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function AfterHowItWorks() {
+  const steps = [
+    { n: '01', title: 'Pesquise', desc: 'Nome, marca ou código de barras. Detecção automática do tipo de busca.' },
+    { n: '02', title: 'Consulte', desc: 'Conexão direta à base colaborativa Open Food Facts.' },
+    { n: '03', title: 'Analise',  desc: 'Nutri‑Score, NOVA e alertas de alérgenos em um só lugar.' },
+    { n: '04', title: 'Decida',   desc: 'Informação técnica, livre de vieses comerciais.' },
+  ];
+  return (
+    <section style={{ padding: '96px 40px', background: 'var(--ink-0)' }}>
+      <div style={{ maxWidth: 1000, margin: '0 auto' }}>
+        <div style={{ marginBottom: 56, maxWidth: 640 }}>
+          <div className="eyebrow" style={{ marginBottom: 16 }}>Como funciona</div>
+          <h2 className="display-sm" style={{ color: 'var(--ink-900)' }}>
+            Quatro passos entre a dúvida e a clareza.
+          </h2>
+        </div>
+
+        <ol style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 0, position: 'relative' }}>
+          {/* Connector line */}
+          <div style={{ position: 'absolute', top: 36, left: '12%', right: '12%', height: 1, background: 'var(--ink-200)', zIndex: 0 }}/>
+          {steps.map((s, i) => (
+            <li key={s.n} style={{ position: 'relative', zIndex: 1, paddingRight: 20 }}>
+              <div style={{
+                width: 72, height: 72, borderRadius: '50%',
+                background: 'var(--ink-0)', border: '1px solid var(--ink-200)',
+                display: 'grid', placeItems: 'center',
+                fontFamily: 'var(--font-serif)', fontSize: 28, color: 'var(--accent)',
+                marginBottom: 24, letterSpacing: '-0.02em',
+              }}>
+                {s.n}
+              </div>
+              <div style={{ fontSize: 20, fontWeight: 500, letterSpacing: '-0.01em', color: 'var(--ink-900)', marginBottom: 6 }}>{s.title}</div>
+              <div style={{ fontSize: 14, color: 'var(--ink-600)', lineHeight: 1.55 }}>{s.desc}</div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  );
+}
+
+function AfterDonation() {
+  return (
+    <section style={{ padding: '96px 40px', background: 'var(--ink-900)', color: 'var(--ink-0)' }}>
+      <div style={{ maxWidth: 1000, margin: '0 auto', display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 80, alignItems: 'center' }}>
+        <div>
+          <div style={{
+            fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.14em',
+            textTransform: 'uppercase', color: 'var(--ink-400)', marginBottom: 18,
+          }}>
+            <span style={{ display: 'inline-block', width: 8, height: 8, background: 'var(--accent)', borderRadius: 999, marginRight: 10, verticalAlign: 'middle' }}/>
+            Sistema on-line · 100% open source
+          </div>
+          <h2 className="display-sm" style={{ color: 'var(--ink-0)', marginBottom: 24 }}>
+            Mantenha o NutriScan <em style={{ fontStyle: 'italic', color: 'var(--accent)' }}>livre</em>  —  para sempre.
+          </h2>
+          <p style={{ fontSize: 16, color: 'var(--ink-500)', lineHeight: 1.65, marginBottom: 32, maxWidth: 480 }}>
+            Nascido em Garuva/SC, operado sem anúncios e sem venda de dados.
+            Toda contribuição vira infraestrutura, melhorias e mais horas de manutenção.
+          </p>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 14, maxWidth: 420 }}>
+            {[
+              { icon: Icon.Shield, t: 'Servidores e auditoria' },
+              { icon: Icon.Globe,  t: 'Expansão da base internacional' },
+              { icon: Icon.Code,   t: 'Código aberto em GitHub' },
+            ].map((x, i) => {
+              const I = x.icon;
+              return (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '14px 0', borderTop: '1px solid var(--ink-300)' }}>
+                  <I className="i-18" style={{ color: 'var(--accent)' }}/>
+                  <span style={{ fontSize: 14, color: 'var(--ink-200)' }}>{x.t}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <div style={{
+          background: 'var(--ink-800)', borderRadius: 18, padding: 32,
+          border: '1px solid var(--ink-300)',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 24 }}>
+            <div style={{ width: 44, height: 44, borderRadius: 12, background: 'var(--accent-soft)', color: 'var(--accent-ink)', display: 'grid', placeItems: 'center' }}>
+              <Icon.Coffee className="i-20"/>
+            </div>
+            <div>
+              <div style={{ fontSize: 15, fontWeight: 500 }}>Apoie com um café</div>
+              <div style={{ fontSize: 11, color: 'var(--ink-500)', fontFamily: 'var(--font-mono)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>qualquer valor ajuda</div>
+            </div>
+          </div>
+
+          <blockquote style={{
+            fontFamily: 'var(--font-serif)', fontSize: 20, lineHeight: 1.35,
+            color: 'var(--ink-100)', paddingLeft: 18, borderLeft: '2px solid var(--accent)',
+            marginBottom: 28,
+          }}>
+            “Cada contribuição me permite dedicar mais horas ao NutriScan — refatoração, dados e novas features.”
+          </blockquote>
+
+          <button className="btn btn-accent btn-lg" style={{ width: '100%' }}>
+            <Icon.Heart className="i-16"/>
+            Contribuir agora
+          </button>
+
+          <div style={{ marginTop: 18, fontSize: 11, color: 'var(--ink-500)', fontFamily: 'var(--font-mono)', letterSpacing: '0.14em', textTransform: 'uppercase', textAlign: 'center' }}>
+            Engenharia brasileira · Garuva/SC
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+Object.assign(window, { AfterHero, AfterFeatures, AfterHowItWorks, AfterDonation });
+
+</script>
+<script type="text/babel">
+// AFTER — Product card with two densities + product detail page
+
+// ------- COMPACT card — Nutri-Score dominant, minimal info
+function AfterProductCardCompact({ product, onOpen }) {
+  return (
+    <article
+      onClick={() => onOpen?.(product)}
+      style={{
+        display: 'flex', gap: 14, alignItems: 'center',
+        padding: 14,
+        background: 'var(--ink-0)',
+        border: '1px solid var(--ink-200)',
+        borderRadius: 14,
+        cursor: 'pointer',
+        transition: 'all 0.18s',
+      }}
+      onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--ink-400)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+      onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--ink-200)'; e.currentTarget.style.transform = 'none'; }}
+    >
+      {/* Image thumb */}
+      <div style={{ flex: '0 0 72px', height: 72, borderRadius: 10, overflow: 'hidden', background: 'var(--ink-100)' }}>
+        <ProductImage product={product} size={72}/>
+      </div>
+
+      {/* Center content */}
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{
+          fontSize: 11, color: 'var(--ink-500)',
+          fontFamily: 'var(--font-mono)', letterSpacing: '0.08em', textTransform: 'uppercase',
+          marginBottom: 2,
+        }}>
+          {product.brands}
+        </div>
+        <div style={{
+          fontSize: 15, fontWeight: 500, color: 'var(--ink-900)',
+          letterSpacing: '-0.005em',
+          overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+          marginBottom: 8,
+        }}>
+          {product.product_name}
+        </div>
+        <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+          <VerdictTag verdict={product.verdict}/>
+          <span style={{ color: 'var(--ink-300)' }}>·</span>
+          <span style={{ fontSize: 12, color: 'var(--ink-500)', fontFamily: 'var(--font-mono)' }}>NOVA {product.nova_group}</span>
+          {product.allergens.length > 0 && (<>
+            <span style={{ color: 'var(--ink-300)' }}>·</span>
+            <span style={{ fontSize: 12, color: 'var(--warn)', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+              <Icon.Alert className="i-14"/> {product.allergens.length} alérgeno{product.allergens.length > 1 ? 's' : ''}
+            </span>
+          </>)}
+        </div>
+      </div>
+
+      {/* Nutri-Score — the hero metric */}
+      <div style={{ flex: '0 0 auto' }}>
+        <NutriLetter grade={product.nutrition_grade} size={64}/>
+      </div>
+    </article>
+  );
+}
+
+// ------- EXPANDED card — full info, portrait orientation
+function AfterProductCardExpanded({ product, onOpen }) {
+  return (
+    <article
+      onClick={() => onOpen?.(product)}
+      style={{
+        display: 'flex', flexDirection: 'column',
+        background: 'var(--ink-0)',
+        border: '1px solid var(--ink-200)',
+        borderRadius: 16,
+        overflow: 'hidden',
+        cursor: 'pointer',
+        transition: 'all 0.2s',
+      }}
+      onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--ink-400)'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 32px -14px rgba(0,0,0,0.15)'; }}
+      onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--ink-200)'; e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; }}
+    >
+      {/* Hero image area w/ Nutri-Score floating */}
+      <div style={{ position: 'relative', aspectRatio: '5/4', background: 'var(--ink-50)', borderBottom: '1px solid var(--ink-200)' }}>
+        <div style={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center', padding: 24 }}>
+          <ProductImage product={product} size={180}/>
+        </div>
+        {/* Nutri-Score corner */}
+        <div style={{ position: 'absolute', top: 14, right: 14 }}>
+          <NutriLetter grade={product.nutrition_grade} size={56}/>
+        </div>
+        {/* Allergen indicator */}
+        {product.allergens.length > 0 && (
+          <div style={{ position: 'absolute', top: 14, left: 14 }}>
+            <span className="chip warn" style={{ padding: '4px 9px', fontSize: 11 }}>
+              <Icon.Alert className="i-14"/> {product.allergens.length}
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* Meta */}
+      <div style={{ padding: 18, display: 'flex', flexDirection: 'column', gap: 14, flex: 1 }}>
+        <div>
+          <div style={{
+            fontSize: 11, color: 'var(--ink-500)',
+            fontFamily: 'var(--font-mono)', letterSpacing: '0.08em', textTransform: 'uppercase',
+            marginBottom: 4,
+          }}>
+            {product.brands}
+          </div>
+          <h3 style={{
+            fontFamily: 'var(--font-serif)', fontSize: 22,
+            letterSpacing: '-0.01em', lineHeight: 1.15,
+            color: 'var(--ink-900)',
+            display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
+            overflow: 'hidden',
+          }}>
+            {product.product_name}
+          </h3>
+        </div>
+
+        {/* Nutriments mini-bar */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 0, borderTop: '1px solid var(--ink-200)', borderBottom: '1px solid var(--ink-200)' }}>
+          {[
+            { l: 'kcal',    v: product.nutriments.energy },
+            { l: 'Açúcar',  v: `${product.nutriments.sugars}g` },
+            { l: 'Gord.',   v: `${product.nutriments.fat}g` },
+            { l: 'Sódio',   v: `${product.nutriments.salt}g` },
+          ].map((n, i) => (
+            <div key={n.l} style={{
+              padding: '12px 6px',
+              borderRight: i < 3 ? '1px solid var(--ink-200)' : 'none',
+              textAlign: 'center',
+              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+              minWidth: 0,
+            }}>
+              <div style={{
+                fontFamily: 'var(--font-serif)', fontSize: 18, color: 'var(--ink-900)', lineHeight: 1.1,
+                overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '100%',
+              }}>{n.v}</div>
+              <div style={{
+                fontSize: 10, color: 'var(--ink-500)', fontFamily: 'var(--font-mono)',
+                letterSpacing: '0.08em', textTransform: 'uppercase', marginTop: 6,
+              }}>{n.l}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Footer row */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <VerdictTag verdict={product.verdict}/>
+          </div>
+          <div style={{ fontSize: 12, color: 'var(--ink-500)', fontFamily: 'var(--font-mono)' }}>
+            NOVA {product.nova_group}
+          </div>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+// ------- Density toggle
+function DensityToggle({ mode, setMode }) {
+  return (
+    <div style={{
+      display: 'inline-flex',
+      padding: 3,
+      background: 'var(--ink-100)',
+      border: '1px solid var(--ink-200)',
+      borderRadius: 10,
+    }}>
+      {[
+        { id: 'compact', icon: Icon.List, label: 'Compacto' },
+        { id: 'expanded', icon: Icon.Grid, label: 'Cards' },
+      ].map(opt => {
+        const I = opt.icon;
+        return (
+          <button
+            key={opt.id}
+            onClick={() => setMode(opt.id)}
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 8,
+              padding: '7px 12px', borderRadius: 7,
+              fontSize: 13, fontWeight: 500,
+              background: mode === opt.id ? 'var(--ink-0)' : 'transparent',
+              color: mode === opt.id ? 'var(--ink-900)' : 'var(--ink-500)',
+              boxShadow: mode === opt.id ? '0 1px 2px rgba(0,0,0,0.05)' : 'none',
+              transition: 'all 0.15s',
+            }}
+          >
+            <I className="i-14"/>
+            {opt.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+// ------- Results page shell — interactive grid/list with filters
+function AfterResultsPage() {
+  const [density, setDensity] = React.useState('expanded');
+  const [sortBy, setSortBy] = React.useState('score');
+  const [query, setQuery] = React.useState('');
+  const [filters, setFilters] = React.useState({ grade: null, allergen: null });
+
+  let list = [...window.SAMPLE_PRODUCTS];
+  if (query) list = list.filter(p => (p.product_name + ' ' + p.brands).toLowerCase().includes(query.toLowerCase()));
+  if (filters.grade) list = list.filter(p => p.nutrition_grade === filters.grade);
+  if (filters.allergen === 'free') list = list.filter(p => p.allergens.length === 0);
+  if (sortBy === 'score') list.sort((a, b) => a.nutrition_grade.localeCompare(b.nutrition_grade));
+  if (sortBy === 'sugar') list.sort((a, b) => (a.nutriments.sugars || 0) - (b.nutriments.sugars || 0));
+  if (sortBy === 'name') list.sort((a, b) => a.product_name.localeCompare(b.product_name));
+
+  return (
+    <div style={{ background: 'var(--ink-0)', padding: '32px 40px 60px', minHeight: '100%' }}>
+      {/* Top search bar */}
+      <div style={{ marginBottom: 28 }}>
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 8,
+          background: 'var(--ink-0)', border: '1px solid var(--ink-200)',
+          borderRadius: 12, padding: 4, maxWidth: 520,
+        }}>
+          <div style={{ padding: '0 10px 0 12px', color: 'var(--ink-500)' }}>
+            <Icon.Search className="i-16"/>
+          </div>
+          <input
+            value={query}
+            onChange={e => setQuery(e.target.value)}
+            placeholder="Buscar produto, marca ou código…"
+            style={{ flex: 1, border: 0, background: 'transparent', padding: '10px 4px', fontSize: 14, outline: 'none', color: 'var(--ink-900)', fontFamily: 'inherit' }}
+          />
+          <button className="btn btn-primary btn-sm" style={{ padding: '8px 14px' }}>Buscar</button>
+        </div>
+      </div>
+
+      {/* Results header */}
+      <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 24, flexWrap: 'wrap', gap: 16 }}>
+        <div>
+          <div className="eyebrow" style={{ marginBottom: 6 }}>{list.length} resultados</div>
+          <h2 className="display-sm" style={{ fontSize: 34 }}>
+            {query ? <>Para <em style={{ fontStyle: 'italic', color: 'var(--accent)' }}>"{query}"</em></> : 'Todos os produtos'}
+          </h2>
+        </div>
+        <DensityToggle mode={density} setMode={setDensity}/>
+      </div>
+
+      {/* Filter strip */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 20, padding: '14px 0', borderTop: '1px solid var(--ink-200)', borderBottom: '1px solid var(--ink-200)', marginBottom: 28, flexWrap: 'wrap' }}>
+        <span className="label-sm">Filtrar</span>
+        <div style={{ display: 'flex', gap: 6 }}>
+          {['a','b','c','d','e'].map(g => (
+            <button
+              key={g}
+              onClick={() => setFilters(f => ({ ...f, grade: f.grade === g ? null : g }))}
+              style={{
+                width: 28, height: 28, borderRadius: 999,
+                fontFamily: 'var(--font-sans)', fontSize: 11, fontWeight: 700,
+                background: filters.grade === g
+                  ? `var(--nutri-${g})`
+                  : 'var(--ink-100)',
+                color: filters.grade === g ? (g === 'c' ? '#3a2a00' : '#fff') : 'var(--ink-600)',
+                border: filters.grade === g ? 'none' : '1px solid var(--ink-200)',
+                transition: 'all 0.15s',
+              }}
+            >{g.toUpperCase()}</button>
+          ))}
+        </div>
+        <button
+          onClick={() => setFilters(f => ({ ...f, allergen: f.allergen === 'free' ? null : 'free' }))}
+          className="chip"
+          style={{
+            background: filters.allergen === 'free' ? 'var(--accent-soft)' : 'var(--ink-100)',
+            color: filters.allergen === 'free' ? 'var(--accent-ink)' : 'var(--ink-700)',
+            borderColor: filters.allergen === 'free' ? 'var(--accent)' : 'var(--ink-200)',
+            cursor: 'pointer',
+          }}
+        >
+          <Icon.Leaf className="i-14"/> Sem alérgenos comuns
+        </button>
+
+        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 10 }}>
+          <span className="label-sm">Ordenar</span>
+          <select
+            value={sortBy} onChange={e => setSortBy(e.target.value)}
+            style={{
+              border: '1px solid var(--ink-200)', borderRadius: 8, padding: '6px 28px 6px 10px',
+              background: 'var(--ink-0)', color: 'var(--ink-900)', fontSize: 13, fontFamily: 'inherit',
+              appearance: 'none',
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%237a7269' fill='none' stroke-linecap='round'/%3E%3C/svg%3E")`,
+              backgroundRepeat: 'no-repeat', backgroundPosition: 'right 10px center',
+            }}
+          >
+            <option value="score">Nutri‑Score</option>
+            <option value="sugar">Menos açúcar</option>
+            <option value="name">Nome (A–Z)</option>
+          </select>
+        </div>
+      </div>
+
+      {/* List/grid */}
+      {density === 'compact' ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {list.map(p => <AfterProductCardCompact key={p.code} product={p}/>)}
+        </div>
+      ) : (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 20 }}>
+          {list.map(p => <AfterProductCardExpanded key={p.code} product={p}/>)}
+        </div>
+      )}
+
+      {list.length === 0 && (
+        <div style={{ padding: 60, textAlign: 'center', color: 'var(--ink-500)' }}>
+          <div style={{ fontFamily: 'var(--font-serif)', fontSize: 28, color: 'var(--ink-700)', marginBottom: 8 }}>Nada encontrado</div>
+          <div style={{ fontSize: 14 }}>Tente limpar os filtros ou usar outros termos.</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ------- Product detail page
+function AfterProductDetail({ product }) {
+  const gradeDesc = { a: 'Excelente qualidade nutricional', b: 'Boa qualidade nutricional', c: 'Qualidade regular', d: 'Qualidade ruim', e: 'Qualidade muito ruim' }[product.nutrition_grade];
+
+  const novaDesc = {
+    1: 'Alimento in natura ou minimamente processado.',
+    2: 'Ingrediente culinário processado.',
+    3: 'Alimento processado com adição de sal, açúcar ou óleo.',
+    4: 'Ultraprocessado — formulação industrial com aditivos.',
+  }[product.nova_group];
+
+  // For nutriment bars — % of reference daily intake (simplified)
+  const dailyRef = { energy: 2000, fat: 70, sat_fat: 20, sugars: 90, salt: 6, fiber: 30, proteins: 50 };
+  const bar = (key) => Math.min(100, Math.round((product.nutriments[key] / dailyRef[key]) * 100));
+
+  return (
+    <div style={{ background: 'var(--ink-0)', minHeight: '100%' }}>
+      {/* Top bar */}
+      <div style={{
+        padding: '18px 40px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        borderBottom: '1px solid var(--ink-200)',
+      }}>
+        <button style={{ display: 'inline-flex', alignItems: 'center', gap: 10, fontSize: 13, color: 'var(--ink-700)' }}>
+          <Icon.Back className="i-16"/> Voltar
+        </button>
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--ink-500)', letterSpacing: '0.12em' }}>
+          EAN · {product.code}
+        </div>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button className="btn btn-ghost btn-sm"><Icon.Heart className="i-14"/></button>
+          <button className="btn btn-ghost btn-sm"><Icon.Share className="i-14"/></button>
+        </div>
+      </div>
+
+      {/* Hero: image + headline + nutri-score */}
+      <div style={{ padding: '40px 40px 32px', display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: 48 }}>
+        <div style={{ background: 'var(--ink-50)', borderRadius: 18, aspectRatio: '1/1', display: 'grid', placeItems: 'center', border: '1px solid var(--ink-200)' }}>
+          <ProductImage product={product} size={280}/>
+        </div>
+
+        <div>
+          <div style={{ fontSize: 12, color: 'var(--ink-500)', fontFamily: 'var(--font-mono)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 12 }}>
+            {product.brands}
+          </div>
+          <h1 className="display-sm" style={{ fontSize: 44, marginBottom: 24 }}>{product.product_name}</h1>
+
+          {/* Hero metric: Nutri-Score big */}
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 20, padding: 24,
+            background: 'var(--ink-50)', border: '1px solid var(--ink-200)', borderRadius: 16,
+            marginBottom: 16,
+          }}>
+            <NutriLetter grade={product.nutrition_grade} size={92}/>
+            <div style={{ flex: 1 }}>
+              <div className="label-sm" style={{ marginBottom: 4 }}>Nutri‑Score</div>
+              <div style={{ fontFamily: 'var(--font-serif)', fontSize: 28, letterSpacing: '-0.01em', color: 'var(--ink-900)', lineHeight: 1.1, marginBottom: 10 }}>
+                {gradeDesc}
+              </div>
+              <NutriScale active={product.nutrition_grade} size="sm"/>
+            </div>
+          </div>
+
+          {/* NOVA row */}
+          <div style={{
+            padding: 20, border: '1px solid var(--ink-200)', borderRadius: 14, marginBottom: 16,
+            display: 'flex', gap: 18, alignItems: 'center',
+          }}>
+            <NovaPill group={product.nova_group}/>
+            <div style={{ fontSize: 14, color: 'var(--ink-600)', lineHeight: 1.5, flex: 1 }}>
+              {novaDesc}
+            </div>
+          </div>
+
+          {/* Allergens */}
+          {product.allergens.length > 0 && (
+            <div style={{
+              padding: 18, borderRadius: 14,
+              background: 'var(--warn-soft)', border: '1px solid #fcd34d',
+              display: 'flex', alignItems: 'flex-start', gap: 14,
+            }}>
+              <Icon.Alert className="i-20" style={{ color: 'var(--warn)', flexShrink: 0, marginTop: 1 }}/>
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--warn)', marginBottom: 4 }}>
+                  Contém alérgenos
+                </div>
+                <div style={{ fontSize: 14, color: '#78350f' }}>
+                  {product.allergens.map(a => ({ gluten: 'Glúten', milk: 'Leite', soy: 'Soja', nuts: 'Oleaginosas', eggs: 'Ovos', peanuts: 'Amendoim' }[a] || a)).join(' · ')}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Nutriments section */}
+      <div style={{ padding: '32px 40px 60px', borderTop: '1px solid var(--ink-200)' }}>
+        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 20 }}>
+          <h3 className="display-sm" style={{ fontSize: 28 }}>Composição nutricional</h3>
+          <div className="label-sm">por 100g · %VD de referência</div>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px 48px' }}>
+          {[
+            { k: 'energy',  l: 'Energia',   u: 'kcal' },
+            { k: 'fat',     l: 'Gorduras totais', u: 'g' },
+            { k: 'sat_fat', l: 'Gorduras saturadas', u: 'g' },
+            { k: 'sugars',  l: 'Açúcares',  u: 'g' },
+            { k: 'salt',    l: 'Sódio',     u: 'g' },
+            { k: 'fiber',   l: 'Fibras',    u: 'g' },
+            { k: 'proteins',l: 'Proteínas', u: 'g' },
+          ].map(row => {
+            const pct = bar(row.k);
+            const v = product.nutriments[row.k];
+            const high = pct > 40 && ['fat','sat_fat','sugars','salt'].includes(row.k);
+            const good = ['fiber','proteins'].includes(row.k);
+            return (
+              <div key={row.k} style={{ padding: '14px 0', borderBottom: '1px solid var(--ink-200)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 8 }}>
+                  <span style={{ fontSize: 14, color: 'var(--ink-800)' }}>{row.l}</span>
+                  <span style={{ fontFamily: 'var(--font-serif)', fontSize: 18, color: 'var(--ink-900)' }}>
+                    {v}<span style={{ fontSize: 12, color: 'var(--ink-500)', marginLeft: 3, fontFamily: 'var(--font-mono)' }}>{row.u}</span>
+                  </span>
+                </div>
+                <div style={{ height: 4, background: 'var(--ink-100)', borderRadius: 999, overflow: 'hidden', position: 'relative' }}>
+                  <div style={{
+                    width: `${pct}%`, height: '100%',
+                    background: high ? 'var(--nutri-e)' : good ? 'var(--accent)' : 'var(--ink-500)',
+                    transition: 'width 0.6s',
+                  }}/>
+                </div>
+                <div style={{ fontSize: 11, color: 'var(--ink-500)', marginTop: 4, fontFamily: 'var(--font-mono)', letterSpacing: '0.04em' }}>
+                  {pct}% VD
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div style={{ padding: '28px 40px', background: 'var(--ink-50)', borderTop: '1px solid var(--ink-200)' }}>
+        <div style={{ fontSize: 12, color: 'var(--ink-500)', lineHeight: 1.6, maxWidth: 700 }}>
+          Dados fornecidos pela comunidade Open Food Facts sob licença ODbL.
+          Última atualização: há 3 dias · fonte: contribuidor verificado.
+        </div>
+      </div>
+    </div>
+  );
+}
+
+Object.assign(window, {
+  AfterProductCardCompact, AfterProductCardExpanded,
+  DensityToggle, AfterResultsPage, AfterProductDetail,
+});
+
+</script>
+
+<script type="text/babel" data-presets="react">
+const { useState, useEffect } = React;
+
+const SECTIONS = [
+  { id: 'hero',       label: 'Hero' },
+  { id: 'features',   label: 'Features' },
+  { id: 'detail',     label: 'Produto' },
+  { id: 'results',    label: 'Resultados' },
+  { id: 'donation',   label: 'Doação' },
+];
+
+function Frame({ label, children, kind, tall }) {
+  return (
+    <div className="compare-frame" style={{ display: 'flex', flexDirection: 'column' }}>
+      <div className={`compare-label ${kind === 'new' ? 'new' : ''}`}>
+        {kind === 'new' ? 'Depois · Proposta' : 'Antes · Atual em produção'}
+      </div>
+      <div className={`frame-body${tall ? ' tall' : ''}`}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function Rationale({ items }) {
+  return (
+    <div className="rationale">
+      {items.map((it, i) => (
+        <div key={i}>
+          <span className="tag">{it.tag}</span>
+          <h4>{it.title}</h4>
+          <p>{it.desc}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function App() {
+  const [theme, setTheme] = useState(() => localStorage.getItem('nsc-theme') || 'light');
+  const [section, setSection] = useState(() => localStorage.getItem('nsc-section') || 'hero');
+
+  useEffect(() => {
+    document.documentElement.className = theme === 'dark' ? 'theme-dark' : '';
+    localStorage.setItem('nsc-theme', theme);
+  }, [theme]);
+  useEffect(() => { localStorage.setItem('nsc-section', section); }, [section]);
+
+  const sampleProduct = window.SAMPLE_PRODUCTS[1]; // Nutella
+
+  return (
+    <div className="shell">
+      <header className="shell-head">
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 10 }}>
+            <div style={{
+              width: 36, height: 36, borderRadius: 10,
+              background: 'var(--accent)', color: '#fff',
+              display: 'grid', placeItems: 'center',
+              fontFamily: 'var(--font-serif)', fontSize: 22,
+            }}>N</div>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--ink-500)', letterSpacing: '0.14em', textTransform: 'uppercase' }}>
+              Design Review · Abril 2026
+            </div>
+          </div>
+          <h1 className="shell-title">NutriScan — revamp de design</h1>
+          <p className="shell-subtitle">
+            Comparativo antes / depois das principais superfícies do produto.
+            Tipografia editorial (Instrument Serif + Inter), paleta neutra quente com um único accent verde,
+            e o Nutri‑Score como métrica herói. Todos os exemplos abaixo são interativos.
+          </p>
+        </div>
+
+        <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+          <div className="tabs">
+            {SECTIONS.map(s => (
+              <button key={s.id} onClick={() => setSection(s.id)} className={section === s.id ? 'active' : ''}>
+                {s.label}
+              </button>
+            ))}
+          </div>
+          <button className="theme-switch" onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}>
+            {theme === 'dark' ? <Icon.Sun className="i-14"/> : <Icon.Moon className="i-14"/>}
+            {theme === 'dark' ? 'Light' : 'Dark'}
+          </button>
+        </div>
+      </header>
+
+      {section === 'hero' && (
+        <>
+          <div className="section-title">Hero <small>Landing · página inicial</small></div>
+          <Rationale items={[
+            { tag: 'Tipografia', title: 'Serif editorial no headline', desc: 'Instrument Serif sinaliza confiança e leitura — em vez de tech-bravado. Peso 400 + itálico para acento.' },
+            { tag: 'Tom',        title: 'Linguagem direta, humana',    desc: '"Entenda o que há dentro" substitui "Descriptografamos rótulos para decisões soberanas". Menos jargão, mais clareza.' },
+            { tag: 'Cor',        title: 'Um único accent, bem usado', desc: 'Verde clínico oklch(52% 0.11 155) no elemento mais importante. Gradientes e badges tech removidos.' },
+          ]}/>
+          <div className="grid-2">
+            <Frame kind="old"><BeforeHero/></Frame>
+            <Frame kind="new"><AfterHero onSearch={() => setSection('results')}/></Frame>
+          </div>
+        </>
+      )}
+
+      {section === 'features' && (
+        <>
+          <div className="section-title">Features + How it works <small>Princípios &amp; fluxo</small></div>
+          <Rationale items={[
+            { tag: 'Hierarquia',  title: 'Do grid de cartões ao sistema',  desc: '4 cards coloridos foram substituídos por uma "planilha" de 2×2 com hairline shared — mais editorial, menos ruidoso.' },
+            { tag: 'Ícones',      title: 'Mesma família, mesmo peso',      desc: 'Ícones monocromáticos em um único accent. Antes: cada feature tinha uma cor própria, diluindo a leitura.' },
+            { tag: 'Fluxo',       title: 'Passos com linha conectora',     desc: 'Números serifados em círculos outline guiam o olho. Sem "STEP_01" techy.' },
+          ]}/>
+          <div className="grid-2">
+            <Frame kind="old" tall>
+              <BeforeFeatures/>
+            </Frame>
+            <Frame kind="new" tall>
+              <AfterFeatures/>
+              <AfterHowItWorks/>
+            </Frame>
+          </div>
+        </>
+      )}
+
+      {section === 'detail' && (
+        <>
+          <div className="section-title">Página de produto <small>superfície mais crítica</small></div>
+          <Rationale items={[
+            { tag: 'Métrica-herói', title: 'Nutri-Score dominante', desc: 'Letra grande (92px) num círculo oficial da cor correspondente, com a escala A–E completa logo abaixo para contexto.' },
+            { tag: 'Clareza',      title: 'Composição com barras VD', desc: 'Cada nutriente recebe uma barra proporcional ao % do valor diário de referência, com verde/vermelho semânticos.' },
+            { tag: 'Trust',        title: 'Atribuição visível',       desc: 'Fonte e data da informação são mostradas no rodapé. Saúde pede transparência da procedência.' },
+          ]}/>
+          <div className="grid-2">
+            <Frame kind="old" tall><BeforeProductDetail product={sampleProduct}/></Frame>
+            <Frame kind="new" tall><AfterProductDetail product={sampleProduct}/></Frame>
+          </div>
+        </>
+      )}
+
+      {section === 'results' && (
+        <>
+          <div className="section-title">Grid / Lista de resultados <small>compact + expanded toggle</small></div>
+          <Rationale items={[
+            { tag: 'Densidade',   title: 'Dois modos com alternância', desc: 'Cards para exploração (imagem grande), Compact para triagem rápida (mais 4× por tela). O toggle persiste a preferência.' },
+            { tag: 'Nutri-Score', title: 'Hero consistente',          desc: 'Letra circular aparece nos DOIS modos, com o mesmo estilo visual da página de produto. Linguagem unificada.' },
+            { tag: 'Filtros',     title: 'Em linha, não sidebar',     desc: 'Badges coloridas A–E agem como filtro inline — acionáveis e didáticas ao mesmo tempo.' },
+          ]}/>
+          <div className="grid-2" style={{ marginBottom: 20 }}>
+            <Frame kind="old" tall>
+              <div style={{ padding: 24, background: '#fff' }}>
+                <div style={{ fontFamily: 'Poppins, sans-serif', fontSize: 24, fontWeight: 800, marginBottom: 20 }}>
+                  Resultados <span style={{ color: '#2563eb' }}>(atual)</span>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
+                  {window.SAMPLE_PRODUCTS.slice(0, 4).map(p => <BeforeProductCard key={p.code} product={p}/>)}
+                </div>
+              </div>
+            </Frame>
+            <Frame kind="new" tall>
+              <AfterResultsPage/>
+            </Frame>
+          </div>
+        </>
+      )}
+
+      {section === 'donation' && (
+        <>
+          <div className="section-title">Seção de doação <small>closing</small></div>
+          <Rationale items={[
+            { tag: 'Ancoragem', title: 'Fundo escuro intencional',  desc: 'A mudança de tom reforça "parada para ação". Antes era mais um bloco claro em uma parede de branco.' },
+            { tag: 'Copy',      title: 'Valor antes do pedido',     desc: 'Primeiro o porquê (sem anúncios, sem venda de dados), depois o CTA. Quote em serif para humanizar.' },
+            { tag: 'Conexão',   title: 'Conecta com o hero',        desc: 'Usa o mesmo accent verde, a mesma tipografia — consistência visual entre seções que antes pareciam apps diferentes.' },
+          ]}/>
+          <div className="full">
+            <Frame kind="new" tall><AfterDonation/></Frame>
+          </div>
+        </>
+      )}
+
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+
+
+
+</body></html>

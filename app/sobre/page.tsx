@@ -37,10 +37,10 @@ export const metadata: Metadata = {
 
 export default function SobrePage() {
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900">
+    <div className="bg-base min-h-screen">
       <HeroSection />
-      <ProblemSection />
       <StorySection />
+      <ProblemSection />
       <MissionSection />
       <ImpactSection />
       <TargetAudienceSection />

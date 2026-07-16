@@ -21,7 +21,7 @@ export async function CardList({ listaId }: CardListProps) {
 
   if (produtos.length === 0) {
     return (
-      <div className="text-center p-8 text-gray-500">
+      <div className="text-center p-8" style={{ color: 'var(--fg-muted)' }}>
         Nenhum produto cadastrado ainda.
       </div>
     );
@@ -47,7 +47,7 @@ export async function CardList({ listaId }: CardListProps) {
 
       {produtosComprados.length > 0 && (
         <section>
-          <h2 className="text-2xl font-bold mb-4 text-green-700">
+          <h2 className="text-2xl font-bold mb-4" style={{ color: 'var(--accent)' }}>
             Produtos Comprados
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

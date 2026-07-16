@@ -1,0 +1,454 @@
+{
+  "D:\\Documents\\Github\\nutriscan\\next-env.d.ts": {
+    "mtime": 1776581037.4265213,
+    "hash": "90426577ad8f38459f3e566411c85589"
+  },
+  "D:\\Documents\\Github\\nutriscan\\next.config.mjs": {
+    "mtime": 1776580958.5641155,
+    "hash": "c069e0c7601402aa2d0d4662f521e130"
+  },
+  "D:\\Documents\\Github\\nutriscan\\postcss.config.mjs": {
+    "mtime": 1768249662.4925277,
+    "hash": "3507368dae6e94b0070b0a10efa15a05"
+  },
+  "D:\\Documents\\Github\\nutriscan\\sw.js": {
+    "mtime": 1768249662.5006702,
+    "hash": "9e9f953064a2c5cd67f64900f13d3014"
+  },
+  "D:\\Documents\\Github\\nutriscan\\tailwind.config.ts": {
+    "mtime": 1776580101.8993669,
+    "hash": "0cba6437e7c99368790312c152b6fced"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\actions.ts": {
+    "mtime": 1768249662.4183648,
+    "hash": "2b3afbc26700e0d15a520fac75c854cc"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\layout.tsx": {
+    "mtime": 1776580180.508401,
+    "hash": "9ea7b9a215d0fad9deb66c271e9a352b"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\page.tsx": {
+    "mtime": 1776580552.005734,
+    "hash": "85109f1185e440baaa2547761368b0e5"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\providers.tsx": {
+    "mtime": 1768249662.4577835,
+    "hash": "0d1f3e4651bdbad8862f130f612208e2"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\robots.ts": {
+    "mtime": 1768249662.458293,
+    "hash": "1115771eafd3722add87e363315d9e72"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\sitemap.ts": {
+    "mtime": 1768249662.4588017,
+    "hash": "22810601cf6905b7ce3b39a2f47118ed"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\api\\cache\\sync\\route.ts": {
+    "mtime": 1768249662.4191432,
+    "hash": "76481ff537281162314f4832a54f1851"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\api\\location\\route.ts": {
+    "mtime": 1768249662.419977,
+    "hash": "2073532d3a2b449afebeb85eb32abcd0"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\api\\products\\[barcode]\\route.ts": {
+    "mtime": 1776581065.9446218,
+    "hash": "a7793be701f96174beeda43b5949c709"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\api\\search\\route.ts": {
+    "mtime": 1768249662.4209993,
+    "hash": "043597d3ef75c473eba4aaed3b9d28f0"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\api\\storage-stats\\route.ts": {
+    "mtime": 1768249662.4215066,
+    "hash": "a40d80f8d79ff4269aead587535ea097"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\components\\CacheOnlySwitch.tsx": {
+    "mtime": 1768249662.4215066,
+    "hash": "81ff7d76c9b4e39ae9babf24d55aef3f"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\components\\card.tsx": {
+    "mtime": 1768249662.428677,
+    "hash": "9c2acecd7c3bb8f83c9d5d0a51dd30b0"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\components\\CardList.tsx": {
+    "mtime": 1776596229.1311963,
+    "hash": "56a63ddcbb2b112767434b422ed28f06"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\components\\DeleteButton.tsx": {
+    "mtime": 1776596286.2891304,
+    "hash": "10660d6edf611427d82b46f5c09a2d1a"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\components\\DonateCard.tsx": {
+    "mtime": 1776580524.8940318,
+    "hash": "6783721da778ad4bb4022d93833bbe8c"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\components\\ErrorBoundary.tsx": {
+    "mtime": 1768955691.2024121,
+    "hash": "c23a36abc614ae1c0f2bee7b3e6ecb12"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\components\\ErrorTracking.tsx": {
+    "mtime": 1768955673.7129595,
+    "hash": "1b03406317367d3fca5a0a9d1b0a3166"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\components\\FilterBadge.tsx": {
+    "mtime": 1768249662.4230216,
+    "hash": "515328cca936ddb9b4abaeb44d7db66e"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\components\\FilterSidebar.tsx": {
+    "mtime": 1776582723.64508,
+    "hash": "ffa3ab9dd0e147125c6ec58cc4e84af8"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\components\\Footer.tsx": {
+    "mtime": 1776580356.1049466,
+    "hash": "b365f7a7325950a3ea054a99c5ec1645"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\components\\header.tsx": {
+    "mtime": 1776580324.349429,
+    "hash": "8d61e6d32c89457dd7d136ea23c64aaa"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\components\\IdInput.tsx": {
+    "mtime": 1776596267.8479795,
+    "hash": "3ba6010a4a9508ab2833523087ed5dc2"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\components\\items.tsx": {
+    "mtime": 1768249662.4292626,
+    "hash": "9387fa029ed32cd3106599d1e1f3c91b"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\components\\ListaProductCard.tsx": {
+    "mtime": 1776596250.2481449,
+    "hash": "3a3a397662b6ad4cfa2e1ef17fca8839"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\components\\ListHeader.tsx": {
+    "mtime": 1768249662.4247987,
+    "hash": "20b0c66c419469f8cd51ced32d6c2c94"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\components\\Main.tsx": {
+    "mtime": 1776596217.9284904,
+    "hash": "d011b9325c593d1ab7ea859684f4caba"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\components\\NutriScoreBadge.tsx": {
+    "mtime": 1776580414.1334257,
+    "hash": "0df9e718482f2da665a7564719ca9253"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\components\\NutritionBar.tsx": {
+    "mtime": 1776580455.0599718,
+    "hash": "c6647b0710b728b9775deba3374d04fd"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\components\\NutritionChart.tsx": {
+    "mtime": 1768249662.4264407,
+    "hash": "ea58f5c4d16bbb0f927f501b1af0de6c"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\components\\PageTitle.tsx": {
+    "mtime": 1768249662.4264407,
+    "hash": "9392a8e30aa4cb89fb978e5479f56a1c"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\components\\Pagination.tsx": {
+    "mtime": 1768249662.4271603,
+    "hash": "7c9f8201282257d9644dab6d73b2fdfc"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\components\\ProductCard.tsx": {
+    "mtime": 1776595278.9116664,
+    "hash": "ff3c4da338cb4aba008f1f91c10f0fa1"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\components\\ProductCardSkeleton.tsx": {
+    "mtime": 1768249662.427674,
+    "hash": "a7044fd1979438d7cc6c4014d231652f"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\components\\ProductSkeleton.tsx": {
+    "mtime": 1776580434.5229468,
+    "hash": "f0fdc91d687889aaa4805bc8403de9ad"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\components\\SearchBar.tsx": {
+    "mtime": 1776580544.0693707,
+    "hash": "a2151d0a8f3b9f26c0e98138d545490c"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\components\\SortDropdown.tsx": {
+    "mtime": 1768249662.428677,
+    "hash": "3b6964f5a894272fb63de03b36e38780"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\components\\landing\\DonationSection.tsx": {
+    "mtime": 1776581085.5905292,
+    "hash": "06d8d6927ebe81d2083be6e09ce8df46"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\components\\landing\\Features.tsx": {
+    "mtime": 1776581029.1289535,
+    "hash": "c6535c581a87af0486cab115f88f585f"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\components\\landing\\Hero.tsx": {
+    "mtime": 1776581003.7377586,
+    "hash": "6d942240efd7b4daf7772a7f041756aa"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\components\\landing\\HowItWorks.tsx": {
+    "mtime": 1776581053.1267357,
+    "hash": "83b11b0c4394e7694877d841ee4c8019"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\components\\landing\\PersuasiveCTA.tsx": {
+    "mtime": 1776580970.6574087,
+    "hash": "15e561731783d829bcbf22c4a2590379"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\components\\landing\\SearchBar.tsx": {
+    "mtime": 1768249662.4312906,
+    "hash": "229837e0588ef74791464bcef8f9b6cb"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\components\\landing\\TrustBadges.tsx": {
+    "mtime": 1776581062.9543862,
+    "hash": "851f5fa393064f20050ffdd3e47c2a1d"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\lista\\[id]\\page.tsx": {
+    "mtime": 1776596202.1780298,
+    "hash": "64575800c661ddd25d67beac8b8b1ea3"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\produto\\[barcode]\\page.tsx": {
+    "mtime": 1776581287.7353265,
+    "hash": "a0eaaf5d370a9b9f71b6f91bf74b6323"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\resultados\\page.tsx": {
+    "mtime": 1776598632.9777951,
+    "hash": "871dd62ee6467caa4dc8baa4f79c5491"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\sobre\\page.tsx": {
+    "mtime": 1776595125.9413378,
+    "hash": "c34bf07af3993d729e56eec982cfe331"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\sobre\\components\\CTASection.tsx": {
+    "mtime": 1776581167.4301932,
+    "hash": "819962044027737d93fd7da0fd44e980"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\sobre\\components\\HeroSection.tsx": {
+    "mtime": 1776580987.1199255,
+    "hash": "3f54b1c013752ebc429141d2f18e4916"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\sobre\\components\\HowItWorksSection.tsx": {
+    "mtime": 1776581113.568597,
+    "hash": "fc8f87a8d08debf289a67ffc9c0ab9e7"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\sobre\\components\\ImpactSection.tsx": {
+    "mtime": 1776581067.482777,
+    "hash": "afc086f713473a29cbfb5310e4d3324e"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\sobre\\components\\MissionSection.tsx": {
+    "mtime": 1776581992.5232103,
+    "hash": "13d055b46c2cf3763f6a396205ffae3a"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\sobre\\components\\ProblemSection.tsx": {
+    "mtime": 1776581005.877464,
+    "hash": "ea4e9c7cf93f987051b1260f3a11aaa1"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\sobre\\components\\StorySection.tsx": {
+    "mtime": 1776581024.6681736,
+    "hash": "5897e2e7914f2860d7cc40ab7c5a4933"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\sobre\\components\\TargetAudienceSection.tsx": {
+    "mtime": 1776581093.8005397,
+    "hash": "957250f07ed9d7413e34f06f8a957a0a"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\sobre\\components\\ValuesSection.tsx": {
+    "mtime": 1776581144.515073,
+    "hash": "12a42890229585884797b32708e912b5"
+  },
+  "D:\\Documents\\Github\\nutriscan\\components\\OptimizedImage.tsx": {
+    "mtime": 1776195665.0843182,
+    "hash": "9f29c895e9a0c1a5a858b68aa2e64209"
+  },
+  "D:\\Documents\\Github\\nutriscan\\components\\theme-toggle.tsx": {
+    "mtime": 1768249662.4645047,
+    "hash": "b3ccde8c87e9282f2c75488ab4593994"
+  },
+  "D:\\Documents\\Github\\nutriscan\\components\\ui\\accordion.tsx": {
+    "mtime": 1768249662.4651475,
+    "hash": "babe82cc67afc33956195417f2de2395"
+  },
+  "D:\\Documents\\Github\\nutriscan\\components\\ui\\alert-dialog.tsx": {
+    "mtime": 1768249662.4656568,
+    "hash": "7dcdec2e0130d5fa6240d66c23776e2d"
+  },
+  "D:\\Documents\\Github\\nutriscan\\components\\ui\\badge.tsx": {
+    "mtime": 1768249662.465995,
+    "hash": "c6db5a6c42e5c86485a853e1a73bef01"
+  },
+  "D:\\Documents\\Github\\nutriscan\\components\\ui\\button.tsx": {
+    "mtime": 1768249662.465995,
+    "hash": "c859c8272fbb95452bbab9e0afe996e2"
+  },
+  "D:\\Documents\\Github\\nutriscan\\components\\ui\\card.tsx": {
+    "mtime": 1768249662.4665093,
+    "hash": "417aa24d02057f716cf3256ad3505157"
+  },
+  "D:\\Documents\\Github\\nutriscan\\components\\ui\\checkbox.tsx": {
+    "mtime": 1768249662.4665093,
+    "hash": "47aa0df2e5f920120faa9e40cec1bf6f"
+  },
+  "D:\\Documents\\Github\\nutriscan\\components\\ui\\dialog.tsx": {
+    "mtime": 1768249662.4674194,
+    "hash": "f73202fda409f741c6cdda528b75bd3c"
+  },
+  "D:\\Documents\\Github\\nutriscan\\components\\ui\\dropdown-menu.tsx": {
+    "mtime": 1768249662.4674194,
+    "hash": "79992f92cc2fedb7545c67dbde72e3ff"
+  },
+  "D:\\Documents\\Github\\nutriscan\\components\\ui\\input.tsx": {
+    "mtime": 1768249662.4674194,
+    "hash": "b6f39aedc2dcec6a539ef6a3f5800eb0"
+  },
+  "D:\\Documents\\Github\\nutriscan\\components\\ui\\label.tsx": {
+    "mtime": 1768249662.4674194,
+    "hash": "21b597ac5ace57dae3a811f554154654"
+  },
+  "D:\\Documents\\Github\\nutriscan\\components\\ui\\radio-group.tsx": {
+    "mtime": 1768249662.4685318,
+    "hash": "5e1c1dd36996ad6ce9dc61a21636f9f1"
+  },
+  "D:\\Documents\\Github\\nutriscan\\components\\ui\\select.tsx": {
+    "mtime": 1768249662.4685318,
+    "hash": "6a6438b55eaa208ff9c5a966fc55795b"
+  },
+  "D:\\Documents\\Github\\nutriscan\\components\\ui\\separator.tsx": {
+    "mtime": 1768249662.4690459,
+    "hash": "a554485146f11e2f99567142c3eea40a"
+  },
+  "D:\\Documents\\Github\\nutriscan\\components\\ui\\sheet.tsx": {
+    "mtime": 1768249662.4690459,
+    "hash": "9c6ed03705c0b39a4835dd3ae39de9c7"
+  },
+  "D:\\Documents\\Github\\nutriscan\\components\\ui\\skeleton.tsx": {
+    "mtime": 1768249662.469602,
+    "hash": "f65c9baa039c5484ed34c6ccaf9a2849"
+  },
+  "D:\\Documents\\Github\\nutriscan\\components\\ui\\slider.tsx": {
+    "mtime": 1768249662.469602,
+    "hash": "ec52b3ef83d5350cf3ac6e746cd4bc5a"
+  },
+  "D:\\Documents\\Github\\nutriscan\\components\\ui\\switch.tsx": {
+    "mtime": 1768249662.4701164,
+    "hash": "fea1a0aea3f582e86df145bdcd45b34f"
+  },
+  "D:\\Documents\\Github\\nutriscan\\docs\\resedesign\\extract.js": {
+    "mtime": 1776580942.1980963,
+    "hash": "44c795200fd8549360d54e06e3d5f482"
+  },
+  "D:\\Documents\\Github\\nutriscan\\hooks\\use-geolocation.ts": {
+    "mtime": 1768258524.6853542,
+    "hash": "9e43917f3ffbcbec19dc3a13994e3100"
+  },
+  "D:\\Documents\\Github\\nutriscan\\hooks\\use-search-logic.ts": {
+    "mtime": 1768250431.0643024,
+    "hash": "eb6d37231458c11514959ff3620b0cbe"
+  },
+  "D:\\Documents\\Github\\nutriscan\\hooks\\useCacheOnlyMode.ts": {
+    "mtime": 1768249662.4754808,
+    "hash": "0cefa74045549ddf7f1deaf627eb5c09"
+  },
+  "D:\\Documents\\Github\\nutriscan\\hooks\\useProductFilters.ts": {
+    "mtime": 1768249662.4760673,
+    "hash": "bc728d3a2a8f3be0fe32c2074a415c59"
+  },
+  "D:\\Documents\\Github\\nutriscan\\hooks\\useSearchCache.ts": {
+    "mtime": 1768249662.4760673,
+    "hash": "1be9d54cb4ce9963ac5530db86b057ce"
+  },
+  "D:\\Documents\\Github\\nutriscan\\hooks\\useStorageMonitor.ts": {
+    "mtime": 1768249662.4765754,
+    "hash": "51dae3797809bd695edd8099604298cc"
+  },
+  "D:\\Documents\\Github\\nutriscan\\lib\\cacheManager.ts": {
+    "mtime": 1768249662.4770837,
+    "hash": "5ce534d1aa26c82283e7dc34c2d5a50e"
+  },
+  "D:\\Documents\\Github\\nutriscan\\lib\\geolocation.ts": {
+    "mtime": 1768249662.4770837,
+    "hash": "8a5961092dd096056311de8122ebdab1"
+  },
+  "D:\\Documents\\Github\\nutriscan\\lib\\jsonCacheManager.ts": {
+    "mtime": 1776195580.3778186,
+    "hash": "342778585e4852ab8811ba425d3647ad"
+  },
+  "D:\\Documents\\Github\\nutriscan\\lib\\openFoodFactsApi.ts": {
+    "mtime": 1776194759.0693445,
+    "hash": "c528a68988797784a9299487dd32ef22"
+  },
+  "D:\\Documents\\Github\\nutriscan\\lib\\prisma.ts": {
+    "mtime": 1768249662.477593,
+    "hash": "55279148474980e4f42b2c28e2712b12"
+  },
+  "D:\\Documents\\Github\\nutriscan\\lib\\searchUtils.ts": {
+    "mtime": 1768249662.478596,
+    "hash": "816f89edaa9325e60be8993dc62670fe"
+  },
+  "D:\\Documents\\Github\\nutriscan\\lib\\types.ts": {
+    "mtime": 1768249662.488405,
+    "hash": "ff9b580bca2b5130235788c4595f4bb0"
+  },
+  "D:\\Documents\\Github\\nutriscan\\lib\\utils.ts": {
+    "mtime": 1768249662.488919,
+    "hash": "1f65b42dc459d24557b90915d32643fd"
+  },
+  "D:\\Documents\\Github\\nutriscan\\lib\\types\\rybbit.d.ts": {
+    "mtime": 1768955681.5075545,
+    "hash": "2d64d9864e2d4aa4c6ee29f64176e760"
+  },
+  "D:\\Documents\\Github\\nutriscan\\dokploy.yaml": {
+    "mtime": 1768249662.4749725,
+    "hash": "3633f2b1b7d2ea87c04f104b870b475e"
+  },
+  "D:\\Documents\\Github\\nutriscan\\pnpm-workspace.yaml": {
+    "mtime": 1768249662.4925277,
+    "hash": "70bf37eeae9e94bddabf886404367d07"
+  },
+  "D:\\Documents\\Github\\nutriscan\\README.md": {
+    "mtime": 1768249662.4173625,
+    "hash": "fef53180ee4ca61279135b0ee31bfb44"
+  },
+  "D:\\Documents\\Github\\nutriscan\\docs\\logo-prompts.md": {
+    "mtime": 1776584139.7344599,
+    "hash": "110abc0687331fb2ba00d6fbc9f885f9"
+  },
+  "D:\\Documents\\Github\\nutriscan\\docs\\openFoodFacts.md": {
+    "mtime": 1768249662.4744627,
+    "hash": "f9d517290c868cf5f55a2bb9c7b81068"
+  },
+  "D:\\Documents\\Github\\nutriscan\\docs\\resedesign\\extracted-template.html": {
+    "mtime": 1776580946.4939618,
+    "hash": "767f1216a8fc8c4b50a6fa0fc27585cc"
+  },
+  "D:\\Documents\\Github\\nutriscan\\docs\\resedesign\\NutriScan Redesign.html": {
+    "mtime": 1776579550.1852984,
+    "hash": "94dd57e6e8cc5be09b075fb18a691271"
+  },
+  "D:\\Documents\\Github\\nutriscan\\app\\icon.png": {
+    "mtime": 1768249662.4453888,
+    "hash": "d4a44ea17dc1803b4e65ae6baa3771bf"
+  },
+  "D:\\Documents\\Github\\nutriscan\\docs\\resedesign\\design-full.png": {
+    "mtime": 1776579619.8496165,
+    "hash": "a785f06ca993fb6c248c858d6f22876e"
+  },
+  "D:\\Documents\\Github\\nutriscan\\public\\apple-touch-icon.png": {
+    "mtime": 1768249662.497121,
+    "hash": "d4a44ea17dc1803b4e65ae6baa3771bf"
+  },
+  "D:\\Documents\\Github\\nutriscan\\public\\icon.png": {
+    "mtime": 1768249662.4996526,
+    "hash": "d4a44ea17dc1803b4e65ae6baa3771bf"
+  },
+  "D:\\Documents\\Github\\nutriscan\\public\\images\\CMJN-ICON_WHITE_BG_OFF.svg": {
+    "mtime": 1776581874.2794132,
+    "hash": "97311c01879a48138171e98a8eda5941"
+  },
+  "D:\\Documents\\Github\\nutriscan\\public\\images\\logo-gemini.png": {
+    "mtime": 1776583874.996,
+    "hash": "88363b23e1237eaef9d80b1a75ace8b2"
+  },
+  "D:\\Documents\\Github\\nutriscan\\public\\images\\logo-gemini.svg": {
+    "mtime": 1776583868.9097157,
+    "hash": "09c297f21c15b0b5a6e9fe2f5c55ff7f"
+  },
+  "D:\\Documents\\Github\\nutriscan\\public\\images\\nut-facts.webp": {
+    "mtime": 1768250940.9892068,
+    "hash": "c4108523df397239c886c84367504632"
+  },
+  "D:\\Documents\\Github\\nutriscan\\public\\images\\nutscore.webp": {
+    "mtime": 1768250985.9123082,
+    "hash": "aa20def9a59fa102da7e03be71b6e788"
+  }
+}

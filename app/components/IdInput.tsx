@@ -38,13 +38,29 @@ export function IdInput() {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-            <div className="max-w-md w-full space-y-8 p-8 bg-white dark:bg-gray-800 rounded-xl shadow-lg">
+        <div
+            className="min-h-screen flex items-center justify-center"
+            style={{ background: 'var(--bg-base)' }}
+        >
+            <div
+                className="max-w-md w-full space-y-8 p-8 rounded-xl"
+                style={{
+                    background: 'var(--bg-elevated)',
+                    border: '1px solid var(--border-subtle)',
+                    boxShadow: '0 8px 32px -8px rgba(30,24,16,0.10)',
+                }}
+            >
                 <div>
-                    <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
+                    <h2
+                        className="mt-6 text-center text-3xl font-display"
+                        style={{ color: 'var(--fg-primary)' }}
+                    >
                         Acesse sua lista
                     </h2>
-                    <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
+                    <p
+                        className="mt-2 text-center text-sm"
+                        style={{ color: 'var(--fg-muted)' }}
+                    >
                         Digite um ID para acessar ou criar uma nova lista
                     </p>
                 </div>
@@ -56,19 +72,20 @@ export function IdInput() {
                             placeholder="Digite o ID da lista"
                             value={id}
                             onChange={(e) => setId(e.target.value)}
-                            className="appearance-none rounded-lg relative block w-full px-3 py-2 border dark:bg-gray-700 dark:border-gray-600"
+                            className="appearance-none rounded-lg relative block w-full px-3 py-2"
+                            style={{ borderColor: 'var(--border-strong)', background: 'var(--bg-surface)' }}
                         />
                     </div>
                     {error && (
-                        <p className="text-red-500 text-sm text-center">{error}</p>
+                        <p className="text-sm text-center" style={{ color: 'var(--nutri-e)' }}>{error}</p>
                     )}
-                    <Button
+                    <button
                         type="submit"
                         disabled={loading}
-                        className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                        className="btn-accent w-full justify-center"
                     >
                         {loading ? 'Carregando...' : 'Acessar/Criar Lista'}
-                    </Button>
+                    </button>
                 </form>
             </div>
         </div>

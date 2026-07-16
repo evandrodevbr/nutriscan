@@ -1,13 +1,31 @@
 import "./globals.css";
 import { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Instrument_Serif, Inter, Newsreader } from "next/font/google";
 import Script from "next/script";
 import { ThemeProvider } from "@/app/providers";
 import { ErrorBoundary } from "@/app/components/ErrorBoundary";
 import { ErrorTracking } from "@/app/components/ErrorTracking";
 
-// Use Inter como fallback já que é uma fonte similar à Geist
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+const instrumentSerif = Instrument_Serif({
+  subsets: ["latin"],
+  variable: "--font-instrument-serif",
+  weight: "400",
+  style: ["normal", "italic"],
+  display: "swap",
+});
+
+const newsreader = Newsreader({
+  subsets: ["latin"],
+  variable: "--font-newsreader",
+  style: ["normal", "italic"],
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://nutriscan.com.br"),
@@ -43,14 +61,7 @@ export const metadata: Metadata = {
     description:
       "Descubra informações nutricionais completas de milhares de produtos alimentícios.",
     siteName: "NutriScan",
-    images: [
-      {
-        url: "/icon.png",
-        width: 512,
-        height: 512,
-        alt: "NutriScan Logo",
-      },
-    ],
+    images: [{ url: "/icon.png", width: 512, height: 512, alt: "NutriScan Logo" }],
   },
   twitter: {
     card: "summary_large_image",
@@ -74,14 +85,10 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt-BR" suppressHydrationWarning className={inter.className}>
-      <body className="min-h-screen bg-background antialiased">
+    <html lang="pt-BR" suppressHydrationWarning className={`${inter.variable} ${instrumentSerif.variable} ${newsreader.variable}`}>
+      <body className="min-h-screen bg-base antialiased font-sans">
         <ErrorBoundary>
           <ThemeProvider>
             {children}

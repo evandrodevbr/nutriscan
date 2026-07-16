@@ -3,14 +3,12 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useTheme } from "next-themes";
-import { motion, AnimatePresence } from "framer-motion";
 import { Sun, Moon, Menu, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import Image from "next/image"
+import Image from "next/image";
+import { cn } from "@/lib/utils";
 
-// 1. Definição de Dados Centralizada (SSOT - Single Source of Truth)
 const NAV_LINKS = [
-  { href: "/", label: "Como funciona" },
+  { href: "/#como-funciona", label: "Como funciona" },
   { href: "/#recursos", label: "Recursos" },
   { href: "/sobre", label: "Sobre" },
 ];
@@ -18,130 +16,116 @@ const NAV_LINKS = [
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const { theme, setTheme } = useTheme();
 
-  // Prevenção de Hydration Mismatch
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    setMounted(true);
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const toggleTheme = () => setTheme(theme === "dark" ? "light" : "dark");
 
   return (
-    <header className="sticky top-0 z-[100] w-full bg-white/70 dark:bg-gray-900/70 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 transition-colors duration-500">
-      <div className="max-w-7xl mx-auto px-6">
+    <header
+      className={cn(
+        "sticky top-0 z-[100] w-full transition-all duration-300",
+        scrolled
+          ? "bg-[var(--bg-base)]/90 backdrop-blur-md border-b border-[var(--border-subtle)]"
+          : "bg-[var(--bg-base)] border-b border-transparent"
+      )}
+    >
+      <div className="container-editorial">
         <div className="flex items-center justify-between h-16">
-          
-          {/* Logo Section - Unificada */}
+
+          {/* ── Logo ──────────────────────────────────────────────────── */}
           <Link href="/" className="flex items-center gap-3 group">
-  {/* Container do Logo com Referencial Relativo */}
-  <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:rotate-6 transition-transform relative overflow-hidden">
-    <Image 
-      src="/apple-touch-icon.png" 
-      alt="NutriScan Logo"
-      fill // Ocupa todo o container pai
-      priority // CRÍTICO: Carrega o logo antes de tudo para melhorar o LCP
-      sizes="40px" // Dica para o browser sobre o tamanho real em pixels
-      className="object-contain p-2" // Mantém a proporção e adiciona respiro interno
-    />
-  </div>
-            <div className="flex flex-col">
-              <span className="text-lg font-black tracking-tighter text-gray-900 dark:text-white leading-none">
-                NUTRI<span className="text-blue-500">SCAN</span>
+            <Image
+              src="/apple-touch-icon.png"
+              alt="NutriScan"
+              width={32}
+              height={32}
+              priority
+              className="rounded object-contain"
+            />
+            <div className="flex flex-col leading-none">
+              <span className="font-sans font-semibold text-[var(--fg-primary)] text-base tracking-tight">
+                NutriScan
               </span>
-              <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest leading-none mt-1">
-                Data Engineering
+              <span className="label text-[var(--fg-faint)] mt-0.5">
+                Dados Nutricionais
               </span>
             </div>
           </Link>
 
-          {/* Desktop Nav - Com micro-interações */}
+          {/* ── Desktop nav ───────────────────────────────────────────── */}
           <nav className="hidden md:flex items-center gap-1">
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="px-4 py-2 text-sm font-semibold text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-all"
+                className="px-4 py-2 label text-[var(--fg-muted)] hover:text-[var(--fg-primary)] rounded transition-colors duration-200"
               >
                 {link.label}
               </Link>
             ))}
           </nav>
 
-          {/* Ações e Mobile Toggle */}
+          {/* ── Actions ───────────────────────────────────────────────── */}
           <div className="flex items-center gap-2">
+            {/* Theme toggle */}
             {mounted && (
-              <Button
-                variant="ghost"
-                size="icon"
+              <button
                 onClick={toggleTheme}
-                className="rounded-full w-10 h-10 border border-gray-200 dark:border-gray-800"
+                aria-label={theme === "dark" ? "Modo claro" : "Modo escuro"}
+                className="w-9 h-9 flex items-center justify-center rounded border border-[var(--border-subtle)] text-[var(--fg-muted)] hover:text-[var(--fg-primary)] hover:border-[var(--border-strong)] transition-all duration-200"
               >
-                <motion.div
-                  initial={false}
-                  animate={{ rotate: theme === "dark" ? 0 : 180, scale: 1 }}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-                </motion.div>
-              </Button>
+                {theme === "dark" ? (
+                  <Sun className="w-4 h-4" strokeWidth={1.5} />
+                ) : (
+                  <Moon className="w-4 h-4" strokeWidth={1.5} />
+                )}
+              </button>
             )}
 
-            <Button
-              variant="ghost"
-              size="icon"
-              className="md:hidden rounded-full"
+            {/* Mobile hamburger */}
+            <button
+              className="md:hidden w-9 h-9 flex items-center justify-center rounded border border-[var(--border-subtle)] text-[var(--fg-muted)] hover:text-[var(--fg-primary)] transition-all duration-200"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
+              aria-label={isMenuOpen ? "Fechar menu" : "Abrir menu"}
             >
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={isMenuOpen ? "close" : "open"}
-                  initial={{ opacity: 0, rotate: -90 }}
-                  animate={{ opacity: 1, rotate: 0 }}
-                  exit={{ opacity: 0, rotate: 90 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-                </motion.div>
-              </AnimatePresence>
-            </Button>
+              {isMenuOpen ? (
+                <X className="w-4 h-4" strokeWidth={1.5} />
+              ) : (
+                <Menu className="w-4 h-4" strokeWidth={1.5} />
+              )}
+            </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile Menu - Animado com AnimatePresence */}
-      <AnimatePresence>
-        {isMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-hidden"
-          >
-            <nav className="flex flex-col p-6 gap-4">
-              {NAV_LINKS.map((link, i) => (
-                <motion.div
-                  key={link.href}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.1 }}
-                >
-                  <Link
-                    href={link.href}
-                    onClick={() => setIsMenuOpen(false)}
-                    className="text-xl font-bold text-gray-900 dark:text-white hover:text-blue-500 transition-colors"
-                  >
-                    {link.label}
-                  </Link>
-                </motion.div>
-              ))}
-              <div className="pt-4 border-t border-gray-100 dark:border-gray-800">
-                <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">
-                  NutriScan v2.0
-                </p>
-              </div>
-            </nav>
-          </motion.div>
+      {/* ── Mobile menu ───────────────────────────────────────────────── */}
+      <div
+        className={cn(
+          "md:hidden overflow-hidden transition-all duration-300 border-t border-[var(--border-subtle)]",
+          isMenuOpen ? "max-h-64 opacity-100" : "max-h-0 opacity-0"
         )}
-      </AnimatePresence>
+      >
+        <nav className="container-editorial py-6 flex flex-col gap-1">
+          {NAV_LINKS.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              onClick={() => setIsMenuOpen(false)}
+              className="py-3 font-sans font-medium text-[var(--fg-secondary)] hover:text-[var(--fg-primary)] border-b border-[var(--border-subtle)] last:border-0 transition-colors duration-200"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+      </div>
     </header>
   );
 }
