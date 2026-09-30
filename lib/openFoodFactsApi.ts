@@ -3,6 +3,8 @@
  * Melhorias: Memoização de Scores, Rate Limiting Robusto e Tipagem Estrita.
  */
 
+import { getEnergyKcal, getNutrientValue } from "./nutrition.ts";
+
 export interface Product {
   code: string;
   product_name: string;
@@ -11,6 +13,8 @@ export interface Product {
   ingredients_text?: string;
   nutriments?: {
     energy_100g?: number;
+    "energy-kcal_100g"?: number;
+    "energy-kj_100g"?: number;
     fat_100g?: number;
     carbohydrates_100g?: number;
     proteins_100g?: number;
@@ -185,6 +189,7 @@ export function sortProducts(
     value: p,
     score: calculateCompletenessScore(p),
     nutritionValue: getGradeValue(p.nutrition_grades),
+    energyKcal: getEnergyKcal(p.nutriments),
   }));
 
   // 2. Sort: Ordenação sobre valores em memória (O(n log n))
@@ -199,7 +204,9 @@ export function sortProducts(
         diff = a.nutritionValue - b.nutritionValue;
         break;
       case "energy":
-        diff = (a.value.nutriments?.energy_100g || 9999) - (b.value.nutriments?.energy_100g || 9999);
+        if (a.energyKcal === null) return b.energyKcal === null ? 0 : 1;
+        if (b.energyKcal === null) return -1;
+        diff = a.energyKcal - b.energyKcal;
         break;
       case "name":
         diff = (a.value.product_name || "").localeCompare(b.value.product_name || "");
@@ -240,21 +247,21 @@ export function formatNutritionData(p: Product) {
   const n = p.nutriments;
   if (!n) return null;
 
-  const fmt = (v: unknown, d: number = 1) => {
-    const num =
-      typeof v === "number"
-        ? v
-        : parseFloat(typeof v === "string" ? v : String(v));
-    return isNaN(num) ? "N/A" : num.toFixed(d);
+  const fmt = (v: unknown, unit: string, d: number = 1) => {
+    const num = getNutrientValue(v);
+    return num === null ? "N/A" : `${num.toFixed(d)}${unit}`;
   };
+  const energy = getEnergyKcal(n);
 
   return {
-    energy: n.energy_100g ? `${Math.round(n.energy_100g)} kcal` : "N/A",
-    fat: n.fat_100g ? `${fmt(n.fat_100g)}g` : "N/A",
-    carbs: n.carbohydrates_100g ? `${fmt(n.carbohydrates_100g)}g` : "N/A",
-    proteins: n.proteins_100g ? `${fmt(n.proteins_100g)}g` : "N/A",
-    sugars: n.sugars_100g ? `${fmt(n.sugars_100g)}g` : "N/A",
-    sodium: n.sodium_100g ? `${fmt(n.sodium_100g, 2)}g` : "N/A",
+    energy: energy === null ? "N/A" : `${Math.round(energy)} kcal`,
+    fat: fmt(n.fat_100g, "g"),
+    carbs: fmt(n.carbohydrates_100g, "g"),
+    carbohydrates: fmt(n.carbohydrates_100g, "g"),
+    proteins: fmt(n.proteins_100g, "g"),
+    sugars: fmt(n.sugars_100g, "g"),
+    fiber: fmt(n.fiber_100g, "g"),
+    sodium: fmt(n.sodium_100g, "g", 2),
   };
 }
 

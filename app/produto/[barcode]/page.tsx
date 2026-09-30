@@ -12,7 +12,8 @@ import {
   Share2,
 } from "lucide-react";
 import Image from "next/image";
-import { searchByBarcode, Product, formatNutritionData } from "@/lib/openFoodFactsApi";
+import { searchByBarcode, Product } from "@/lib/openFoodFactsApi";
+import { getEnergyKcal, getNutrientValue } from "@/lib/nutrition";
 import { ProductSkeleton } from "@/app/components/ProductSkeleton";
 
 /* ── Nutri-Score letter circle ─────────────────────────────────────────── */
@@ -305,7 +306,7 @@ export default function ProdutoPage() {
 
   /* ── Nutrition bars — % of daily reference ─────────────────────────── */
   const dailyRef: Record<string, number> = {
-    energy_100g: 2000,
+    "energy-kcal_100g": 2000,
     fat_100g: 70,
     saturated_fat_100g: 20,
     sugars_100g: 90,
@@ -315,11 +316,11 @@ export default function ProdutoPage() {
   };
   const nutriments = product.nutriments || {};
   const nutritionRows = [
-    { key: "energy_100g",       label: "Energia",              unit: "kcal" },
+    { key: "energy-kcal_100g",  label: "Energia",              unit: "kcal" },
     { key: "fat_100g",          label: "Gorduras totais",      unit: "g" },
     { key: "saturated_fat_100g",label: "Gorduras saturadas",   unit: "g" },
     { key: "sugars_100g",       label: "Açúcares",             unit: "g" },
-    { key: "salt_100g",         label: "Sódio",                unit: "g" },
+    { key: "salt_100g",         label: "Sal",                  unit: "g" },
     { key: "fiber_100g",        label: "Fibras",               unit: "g" },
     { key: "proteins_100g",     label: "Proteínas",            unit: "g" },
   ];
@@ -701,7 +702,7 @@ export default function ProdutoPage() {
         >
           {nutritionRows.map((row) => {
             const raw = nutriments[row.key as keyof typeof nutriments];
-            const v = raw != null ? Number(raw) : null;
+            const v = row.key === "energy-kcal_100g" ? getEnergyKcal(nutriments) : getNutrientValue(raw);
             if (v == null) return null;
             const ref = dailyRef[row.key] || 100;
             const pct = Math.min(100, Math.round((v / ref) * 100));
