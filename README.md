@@ -193,7 +193,7 @@ nixpacks.toml, dokploy.yaml  configuração de deploy
 
 ## Verificação
 
-Não há testes automatizados neste repositório (nenhum framework de teste nas dependências) e não há CI configurada. O que existe hoje:
+Há testes offline com o runner nativo do Node.js (sem framework adicional) e não há CI configurada. O que existe hoje:
 
 - `pnpm lint` roda o ESLint (via `next lint`);
 - `pnpm build` roda `prisma generate` e o `next build` com checagem de tipos;
@@ -226,7 +226,7 @@ Medições feitas nesta auditoria, em 14/09/2026, com Node 24.20.0 e pnpm 12.4.1
 ## Estado atual e limitações
 
 - A busca textual depende do endpoint legado `cgi/search.pl` do Open Food Facts, que respondeu HTTP 503 durante a verificação. Na prática, buscar por nome retorna lista vazia, com a rota respondendo 200 e `count: 0`, sem derrubar a aplicação. A consulta por código de barras continua funcionando pelo endpoint `api/v2/product`.
-- Sem testes automatizados e sem CI.
+- Testes offline de normalização e ordenação nutricional; ainda sem CI.
 - O painel de filtros avançados da página de resultados guarda as escolhas na chave do cache, mas a busca enviada para `/api/search` leva apenas texto, país e paginação. Hoje o que realmente filtra a lista são os atalhos de classificação Nutri-Score e o botão de produtos sem alérgenos.
 - A ordenação implementada em `lib/openFoodFactsApi.ts` cobre quatro critérios (relevância, Nutri-Score, energia e nome). As demais opções do seletor caem no caso padrão da função e não reordenam o resultado.
 - O servidor grava em `data/products-cache.json`, que é versionado. Usar a aplicação altera o conteúdo do arquivo no diretório de trabalho.
@@ -251,3 +251,11 @@ Medições feitas nesta auditoria, em 14/09/2026, com Node 24.20.0 e pnpm 12.4.1
 Licença de uso pessoal, definida em [`LICENSE`](LICENSE): é permitido usar em máquina local, estudar o código e rodar para desenvolvimento. Não é permitido deploy público, uso comercial, redistribuição nem obras derivadas para distribuição. A instância em `nutriscan.evandro.dev.br` é do próprio autor.
 
 Autor: Evandro, <https://evandro.dev.br> e [@evandrodevbr](https://github.com/evandrodevbr).
+
+## Validação de dados nutricionais (2026-09-30)
+
+A exibição e a ordenação de energia priorizam `energy-kcal_100g`; na ausência dele, convertem o campo em kJ para kcal usando `1 kcal = 4,184 kJ`. A página do produto usa a mesma normalização. Zero é preservado como dado válido, e valores ausentes, negativos ou não finitos não entram no cálculo. Produtos sem energia ficam no fim da ordenação nas duas direções. A linha baseada em `salt_100g` é identificada como sal.
+
+Os exemplos de campos vêm da [documentação oficial do Open Food Facts](https://openfoodfacts.github.io/openfoodfacts-server/api/tutorial-off-api/). Valores por 100 g e referências existentes da interface são mantidos; o Nutri-Score continua vindo da API.
+
+Com Node.js 22.7+ (verificado em 24.19.0), `pnpm test` executa 6 regressões offline usando o runner nativo, sem adicionar um framework. `pnpm lint`, `pnpm exec tsc --noEmit` e `pnpm build` completam a validação. O build foi verificado com SQLite temporário, sem conexão com um banco de produção. Next.js e eslint-config-next foram atualizados para 15.5.24.
